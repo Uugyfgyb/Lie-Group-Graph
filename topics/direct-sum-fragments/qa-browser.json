@@ -1,0 +1,581 @@
+{
+  "date": "2026-10-15",
+  "browser": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  "fail": [],
+  "results": [
+    {
+      "name": "desktop-light",
+      "steps": [
+        {
+          "control": "so5-t",
+          "changed": true
+        },
+        {
+          "control": "so5-t→end",
+          "changed": true
+        },
+        {
+          "control": "so5-kind:star",
+          "changed": true
+        },
+        {
+          "control": "so5-kind:all",
+          "changed": true
+        },
+        {
+          "control": "so5-new",
+          "changed": true
+        },
+        {
+          "control": "so5-play",
+          "value": 130
+        },
+        {
+          "control": "dials:drag",
+          "changed": true
+        },
+        {
+          "control": "he-play",
+          "done": true
+        },
+        {
+          "control": "he-reset",
+          "changed": true
+        },
+        {
+          "control": "sectors:click",
+          "changed": true
+        },
+        {
+          "control": "tu-preset:fig1",
+          "changed": true
+        },
+        {
+          "control": "tu-preset:fig2",
+          "changed": true
+        },
+        {
+          "control": "tu-preset:claw",
+          "changed": true
+        },
+        {
+          "control": "tu-preset:spider",
+          "changed": true
+        },
+        {
+          "control": "tu-preset:h2",
+          "changed": true
+        },
+        {
+          "control": "tu-preset:fig3",
+          "changed": true
+        },
+        {
+          "control": "graph:edge 0–1",
+          "changed": true
+        },
+        {
+          "control": "graph:edge 1–2",
+          "changed": true
+        },
+        {
+          "control": "sh-a",
+          "changed": true
+        },
+        {
+          "control": "sh-ground",
+          "changed": true
+        },
+        {
+          "control": "sh-again",
+          "changed": true
+        },
+        {
+          "control": "guo-mol:H2",
+          "changed": true
+        },
+        {
+          "control": "guo-mol:BeH2",
+          "changed": true
+        },
+        {
+          "control": "guo-mol:H2O",
+          "changed": true
+        },
+        {
+          "control": "guo-mol:NH3",
+          "changed": true
+        },
+        {
+          "control": "H2 repro",
+          "ok": true
+        },
+        {
+          "control": "guo-tab:II",
+          "changed": true
+        },
+        {
+          "control": "term:linegraph",
+          "popVisible": true,
+          "popTitle": "线图line graph"
+        }
+      ]
+    },
+    {
+      "name": "desktop-light",
+      "loadMs": 1196,
+      "overflow": 0,
+      "wide": [
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]"
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 470,
+          "h": 470,
+          "inkFrac": 0.082
+        },
+        {
+          "id": "so5",
+          "w": 772,
+          "h": 482,
+          "inkFrac": 0.0588
+        },
+        {
+          "id": "dials",
+          "w": 772,
+          "h": 385,
+          "inkFrac": 0.0362
+        },
+        {
+          "id": "sectors",
+          "w": 772,
+          "h": 385,
+          "inkFrac": 0.0575
+        },
+        {
+          "id": "graph",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0396
+        },
+        {
+          "id": "hasse",
+          "w": 416,
+          "h": 346,
+          "inkFrac": 0.0566
+        },
+        {
+          "id": "root",
+          "w": 416,
+          "h": 311,
+          "inkFrac": 0.0387
+        },
+        {
+          "id": "circuit",
+          "w": 772,
+          "h": 336,
+          "inkFrac": 0.0602
+        },
+        {
+          "id": "curves",
+          "w": 772,
+          "h": 385,
+          "inkFrac": 0.0467
+        },
+        {
+          "id": "shots",
+          "w": 772,
+          "h": 336,
+          "inkFrac": 0.0527
+        },
+        {
+          "id": "bars",
+          "w": 772,
+          "h": 482,
+          "inkFrac": 0.0955
+        }
+      ],
+      "panels": [
+        {
+          "id": "so5-panel",
+          "len": 230
+        },
+        {
+          "id": "he-panel",
+          "len": 254
+        },
+        {
+          "id": "cheng-panel",
+          "len": 285
+        },
+        {
+          "id": "tu-panel",
+          "len": 144
+        },
+        {
+          "id": "",
+          "len": 891
+        },
+        {
+          "id": "sh-panel",
+          "len": 218
+        },
+        {
+          "id": "guo-panel",
+          "len": 143
+        }
+      ],
+      "bg": "rgb(236, 235, 227)",
+      "title": "可解碎片图解",
+      "net": 0,
+      "errors": []
+    },
+    {
+      "name": "desktop-dark",
+      "loadMs": 1194,
+      "overflow": 0,
+      "wide": [
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]",
+        "path.[object SVGAnimatedString]"
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 470,
+          "h": 470,
+          "inkFrac": 0.0803
+        },
+        {
+          "id": "so5",
+          "w": 772,
+          "h": 482,
+          "inkFrac": 0.0582
+        },
+        {
+          "id": "dials",
+          "w": 772,
+          "h": 385,
+          "inkFrac": 0.036
+        },
+        {
+          "id": "sectors",
+          "w": 772,
+          "h": 385,
+          "inkFrac": 0.056
+        },
+        {
+          "id": "graph",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0396
+        },
+        {
+          "id": "hasse",
+          "w": 416,
+          "h": 346,
+          "inkFrac": 0.0561
+        },
+        {
+          "id": "root",
+          "w": 416,
+          "h": 311,
+          "inkFrac": 0.0376
+        },
+        {
+          "id": "circuit",
+          "w": 772,
+          "h": 336,
+          "inkFrac": 0.0591
+        },
+        {
+          "id": "curves",
+          "w": 772,
+          "h": 385,
+          "inkFrac": 0.0457
+        },
+        {
+          "id": "shots",
+          "w": 772,
+          "h": 336,
+          "inkFrac": 0.0513
+        },
+        {
+          "id": "bars",
+          "w": 772,
+          "h": 482,
+          "inkFrac": 0.0942
+        }
+      ],
+      "panels": [
+        {
+          "id": "so5-panel",
+          "len": 230
+        },
+        {
+          "id": "he-panel",
+          "len": 254
+        },
+        {
+          "id": "cheng-panel",
+          "len": 285
+        },
+        {
+          "id": "tu-panel",
+          "len": 144
+        },
+        {
+          "id": "",
+          "len": 891
+        },
+        {
+          "id": "sh-panel",
+          "len": 218
+        },
+        {
+          "id": "guo-panel",
+          "len": 143
+        }
+      ],
+      "bg": "rgb(20, 22, 21)",
+      "title": "可解碎片图解",
+      "net": 0,
+      "errors": []
+    },
+    {
+      "name": "mobile-light",
+      "loadMs": 1229,
+      "overflow": 0,
+      "wide": [
+        "path.[object SVGAnimatedString]",
+        "math.",
+        "semantics.",
+        "mrow.",
+        "mi."
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 600,
+          "h": 600,
+          "inkFrac": 0.0973
+        },
+        {
+          "id": "so5",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.1547
+        },
+        {
+          "id": "dials",
+          "w": 712,
+          "h": 820,
+          "inkFrac": 0.0476
+        },
+        {
+          "id": "sectors",
+          "w": 712,
+          "h": 892,
+          "inkFrac": 0.085
+        },
+        {
+          "id": "graph",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0733
+        },
+        {
+          "id": "hasse",
+          "w": 676,
+          "h": 562,
+          "inkFrac": 0.0832
+        },
+        {
+          "id": "root",
+          "w": 676,
+          "h": 506,
+          "inkFrac": 0.0506
+        },
+        {
+          "id": "circuit",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0999
+        },
+        {
+          "id": "curves",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0917
+        },
+        {
+          "id": "shots",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.1093
+        },
+        {
+          "id": "bars",
+          "w": 712,
+          "h": 950,
+          "inkFrac": 0.1021
+        }
+      ],
+      "panels": [
+        {
+          "id": "so5-panel",
+          "len": 230
+        },
+        {
+          "id": "he-panel",
+          "len": 254
+        },
+        {
+          "id": "cheng-panel",
+          "len": 285
+        },
+        {
+          "id": "tu-panel",
+          "len": 144
+        },
+        {
+          "id": "",
+          "len": 891
+        },
+        {
+          "id": "sh-panel",
+          "len": 218
+        },
+        {
+          "id": "guo-panel",
+          "len": 143
+        }
+      ],
+      "bg": "rgb(236, 235, 227)",
+      "title": "可解碎片图解",
+      "net": 0,
+      "errors": []
+    },
+    {
+      "name": "mobile-dark",
+      "loadMs": 1227,
+      "overflow": 0,
+      "wide": [
+        "path.[object SVGAnimatedString]",
+        "math.",
+        "semantics.",
+        "mrow.",
+        "mi."
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 600,
+          "h": 600,
+          "inkFrac": 0.0959
+        },
+        {
+          "id": "so5",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.1535
+        },
+        {
+          "id": "dials",
+          "w": 712,
+          "h": 820,
+          "inkFrac": 0.0468
+        },
+        {
+          "id": "sectors",
+          "w": 712,
+          "h": 892,
+          "inkFrac": 0.0838
+        },
+        {
+          "id": "graph",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0733
+        },
+        {
+          "id": "hasse",
+          "w": 676,
+          "h": 562,
+          "inkFrac": 0.0818
+        },
+        {
+          "id": "root",
+          "w": 676,
+          "h": 506,
+          "inkFrac": 0.0501
+        },
+        {
+          "id": "circuit",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0989
+        },
+        {
+          "id": "curves",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0902
+        },
+        {
+          "id": "shots",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.108
+        },
+        {
+          "id": "bars",
+          "w": 712,
+          "h": 950,
+          "inkFrac": 0.1009
+        }
+      ],
+      "panels": [
+        {
+          "id": "so5-panel",
+          "len": 230
+        },
+        {
+          "id": "he-panel",
+          "len": 254
+        },
+        {
+          "id": "cheng-panel",
+          "len": 285
+        },
+        {
+          "id": "tu-panel",
+          "len": 144
+        },
+        {
+          "id": "",
+          "len": 891
+        },
+        {
+          "id": "sh-panel",
+          "len": 218
+        },
+        {
+          "id": "guo-panel",
+          "len": 143
+        }
+      ],
+      "bg": "rgb(20, 22, 21)",
+      "title": "可解碎片图解",
+      "net": 0,
+      "errors": []
+    }
+  ]
+}

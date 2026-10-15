@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="水墨风格的论文精读页：Patel 与 Izmaylov（2024）《Exactly solvable Hamiltonian fragments obtained from a direct sum of Lie algebras》。从 VQE 的测量问题讲到 so(N) 直和、泡利对称、反相容图与线图、测量线路和结果；七幅图（六幅可拖可点），H₂ 一行的表格数值在浏览器里重算。">
+<title>可解碎片图解</title>
+<style data-inline="katex">/*__KATEX_CSS__*/</style>
+<style data-inline="ink.css">/*__CSS__*/</style>
+<style data-inline="page.css">/*__PAGE_CSS__*/</style>
+</head>
+<body>
+<div class="scroll">
+
+<header class="top">
+  <div class="top-grid">
+    <div class="top-text">
+      <!--repo-only--><div class="crumbs"><a href="../../index.html">Lie Group Graph</a><span>／</span><span>论文图解：可解哈密顿量</span><span>／</span><span>直和碎片</span></div><!--/repo-only-->
+      <div class="eyebrow">论文精读 · 李代数直和 · 量子测量</div>
+      <h1><span>拆图成片，</span><span>片片可解</span></h1>
+      <p class="lede">在量子计算机上估计分子的能量 \(\langle\hat H\rangle\)，整个哈密顿量没法一次测完，只能把它拆成若干<strong>碎片</strong>，每一片先转到一组彼此对易的 \(\hat z\) 算符上再测。碎片越大、越少，需要的测量次数越少。这篇论文把可以当碎片用的哈密顿量推广到一大类：在泡利对称算符的每个本征子空间里，碎片是若干个 \(\mathfrak{so}(N)\) 李代数之直和里的一个元素。这一页把论文从头走到尾，并用 H₂ 把论文表格里的数在浏览器里重算一遍。</p>
+      <p class="cite-line">Smik Patel, Artur F. Izmaylov, <i lang="en">Exactly solvable Hamiltonian fragments obtained from a direct sum of Lie algebras</i>, <a href="https://arxiv.org/abs/2402.09376">arXiv:2402.09376</a>（2024 年 2 月 15 日，第 1 版）。多伦多大学化学系 · 士嘉堡校区物理与环境科学系。</p>
+      <nav class="route" aria-label="本页路线">
+        <a href="#s-chai"><b>拆</b><span>为什么要拆</span></a><i aria-hidden="true">→</i>
+        <a href="#s-dai"><b>代</b><span>李代数与转动</span></a><i aria-hidden="true">→</i>
+        <a href="#s-he"><b>和</b><span>直和</span></a><i aria-hidden="true">→</i>
+        <a href="#s-cheng"><b>称</b><span>对称作系数</span></a><i aria-hidden="true">→</i>
+        <a href="#s-da"><b>搭</b><span>用泡利搭</span></a><i aria-hidden="true">→</i>
+        <a href="#s-tu"><b>图</b><span>从图上认</span></a><i aria-hidden="true">→</i>
+        <a href="#s-xian"><b>线</b><span>测量线路</span></a><i aria-hidden="true">→</i>
+        <a href="#s-guo"><b>果</b><span>结果</span></a><i aria-hidden="true">→</i>
+        <a href="#s-si"><b>思</b><span>结论与追问</span></a><i aria-hidden="true">→</i>
+        <a href="#s-lian"><b>练</b><span>六道小题</span></a><i aria-hidden="true">→</i>
+        <a href="#s-gloss"><b>析</b><span>注释总表</span></a>
+      </nav>
+    </div>
+    <figure class="hero-fig">
+      <div class="hero"><canvas id="hero" role="img" aria-label="左上是五个泡利项组成的反相容图：两项反对易就连一条细线。右下是它的根图：五个朱色小圈是马约拉纳模，五笔浓墨是五个泡利项，左边相连的两点在右边是共用一个端点的两笔。"></canvas></div>
+      <figcaption><span class="ev k3">示意</span>左上五个墨点是五个泡利项，两项反对易就连一条细线（论文图 2a）。右下是同一张图的“根图”：每一项变成一笔，两项反对易 ⇔ 两笔共用一个端点。朱圈是马约拉纳模 \(\gamma\)，一笔就是一个 \(i\gamma_u\gamma_v\)：这五项合起来是一个可以严格求解的自由费米子哈密顿量。</figcaption>
+    </figure>
+  </div>
+  <div class="howto">
+    <p class="zhu"><b>意思</b>这样的红字是<strong>朱批</strong>。凡是用到数学分析的地方（求极值、对角化、级数、转动的复合），旁边都有一条，用白话说这一步在做什么、凭什么可以这样做。</p>
+    <p>带虚线的词可以点，比如<button type="button" class="term" data-g="vqe">变分量子本征求解器</button>，会弹出它的意思和英文名；全部注释汇总在卷末“析”一节。公式右侧的编号 (1)–(24)、(A1)、(B5) 等与论文一致，可以对照原文读；(a)、(b)… 是这一页补的式子。</p>
+    <div class="legend" aria-label="标签说明">
+      <span><span class="ev">定义</span>论文或教材里的定义</span>
+      <span><span class="ev k2">定理</span>标准结论</span>
+      <span><span class="ev k3">示意</span>为讲解画的图</span>
+      <span><span class="ev k4">数值</span>浏览器现算的数</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ 拆：为什么要拆 ═══════════════ -->
+<section id="s-chai" aria-labelledby="h-chai">
+  <div class="head"><span class="seal" aria-hidden="true">拆</span><h2 id="h-chai">为什么要拆：VQE 的测量问题</h2></div>
+  <p>论文研究的对象是分子的电子哈密顿量（论文 I 节）。在二次量子化里，它由单电子积分 \(h_{pq}\) 和双电子积分 \(g_{pqrs}\) 写成</p>
+  <div class="eq" data-label="he" data-paper="1">$$\hat H_e=\sum_{pq=1}^{N}h_{pq}\,\hat a_p^\dagger\hat a_q+\sum_{pqrs=1}^{N}g_{pqrs}\,\hat a_p^\dagger\hat a_q\hat a_r^\dagger\hat a_s ,$$</div>
+  <p>\(p,q,r,s\) 跑遍 \(N\) 个自旋轨道。用<button type="button" class="term" data-g="mapping">费米子到量子比特的映射</button>（Jordan–Wigner 或 Bravyi–Kitaev）把每个 \(\hat a_p^\dagger\)、\(\hat a_q\) 换成 \(N\) 个量子比特上的算符以后，\(\hat H_e\) 变成一串<button type="button" class="term" data-g="pauli">泡利串</button>的线性组合：</p>
+  <div class="eq" data-label="pauli-sum" data-paper="21">$$\hat H=\sum_{\hat P\in\mathcal S}h_P\,\hat P,\qquad \hat P\in\{\hat I,\hat x,\hat y,\hat z\}^{\otimes N}.$$</div>
+  <p>VQE 要反复估计 \(E[\psi]=\langle\psi|\hat H|\psi\rangle\)。量子计算机只能在计算基里读出每个比特是 0 还是 1，也就是同时测一组 \(\hat z_k\)。一般的 \(\hat H\) 不是 \(\hat z\) 的函数，没法一次读出来。办法是把它拆开（论文 III 节）：</p>
+  <div class="eq" data-label="split" data-paper="22">$$\hat H=\sum_{\alpha=1}^{N_{\rm frag}}\hat H_\alpha ,$$</div>
+  <div class="eq" data-label="linear" data-paper="23">$$E[\psi]=\sum_{\alpha=1}^{N_{\rm frag}}\langle\psi|\hat H_\alpha|\psi\rangle .$$</div>
+  <p>每个碎片 \(\hat H_\alpha\) 都要<strong>严格可解</strong>：能找到一个线路不深的幺正 \(\hat U_\alpha\)，使 \(\hat U_\alpha\hat H_\alpha\hat U_\alpha^\dagger\) 只含 \(\hat z\)。先做 \(\hat U_\alpha\) 再在计算基里读数，就一次读出 \(\hat H_\alpha\) 的一个本征值。每个碎片各测 \(m_\alpha\) 次，总次数 \(M=\sum_\alpha m_\alpha\)。要让估计的标准差等于 \(\epsilon\)，测量次数至少是</p>
+  <div class="eq" data-label="m" data-paper="24">$$M(\epsilon)=\frac1{\epsilon^2}\left[\sum_{\alpha=1}^{N_{\rm frag}}\sqrt{\operatorname{Var}_\psi(\hat H_\alpha)}\right]^2,\qquad \operatorname{Var}_\psi(\hat H_\alpha)=\langle\psi|\hat H_\alpha^2|\psi\rangle-\langle\psi|\hat H_\alpha|\psi\rangle^2 .$$</div>
+  <ol class="deriv">
+    <li>
+      <div class="step">
+        <p>第 \(\alpha\) 片测 \(m_\alpha\) 次取平均，平均值的方差是 \(V_\alpha/m_\alpha\)（记 \(V_\alpha=\operatorname{Var}_\psi(\hat H_\alpha)\)）。各片独立，总估计的方差是它们之和，要求它等于 \(\epsilon^2\)：</p>
+        <div class="eq" data-label="budget">$$\sum_\alpha\frac{V_\alpha}{m_\alpha}=\epsilon^2 .$$</div>
+      </div>
+      <div class="notes"><p class="zhu"><b>意思</b>独立随机变量之和的方差等于方差之和；同一片测 \(m\) 次取平均，方差缩小 \(m\) 倍。这两条是整件事的出发点。</p></div>
+    </li>
+    <li>
+      <div class="step">
+        <p>用<button type="button" class="term" data-g="cs">柯西–施瓦茨不等式</button>把 \(\sum_\alpha\sqrt{V_\alpha}\) 拆成两个因子的乘积：</p>
+        <div class="eq" data-label="cs">$$\Big(\sum_\alpha\sqrt{V_\alpha}\Big)^2=\Big(\sum_\alpha\sqrt{\tfrac{V_\alpha}{m_\alpha}}\,\sqrt{m_\alpha}\Big)^2\le\Big(\sum_\alpha\frac{V_\alpha}{m_\alpha}\Big)\Big(\sum_\alpha m_\alpha\Big)=\epsilon^2M .$$</div>
+      </div>
+      <div class="notes"><p class="zhu"><b>意思</b>这一步在求“约束下的最小值”。不必用拉格朗日乘子：柯西–施瓦茨直接给出下界 \(M\ge(\sum\sqrt{V_\alpha})^2/\epsilon^2\)，就是式 (24)。等号成立当且仅当两个向量成比例，也就是 \(\sqrt{V_\alpha/m_\alpha}\propto\sqrt{m_\alpha}\)，即 \(m_\alpha\propto\sqrt{V_\alpha}\)：方差大的碎片多测几次。</p></div>
+    </li>
+  </ol>
+  <p>所以论文用 \(\epsilon^2M(\epsilon)\) 衡量一种拆法的好坏，数越小越好。它取决于两件事：每片的方差，以及片数。能放进同一片的项越多，片与片之间的“方差相加”就越可能被片内的相消抵掉。基态是 \(\hat H\) 本身的本征态，如果整个 \(\hat H\) 是一片，方差就是零。</p>
+  <p>最简单的两种碎片早已有人用过：<strong>FC</strong>（fully commuting，各项两两对易，有共同本征基，用一个<button type="button" class="term" data-g="clifford">克利福德幺正</button>就能转到 \(\hat z\) 上）和 <strong>AC</strong>（anti-commuting，各项两两反对易，用“幺正分拆”法求解）。判断几个泡利项能不能放在一起，看的是它们之间的对易关系，于是引出一张图：</p>
+  <div class="boxed">
+    <p><span class="ev">定义</span>哈密顿量的<button type="button" class="term" data-g="acgraph">反相容图</button>：每个泡利项是一个顶点；两项反对易，就在它们之间连一条边。</p>
+    <p>两个泡利串对易还是反对易，只看它们在多少个位置上放了不同的非恒等泡利矩阵：个数为偶数就对易，为奇数就反对易。例如 \(\hat x_0\hat z_1\hat x_2\) 与 \(\hat z_0\) 只在第 0 位冲突，反对易；与 \(\hat z_0\hat z_2\) 在第 0、2 两位冲突，对易。</p>
+  </div>
+  <p>FC 碎片的图没有边，AC 碎片的图是完全图。拆哈密顿量就变成了“把反相容图的顶点分组，每组的子图属于某个可解类”。论文的贡献是给出更大的可解类，并说清它们在图上长什么样。</p>
+</section>
+
+<!-- ═══════════════ 代：李代数与转动 ═══════════════ -->
+<section id="s-dai" aria-labelledby="h-dai">
+  <div class="head"><span class="seal" aria-hidden="true">代</span><h2 id="h-dai">李代数里的元素，都能转成对易的</h2></div>
+  <p>论文 II.A 节先讲一般框架。任何费米子或量子比特哈密顿量，都能写成某个 \(d\) 维<button type="button" class="term" data-g="compact">紧李代数</button> \(\mathcal A\) 的厄米生成元 \(\{\hat X_a\}_{a=1}^d\) 的多项式：</p>
+  <div class="eq" data-label="poly" data-paper="2">$$\hat H=\sum_{a=1}^dc_a\hat X_a+\sum_{a\ge b}^dc_{ab}\hat X_a\hat X_b+\cdots .$$</div>
+  <p>形式上 \(\hat H\) 属于 \(\mathcal A\) 的<button type="button" class="term" data-g="uea">泛包络代数</button>：</p>
+  <div class="eq" data-label="uea" data-paper="3">$$\mathcal E_{\mathcal A}=\mathcal A\oplus\mathcal A^2\oplus\cdots,\qquad \mathcal A^N=\otimes_{n=1}^N\mathcal A .$$</div>
+  <p>多项式一般不好解。好解的是只有一次项的那一类：</p>
+  <div class="eq" data-label="lin" data-paper="4">$$\hat H=\sum_{a=1}^dc_a\hat X_a .$$</div>
+  <div class="boxed">
+    <p><span class="ev k2">定理</span>（<button type="button" class="term" data-g="torus">极大环面定理</button>）紧李代数 \(\mathcal A\) 里的任何元素，都能用对应李群里的一个元素</p>
+    <div class="eq" data-label="u" data-paper="5">$$\hat U=\exp\Big(-i\sum_{a=1}^d\theta_a\hat X_a\Big)$$</div>
+    <p>转到一个固定的<button type="button" class="term" data-g="csa">嘉当子代数</button> \(\mathcal C\)（\(\mathcal A\) 的极大阿贝尔子代数）里。\(\mathcal C\) 的元素两两对易。</p>
+  </div>
+  <p>在量子计算里还差最后一步：把 \(\mathcal C\) 的生成元换成单比特的 \(\hat z\)。论文和此前的工作里，这一步都是一个克利福德幺正。</p>
+
+  <h3 class="sub">看得见的例子：两个比特上的 \(\mathfrak{so}(5)\)</h3>
+  <p>先跳到论文 II.C 节要用的那种李代数，亲手转一次。取两个比特上四个两两反对易的泡利串 \(\hat A_1=\hat x\hat I\)、\(\hat A_2=\hat y\hat I\)、\(\hat A_3=\hat z\hat x\)、\(\hat A_4=\hat z\hat y\)。它们自己和两两乘积 \(i\hat A_i\hat A_j\) 一共 \(4+6=10\) 个泡利串，对易子封闭，构成 \(\mathfrak{so}(5)\)。</p>
+  <p>为什么是 \(\mathfrak{so}(5)\)？引入五个抽象的<button type="button" class="term" data-g="majorana">马约拉纳算符</button> \(\gamma_0,\dots,\gamma_4\)，满足 \(\{\gamma_u,\gamma_v\}=2\delta_{uv}\)。令</p>
+  <div class="eq" data-label="maj">$$\hat A_i=i\gamma_0\gamma_i,\qquad i\hat A_i\hat A_j=i\gamma_i\gamma_j,\qquad \hat H=\sum_{u\lt v}h_{uv}\,\hat O_{uv},\quad \hat O_{uv}=i\gamma_u\gamma_v ,$$</div>
+  <p>\(h\) 是 \(5\times5\) 实反对称矩阵。\(\{i\gamma_u\gamma_v\}\) 张成的正是 \(\mathfrak{so}(5)\)：这样的 \(\hat H\) 是一个<button type="button" class="term" data-g="freefermion">自由费米子</button>（马约拉纳单体）哈密顿量。把马约拉纳模画成五个顶点、把生成元 \(\hat O_{uv}\) 画成边，就是下图的五边形；它也是后面要讲的“根图”。</p>
+
+  <div class="stage" id="lab-so5">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>五个顶点是马约拉纳模 \(\gamma_0\)–\(\gamma_4\)，每条边是一个生成元 \(\hat O_{uv}\)（边上写的是泡利串，XI 即 \(\hat x\otimes\hat I\)），笔画粗细正比于 \(|h_{uv}|\)；实线是实对称的泡利串，虚线是反对称的。右侧竖轴是 \(\hat H\) 的四个本征值</span>
+      <div class="wash-box wide"><canvas id="so5" role="img" aria-label="五边形加五角星：十条边是 so(5) 的十个泡利生成元，粗细表示系数大小。拖动转动进度，边一条条被消掉，最后只剩两条不相邻的边。右侧竖轴上是四个本征值，墨点是精确对角化，朱圈是 ±ε₁±ε₂。"></canvas></div>
+      <div class="ctrl">
+        <div class="chips" id="so5-kind" role="group" aria-label="哈密顿量的类型">
+          <button type="button" data-k="star" aria-pressed="false">AC：只有 \(\hat A_i\)</button>
+          <button type="button" data-k="real" aria-pressed="true">只用实对称项</button>
+          <button type="button" data-k="all" aria-pressed="false">一般元素</button>
+        </div>
+        <button type="button" class="toggle" id="so5-new">换一组系数</button>
+      </div>
+      <div class="ctrl">
+        <label class="slider"><span>转动进度</span><input type="range" id="so5-t" min="0" max="1000" step="1" value="0" aria-label="吉文斯转动的进度"><output id="so5-t-o"></output></label>
+        <button type="button" class="toggle" id="so5-play" aria-pressed="false">转</button>
+      </div>
+    </div>
+    <aside class="panel" id="so5-panel" aria-live="polite"></aside>
+  </div>
+
+  <ol class="deriv">
+    <li>
+      <div class="step">
+        <p>一次转动只动两个马约拉纳模。取 \(\hat O_{uv}=i\gamma_u\gamma_v\)，令 \(\hat G=\exp(-i\tfrac\varphi2\hat O_{uv})\)，则</p>
+        <div class="eq" data-label="givens">$$\hat G\gamma_u\hat G^\dagger=\cos\varphi\,\gamma_u-\sin\varphi\,\gamma_v,\quad \hat G\gamma_v\hat G^\dagger=\sin\varphi\,\gamma_u+\cos\varphi\,\gamma_v,\quad h\mapsto RhR^{\mathsf T}.$$</div>
+        <p>\(R\) 是 \((u,v)\) 平面里转 \(\varphi\) 角的 \(5\times5\) 正交矩阵，叫<button type="button" class="term" data-g="givens">吉文斯转动</button>。</p>
+      </div>
+      <div class="notes"><p class="zhu"><b>意思</b>\(K=\gamma_u\gamma_v\) 满足 \(K^2=-1\)，所以 \(e^{\theta K}=\cos\theta+K\sin\theta\)，就像 \(e^{i\theta}=\cos\theta+i\sin\theta\)。\(K\) 与 \(\gamma_u\)、\(\gamma_v\) 反对易，与其余 \(\gamma\) 对易，于是 \(e^{\theta K}\gamma_ue^{-\theta K}=e^{2\theta K}\gamma_u\)：角度翻倍，这就是指数里写 \(\varphi/2\) 的原因。其余的 \(\gamma\) 原样不动。</p></div>
+    </li>
+    <li>
+      <div class="step">
+        <p>实反对称矩阵总能用 \(SO(5)\) 里的转动化成标准形：只剩两个 \(2\times2\) 块。对应地</p>
+        <div class="eq" data-label="normal">$$R h R^{\mathsf T}=\begin{pmatrix}0&\varepsilon_1\\-\varepsilon_1&0\end{pmatrix}\oplus\begin{pmatrix}0&\varepsilon_2\\-\varepsilon_2&0\end{pmatrix}\oplus(0),\qquad \hat H'=\varepsilon_1\,i\gamma_0\gamma_1+\varepsilon_2\,i\gamma_2\gamma_3 .$$</div>
+        <p>\(i\gamma_0\gamma_1\) 与 \(i\gamma_2\gamma_3\) 没有共同的下标，彼此对易，各自的本征值是 \(\pm1\)，所以 \(\hat H\) 的四个本征值是 \(\pm\varepsilon_1\pm\varepsilon_2\)。</p>
+      </div>
+      <div class="notes"><p class="zhu"><b>意思</b>\(\varepsilon_k\) 怎么算：\(h^{\mathsf T}h\) 是实对称半正定矩阵，本征值成对出现，每对都是 \(\varepsilon_k^2\)。取一对的本征向量 \(u\)，令 \(v=h^{\mathsf T}u/\varepsilon\)，\(u,v\) 张成的平面在 \(h\) 下不变，就是一个 \(2\times2\) 块。这和“实对称矩阵能正交对角化”是同一个道理，只是反对称矩阵的本征值是纯虚数 \(\pm i\varepsilon_k\)，实数域里只能化到 \(2\times2\) 块为止。</p></div>
+    </li>
+    <li>
+      <div class="step">
+        <p>一般的 \(SO(5)\) 元素可以写成至多 10 个吉文斯转动的乘积，10 正好是 \(\dim\mathfrak{so}(5)\)。每一步是一个泡利指数门 \(\exp(-i\tfrac\varphi2\hat O_{uv})\)，乘起来就是式 (5) 的 \(\hat U\)。转完剩下 \(\varepsilon_1\hat O_{01}+\varepsilon_2\hat O_{23}=\varepsilon_1\,\hat x\hat I-\varepsilon_2\,\hat x\hat x\)，两项对易；两个比特各做一次阿达马门，它们变成 \(\hat z\hat I\) 与 \(\hat z\hat z\)。</p>
+      </div>
+      <div class="notes"><p class="zhu"><b>意思</b>转动前后谱不变（右侧竖轴上的点一动不动），因为 \(\hat U\hat H\hat U^\dagger\) 与 \(\hat H\) 相似。这一页拿 \(4\times4\) 矩阵的精确对角化（墨点）和公式 \(\pm\varepsilon_1\pm\varepsilon_2\)（朱圈）对照，两者在 \(10^{-12}\) 以内重合。</p></div>
+    </li>
+  </ol>
+  <p class="zhu"><b>留意</b>“只用实对称项”时，实线恰好连成二部图：\(\{\gamma_0,\gamma_2,\gamma_4\}\) 只与 \(\{\gamma_1,\gamma_3\}\) 相连。任何三角形（一个 \(\mathfrak{so}(3)\) 子代数）都至少有一条虚线。这是论文 II.C 节第一个麻烦的几何样子，到“搭”一节再细说。</p>
+</section>
+
+<!-- ═══════════════ 和：直和 ═══════════════ -->
+<section id="s-he" aria-labelledby="h-he">
+  <div class="head"><span class="seal" aria-hidden="true">和</span><h2 id="h-he">直和：几块互不干扰，各转各的</h2></div>
+  <p>一个李代数不够大，就把几个拼起来。设 \(\{\hat X_a^{(\lambda)}\}_{a=1}^{d_\lambda}\) 是李代数 \(\mathcal A_\lambda\) 的生成元，\(\mathcal C_\lambda\) 是它的嘉当子代数，不同的代数之间两两对易：</p>
+  <div class="eq" data-label="comm-blocks" data-paper="6">$$\big[\hat X_a^{(\lambda)},\hat X_b^{(\sigma)}\big]=0,\qquad\lambda\neq\sigma .$$</div>
+  <p>全部生成元合起来生成<button type="button" class="term" data-g="directsum">直和</button> \(\mathcal A=\oplus_{\lambda=1}^\Lambda\mathcal A_\lambda\)，嘉当子代数是 \(\mathcal C=\oplus_\lambda\mathcal C_\lambda\)。生成元的线性组合</p>
+  <div class="eq" data-label="sum-blocks" data-paper="7">$$\hat H=\sum_{\lambda=1}^\Lambda\hat H^{(\lambda)},\qquad \hat H^{(\lambda)}=\sum_{a=1}^{d_\lambda}c_a^{(\lambda)}\hat X_a^{(\lambda)}$$</div>
+  <p>仍然严格可解，转动是各块转动的乘积：</p>
+  <div class="eq" data-label="u-blocks" data-paper="8">$$\hat U=\prod_{\lambda=1}^\Lambda\exp\Big(-i\sum_{a=1}^{d_\lambda}\theta_a^{(\lambda)}\hat X_a^{(\lambda)}\Big).$$</div>
+  <p class="zhu"><b>意思</b>块与块的生成元对易，所以第 \(\lambda\) 块的转动 \(\hat U_\lambda\) 与别的块里的每一项都对易，作用上去不改变它们；各块的 \(\hat U_\lambda\) 彼此也对易，乘的先后无所谓。直和就是“一个大问题分成几个互不打扰的小问题”。</p>
+  <p>下图是两个比特上最小的例子：\(\{\hat x\hat x,\hat z\hat I\}\) 与 \(\{\hat z\hat z,\hat I\hat x\}\)。块内两项反对易，各是一个 AC 块（\(\mathfrak{so}(3)\)）；块间四对都对易，虽然它们作用在同样的比特上。每块的系数是平面上的一个向量，转动就是把向量转到横轴上。</p>
+
+  <div class="stage" id="lab-he">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>两个圆盘是两块 \(\mathfrak{so}(3)\)。拖动朱点改系数 \((c_1,c_2)\)；按“转”，先转第一块、再转第二块，另一块的向量一动不动</span>
+      <div class="wash-box dials"><canvas id="dials" class="drag" role="img" aria-label="两个圆盘，各有一支从圆心出发的墨笔向量；拖动向量末端的朱点改系数。按转，向量依次转到各自的横轴上。"></canvas></div>
+      <div class="ctrl">
+        <button type="button" class="toggle" id="he-play" aria-pressed="false">转</button>
+        <button type="button" class="toggle" id="he-reset">复原</button>
+        <span class="hint">直和的谱 = 各块谱之和：\(\pm r_1\pm r_2\)</span>
+      </div>
+    </div>
+    <aside class="panel" id="he-panel" aria-live="polite"></aside>
+  </div>
+  <p>转完剩下 \(r_1\,\hat x\hat x+r_2\,\hat z\hat z\)。同时测 \(\hat x\hat x\) 和 \(\hat z\hat z\) 就是<button type="button" class="term" data-g="bell">贝尔测量</button>：先做 CNOT(0→1)，再对比特 0 做阿达马门，\(\hat x\hat x\) 和 \(\hat z\hat z\) 分别变成 \(\hat z_0\) 和 \(\hat z_1\)。</p>
+</section>
+
+<!-- ═══════════════ 称：对称作系数 ═══════════════ -->
+<section id="s-cheng" aria-labelledby="h-cheng">
+  <div class="head"><span class="seal" aria-hidden="true">称</span><h2 id="h-cheng">把对称算符放进系数</h2></div>
+  <p>论文 II.B 节。假如有一组算符和李代数的全部生成元都对易，它们生成一个阿贝尔群 \(\mathcal G\)，取一组极小生成元 \(G=\{\hat C_1,\dots,\hat C_K\}\)：</p>
+  <div class="eq" data-label="cc" data-paper="9">$$\big[\hat C_k,\hat C_l\big]=0,$$</div>
+  <div class="eq" data-label="cx" data-paper="10">$$\big[\hat C_k,\hat X_a^{(\lambda)}\big]=0 .$$</div>
+  <p>这样的 \(\hat C_k\) 叫<button type="button" class="term" data-g="symmetry">对称算符</button>。由它们组成的多项式记作</p>
+  <div class="eq" data-label="pc" data-paper="11">$$p(\overline C)=\sum_{k=1}^Kc_k\hat C_k+\sum_{k\ge l}^Kc_{kl}\hat C_k\hat C_l+\cdots .$$</div>
+  <p>论文的第一个推广：把生成元前面的系数换成对称算符的多项式，</p>
+  <div class="eq" data-label="sym-h" data-paper="12">$$\hat H=\sum_{\lambda=1}^\Lambda\sum_{a=1}^{d_\lambda}p_a^{(\lambda)}(\overline C)\,\hat X_a^{(\lambda)}+q(\overline C),$$</div>
+  <p>仍然严格可解。在 \(\hat C_k\) 的每个共同本征子空间 \(E_{\vec v}\)（\(\hat C_k|\psi\rangle=v_k|\psi\rangle\)）里，每个 \(\hat C_k\) 都只是一个数 \(v_k\)，\(\hat H\) 退化成李代数元素加一个常数：</p>
+  <div class="eq" data-label="sector" data-paper="13">$$\hat H\hat P_{\vec v}=\Big[\sum_{\lambda=1}^\Lambda\sum_{a=1}^{d_\lambda}p_a^{(\lambda)}(\vec v)\,\hat X_a^{(\lambda)}+q(\vec v)\Big]\hat P_{\vec v},$$</div>
+  <p>\(\hat P_{\vec v}\) 是到 \(E_{\vec v}\) 上的投影。每个“扇区”都有自己的系数，因而有自己的转动角。</p>
+  <!--repo-only--><p class="hint">这一步来自同组的前作（Patel、Yen、Izmaylov，arXiv:2305.18251），它的图解在本库的<a href="../solvable-hamiltonians/index.html">《以符代数，分块而治》</a>一页。</p><!--/repo-only-->
+  <p class="zhu"><b>意思</b>为什么能把 \(\hat C_k\) 当数：\(\hat C_k\) 与 \(\hat H\) 的每一项都对易，\(\hat H\) 不会把一个 \(\hat C_k\) 的本征态带出它的本征子空间。在子空间里 \(\hat C_k\) 就是数乘 \(v_k\)，多项式 \(p(\overline C)\) 也就成了数 \(p(\vec v)\)。泡利对称的本征值只能是 \(\pm1\)，所以 \(K\) 个对称算符把希尔伯特空间切成 \(2^K\) 个扇区。</p>
+
+  <h3 class="sub">实例：H₂ 有三个泡利对称</h3>
+  <p>论文表格的第一行是 H₂（STO-3G 基组，核间距 1 Å，Bravyi–Kitaev 映射）。这一页按同样的设定从积分算起，得到 4 个比特上的 15 个泡利项（含常数项）。其中 \(\hat z_1\)、\(\hat z_3\)、\(\hat z_0\hat z_2\) 与每一项都对易，在 BK 编码里它们分别是 \((-1)^{n_{\sigma_g}}\)（成键轨道 \(\sigma_g\) 上电子数的奇偶）、\((-1)^N\)（总电子数的奇偶）、\((-1)^{N_\alpha}\)（自旋向上电子数的奇偶）。把 14 个非常数项按式 (12) 整理，只需要两个生成元 \(\hat z_0\) 和 \(\hat x_0\hat z_1\hat x_2\)（二者反对易）：</p>
+  <div class="eq" data-label="h2poly">$$\begin{aligned}\hat H_{\rm H_2}&=p_0(\overline C)+p_1(\overline C)\,\hat z_0+p_2(\overline C)\,\hat x_0\hat z_1\hat x_2,\\ p_1(\overline C)&=0.13717\,(1+\hat z_1)-0.13036\,\hat z_0\hat z_2\,(1+\hat z_1\hat z_3),\\ p_2(\overline C)&=0.04920\,(1-\hat z_0\hat z_2)(1+\hat z_3),\\ p_0(\overline C)&=-0.32761+0.15660\,\hat z_1+0.16327\,\hat z_1\hat z_3+\hat z_0\hat z_2(1+\hat z_3)(0.10623+0.15543\,\hat z_1).\end{aligned}$$</div>
+  <p>系数的单位是哈特里，\(p_0\) 已含核排斥能。三个对称算符各取 \(\pm1\)，一共 8 个扇区，每个扇区是二维的，\(\hat H\) 在里面是 \(p_0+p_1\hat z_0+p_2\hat x_0\hat z_1\hat x_2\)：一个 \(\mathfrak{su}(2)\cong\mathfrak{so}(3)\) 元素加常数，本征值 \(p_0\pm\sqrt{p_1^2+p_2^2}\)。</p>
+
+  <div class="stage" id="lab-cheng">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>八个小圆是八个扇区 \(\vec v=(z_1,z_3,z_{02})\)。墨笔是该扇区的系数向量 \((p_1,p_2)\)，横轴对应 \(\hat z_0\)、纵轴对应 \(\hat x_0\hat z_1\hat x_2\)；朱色那一格是基态所在的扇区。点一格看细节</span>
+      <div class="wash-box sectors"><canvas id="sectors" role="img" aria-label="八个小圆排成两行，每个圆里有一支向量，下面写着扇区符号和两个能量。基态所在的扇区用朱色标出。点击一个圆，右侧显示它的含义和数值。" tabindex="0"></canvas></div>
+    </div>
+    <aside class="panel" id="cheng-panel" aria-live="polite"></aside>
+  </div>
+  <p>8 个扇区给出的 16 个能级与 \(16\times16\) 矩阵精确对角化的结果逐个相同（差在 \(10^{-12}\) 以内）。基态所在的扇区是“2 个电子、自旋上下各一、成键轨道上 0 或 2 个电子”，这个二维空间由 \(\sigma_g^2\) 与 \(\sigma_u^2\) 两个组态张成：最小基 H₂ 的全组态相互作用，在这里只是一次 \(\mathfrak{su}(2)\) 转动。</p>
+</section>
+
+<!-- ═══════════════ 搭：用泡利搭 ═══════════════ -->
+<section id="s-da" aria-labelledby="h-da">
+  <div class="head"><span class="seal" aria-hidden="true">搭</span><h2 id="h-da">用泡利算符搭出 \(\oplus\,\mathfrak{so}(L_\lambda+1)\)</h2></div>
+  <p>论文 II.C 节把前两节落到量子比特上。取几组泡利串 \(\{\hat A_i^{(\lambda)}\}_{i=1}^{L_\lambda}\)，\(1\le\lambda\le\Lambda\)，组内两两反对易，组间两两对易：</p>
+  <div class="eq" data-label="anti" data-paper="14">$$\big\{\hat A_i^{(\lambda)},\hat A_j^{(\lambda)}\big\}=2\delta_{ij},$$</div>
+  <div class="eq" data-label="comm" data-paper="15">$$\big[\hat A_i^{(\lambda)},\hat A_j^{(\sigma)}\big]=0,\qquad\lambda\neq\sigma .$$</div>
+  <p>每组连同两两乘积生成 \(\mathfrak{so}(L_\lambda+1)\)（“代”一节的五边形是 \(L=4\)），全部合起来是直和。其中的元素是</p>
+  <div class="eq" data-label="twcff-lin" data-paper="16">$$\hat H=\sum_{\lambda=1}^\Lambda\Big[\sum_{i=1}^{L_\lambda}c_i^{(\lambda)}\hat A_i^{(\lambda)}+i\sum_{i\gt j}^{L_\lambda}c_{ij}^{(\lambda)}\hat A_i^{(\lambda)}\hat A_j^{(\lambda)}\Big].$$</div>
+  <p>令 \(c_{ij}^{(\lambda)}=0\) 就是 AC 哈密顿量之和，论文叫 <strong>TWC-AC</strong>（term-wise commuting AC：几个 AC 块，块间逐项对易）。要把式 (16) 用到真实的 \(\hat H_e\) 上，论文指出两个麻烦。</p>
+
+  <h3 class="sub">麻烦一：电子哈密顿量是实对称的</h3>
+  <p>\(\hat H_e\) 在计算基下是<button type="button" class="term" data-g="realsym">实对称矩阵</button>，只含实对称的泡利串（\(\hat y\) 的个数为偶数）。可是任何由泡利串生成的 \(\mathfrak{so}(L+1)\) 都含反对称的生成元。看一个 \(\mathfrak{so}(3)\) 子代数 \(\{\hat A_i,\hat A_j,i\hat A_i\hat A_j\}\)：</p>
+  <div class="eq" data-label="transpose">$$\big(i\hat A_i\hat A_j\big)^{\mathsf T}=i\hat A_j^{\mathsf T}\hat A_i^{\mathsf T}=-\,s_is_j\,\big(i\hat A_i\hat A_j\big),\qquad \hat A^{\mathsf T}=s\hat A,\ s=\pm1 .$$</div>
+  <p>\(\hat A_i,\hat A_j\) 同为对称或同为反对称时，乘积反对称；恰有一个反对称时，那一个本身就是反对称的。所以每个三角形都至少有一条虚线，式 (16) 的全部生成元不可能同时出现在 \(\hat H_e\) 里。</p>
+  <p class="zhu"><b>意思</b>推导用到两件事：转置把乘积的次序倒过来，\((AB)^{\mathsf T}=B^{\mathsf T}A^{\mathsf T}\)；\(\hat A_i\) 与 \(\hat A_j\) 反对易，\(\hat A_j\hat A_i=-\hat A_i\hat A_j\)。泡利串的转置只给它乘一个符号：\(\hat y^{\mathsf T}=-\hat y\)，其余三个不变。</p>
+
+  <h3 class="sub">麻烦二：只看图分不清李代数</h3>
+  <p>图划分算法只看得见反对易关系。设 \(\{\hat S_a\}\) 是一组彼此对易、又与所有 \(\hat X_a\) 对易的泡利串：</p>
+  <div class="eq" data-label="s-sym" data-paper="17">$$\forall a,b:\quad\big[\hat S_a,\hat S_b\big]=0,\qquad\big[\hat S_a,\hat X_b\big]=0 .$$</div>
+  <p>那么 \(\{\hat S_a\hat X_a\}\) 的反相容图与 \(\{\hat X_a\}\) 一模一样，生成的李代数却可能不同：</p>
+  <div class="eq" data-label="s-comm" data-paper="18">$$\big[\hat S_a\hat X_a,\hat S_b\hat X_b\big]=\hat S_a\hat S_b\big[\hat X_a,\hat X_b\big],$$</div>
+  <p>右边是对称算符的二次式乘生成元，一般不在 \(\{\hat S_a\hat X_a\}\) 的线性组合里。所以图划分给出的不是式 (16)，而是</p>
+  <div class="eq" data-label="ff" data-paper="19">$$\hat H=\sum_{\lambda=1}^\Lambda\Big[\sum_{i=1}^{L_\lambda}c_i^{(\lambda)}\hat S_i^{(\lambda)}\hat A_i^{(\lambda)}+i\sum_{i\gt j}^{L_\lambda}c_{ij}^{(\lambda)}\hat S_{ij}^{(\lambda)}\hat A_i^{(\lambda)}\hat A_j^{(\lambda)}\Big],$$</div>
+  <p>\(\{\hat S_i^{(\lambda)}\}\cup\{\hat S_{ij}^{(\lambda)}\}\) 是彼此对易的泡利对称。\(\Lambda=1\) 时叫 <strong>FF</strong>（free-fermionic），\(\Lambda\ge1\) 时叫 <strong>TWC-FF</strong>；它们分别推广 AC 与 TWC-AC。“自由费米子”这个名字来自 Chapman 与 Flammia：在对称算符的每个共同本征子空间里，\(\hat H\) 是一个马约拉纳单体哈密顿量。麻烦一在这里反而消失了：反对称的生成元乘上一个反对称的对称算符，就成了对称的泡利项。</p>
+
+  <h3 class="sub">再放进对称多项式</h3>
+  <p>按“称”一节的办法，把系数换成对称算符的多项式：</p>
+  <div class="eq" data-label="symtwcff" data-paper="20">$$\hat H=\sum_{\lambda=1}^\Lambda\Big[\sum_{i=1}^{L_\lambda}p_i^{(\lambda)}(\overline C)\hat A_i^{(\lambda)}+i\sum_{i\gt j}^{L_\lambda}p_{ij}^{(\lambda)}(\overline C)\hat A_i^{(\lambda)}\hat A_j^{(\lambda)}\Big]+p_0(\overline C),$$</div>
+  <p>叫 <strong>Sym-TWC-FF</strong>（symmetry-augmented TWC-FF）。\(\Lambda=1\) 是 Sym-FF；\(p_{ij}=0\) 是 Sym-TWC-AC；两者都要求时是 Sym-AC，它与 Kirby 和 Love 的<button type="button" class="term" data-g="nc">非上下文</button>哈密顿量是同一类。九类整理如下：</p>
+  <div class="tbl-wrap">
+    <table class="classes">
+      <thead><tr><th>类</th><th>李代数结构</th><th>反相容图的样子</th><th>例子</th></tr></thead>
+      <tbody>
+        <tr><td class="nw"><b>FC</b></td><td>全部对易（嘉当子代数本身）</td><td>没有边</td><td>H₂ 的 10 个 \(\hat z\) 型项</td></tr>
+        <tr><td class="nw"><b>AC</b></td><td>一个 \(\mathfrak{so}(L+1)\)，只用 \(\hat A_i\)</td><td>完全图（一整个团）</td><td>\(\{\hat z_0,\hat x_0\hat z_1\hat x_2\}\)</td></tr>
+        <tr><td class="nw"><b>TWC-AC</b></td><td>几个 AC 的直和</td><td>每个连通分量是团</td><td>论文图 1</td></tr>
+        <tr><td class="nw"><b>FF</b></td><td>一个 \(\mathfrak{so}(N)\)，系数可乘泡利对称，式 (19) \(\Lambda=1\)</td><td>连通的线图</td><td>论文图 2</td></tr>
+        <tr><td class="nw"><b>TWC-FF</b></td><td>几个 FF 的直和，式 (19)</td><td>每个连通分量是线图</td><td>五边形去掉若干条边</td></tr>
+        <tr><td class="nw"><b>NC</b> = Sym-AC</td><td>AC 的系数换成对称多项式</td><td>去掉孤立点后，商图是完全图</td><td>整个 H₂、爪</td></tr>
+        <tr><td class="nw"><b>Sym-TWC-AC</b></td><td>TWC-AC 的系数换成对称多项式</td><td>去掉孤立点后，商图的分量都是团</td><td></td></tr>
+        <tr><td class="nw"><b>Sym-FF</b></td><td>FF 的系数换成对称多项式</td><td>去掉孤立点后，商图是连通的线图</td><td>论文图 3</td></tr>
+        <tr><td class="nw"><b>Sym-TWC-FF</b></td><td>式 (20)</td><td>去掉孤立点后，商图的分量都是线图</td><td>最一般的一类</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>“商图”“线图”的意思见下一节。除 NC 外，带 Sym 的三类都是非上下文哈密顿量的严格可解推广。</p>
+</section>
+
+<!-- ═══════════════ 图：从图上认 ═══════════════ -->
+<section id="s-tu" aria-labelledby="h-tu">
+  <div class="head"><span class="seal" aria-hidden="true">图</span><h2 id="h-tu">从反相容图上认出可解类</h2></div>
+  <p>论文附录 A。图划分算法只能看图，所以每一类都要换成图论条件。</p>
+  <h3 class="sub">团：FC、AC、TWC-AC</h3>
+  <p>FC 当且仅当图没有边；AC 当且仅当图是完全图。TWC-AC 是几个 AC 之和，不同块的项两两对易，所以每块是一个<button type="button" class="term" data-g="clique">团</button>，团与团之间没有边：TWC-AC 当且仅当每个连通分量都是团。论文图 1 是 20 项、8 块的例子，其中 4 个孤立点自成一块，它们与所有项都对易，本身就是泡利对称。</p>
+  <h3 class="sub">线图：FF、TWC-FF</h3>
+  <p>生成 \(\mathfrak{so}(N)\) 的泡利项，图是<button type="button" class="term" data-g="linegraph">线图</button>（Chapman 与 Flammia）。看封面的图就明白：马约拉纳双线性项 \(i\gamma_a\gamma_b\) 与 \(i\gamma_c\gamma_d\) 反对易，当且仅当两对下标恰好共用一个。把马约拉纳模画成点、把每一项画成连两个模的边，得到一张图 \(R\)；泡利项的反相容图正是 \(R\) 的线图，\(R\) 叫它的<button type="button" class="term" data-g="root">根图</button>。</p>
+  <div class="boxed">
+    <p><span class="ev k2">定理</span>（<button type="button" class="term" data-g="krausz">Krausz 分解</button>）图 \(G=(V,E)\) 是线图，当且仅当边集 \(E\) 能分成若干个团 \(C_1,\dots,C_N\)，使每个顶点至多属于两个团。</p>
+    <p>允许“空团”（只有一个点、没有边的团）以后，可以说每个顶点恰好属于两个团。每个团是根图的一个顶点，\(G\) 的每个顶点 \(v_a\) 是根图的一条边，连接它所属的两个团。判断一张图是不是线图并求出根图，只需 \(O(|E|)\) 的时间（Roussopoulos，Lehot，Degiorgi 与 Simon）。</p>
+  </div>
+  <p>反过来不成立：图是线图，泡利项不一定生成 \(\mathfrak{so}(N)\)，因为乘上泡利对称不改变图（式 18）。所以论文的结论是：\(\hat H\) 是 FF 当且仅当图是线图（形如式 (19)、\(\Lambda=1\)）；是 TWC-FF 当且仅当每个连通分量都是线图。</p>
+
+  <h3 class="sub">孪生与商图：带 Sym 的四类</h3>
+  <p>称两个泡利项 \(\hat P\)、\(\hat Q\) 为<button type="button" class="term" data-g="twin">孪生</button>：对集合 \(\mathcal S\) 里的每一个 \(\hat R\)，\([\hat P,\hat R]=0\) 当且仅当 \([\hat Q,\hat R]=0\)。在图上，就是两点的邻居完全相同。孪生有三条性质：</p>
+  <ol class="plain">
+    <li>孪生的两项一定对易。</li>
+    <li>\(\hat P\hat Q\) 与 \(\mathcal S\) 里的每一项都对易：任取 \(\hat R\)，\(\hat P\)、\(\hat Q\) 要么都与它对易，要么都与它反对易，两个负号相乘为正。</li>
+    <li>“孪生”是等价关系，把 \(\mathcal S\) 分成互不相交的孪生类 \(\mathcal C_i\)。</li>
+  </ol>
+  <p>每个孪生类缩成一个点，类与类之间有边当且仅当它们的成员反对易，得到<button type="button" class="term" data-g="quotient">无孪生商图</button> \(G'\)。它和“每类挑一个代表”得到的那几项的反相容图相同。</p>
+  <div class="eq" data-label="a1" data-paper="A1">$$\hat H=\sum_ac_a\hat X_a\ \longmapsto\ \hat H_{\rm sym}=\sum_ap_a(\overline C)\hat X_a+p_0(\overline C)$$</div>
+  <p>里，每一项 \(p_a(\overline C)\hat X_a\) 都是一个孪生类的线性组合，\(p_0(\overline C)\) 是图里的孤立点。所以：去掉孤立点，再取无孪生商图，就回到原来那个不带对称的哈密顿量的图。判别 Sym-X 的办法就是“去孤立点 → 取商图 → 用 X 的判据”。</p>
+
+  <div class="stage" id="lab-tu">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>左边是反相容图（空心点与谁都对易，是泡利对称）；依次点两个点可以连上或断开一条边。右上的 Hasse 图里，实心的类就是这张图所属的类</span>
+      <div class="wash-box"><canvas id="graph" role="img" aria-label="可编辑的反相容图。点一个点再点另一个点，就在它们之间加上或去掉一条边。不是线图时，图里的爪用朱色标出。" tabindex="0"></canvas></div>
+      <div class="ctrl">
+        <div class="chips" id="tu-preset" role="group" aria-label="预设的图">
+          <button type="button" data-k="fig1" aria-pressed="false">图 1</button>
+          <button type="button" data-k="fig2" aria-pressed="false">图 2</button>
+          <button type="button" data-k="fig3" aria-pressed="true">图 3</button>
+          <button type="button" data-k="claw" aria-pressed="false">爪</button>
+          <button type="button" data-k="spider" aria-pressed="false">蛛形</button>
+          <button type="button" data-k="h2" aria-pressed="false">H₂ 的 14 项</button>
+          <button type="button" data-k="blank" aria-pressed="false">自己连</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <div class="chips" id="tu-view" role="group" aria-label="显示方式">
+          <button type="button" data-k="g" aria-pressed="true">原图</button>
+          <button type="button" data-k="q" aria-pressed="false">收拢孪生类</button>
+        </div>
+        <span class="hint" id="tu-note"></span>
+      </div>
+    </div>
+    <aside class="panel" id="tu-panel">
+      <div class="wash-box hasse"><canvas id="hasse" role="img" aria-label="九个可解类的 Hasse 图：下面是不带对称的五类，右上是带对称的四类，连线表示包含关系。实心的类是当前这张图所属的类。"></canvas></div>
+      <div class="wash-box rootbox"><canvas id="root" role="img" aria-label="当前图或其商图的根图：朱圈是马约拉纳模，每一笔是一个泡利项或一个孪生类。"></canvas></div>
+      <div id="tu-text" aria-live="polite"></div>
+    </aside>
+  </div>
+  <div class="boxed reader">
+    <p><span class="ev k4">数值</span><strong>读者笔记：FF 要不要求连通？</strong>附录 A 的原话是“\(\hat H\) 是 FF 当且仅当它的图是线图”“是 TWC-FF 当且仅当连通分量都是线图”。可是线图的不交并仍是线图（根图也取不交并即可），照字面这两个条件完全相同，FF 与 TWC-FF 在表 I 里就不该有不同的数。按 \(\Lambda=1\) 的定义，FF 只有一个 \(\mathfrak{so}(N)\) 块，图还应当连通。这一页按“连通的线图”实现 FF，H₂ 一行的 FF 正好得到论文的 0.032 和 0.24(3)；只要求“是线图”时，FF 会和 TWC-FF 一样得 0.136。上面判别器里的 FF、Sym-FF 也按连通处理。</p>
+  </div>
+</section>
+
+<!-- ═══════════════ 线：测量线路 ═══════════════ -->
+<section id="s-xian" aria-labelledby="h-xian">
+  <div class="head"><span class="seal" aria-hidden="true">线</span><h2 id="h-xian">从拆分到测量线路</h2></div>
+  <p>论文 II.D 节回答三个问题：怎样拆，拆完怎样把每片写成可解的形式，再怎样测。</p>
+  <h3 class="sub">怎样拆：排序插入</h3>
+  <p>论文对每一类都用<button type="button" class="term" data-g="si">排序插入</button>（sorted insertion）：把泡利项按系数的绝对值从大到小排好，依次拿出来，放进第一个“放进去仍属于这一类”的碎片；哪一片都放不进，就开一个新碎片。判断“仍属于这一类”用的就是上一节的图论条件。这个贪心法简单，但不保证最优，“果”一节会看到它的后果。</p>
+  <h3 class="sub">拆完以后：因式分解（附录 B）</h3>
+  <p>拿到一片 Sym-TWC-FF 碎片 \(\hat H=\sum_{\hat P\in\mathcal S}h_P\hat P\)，要把它写回式 (20) 的样子。先分类：与所有项都对易的 \(\mathcal Z\)；其余的项按连通分量分成 \(\mathcal T^{(\lambda)}\)，每个分量再按孪生分成 \(\mathcal C_a^{(\lambda)}=\{\hat A_{ab}^{(\lambda)}\}\)：</p>
+  <div class="eq" data-label="b5" data-paper="B5">$$\hat H=\sum_{\alpha=1}^{|\mathcal Z|}h_\alpha\hat Z_\alpha+\sum_{\lambda=1}^\Lambda\sum_{a=1}^{d_\lambda}\sum_{b=1}^{|\mathcal C_a^{(\lambda)}|}h_{ab}^{(\lambda)}\hat A_{ab}^{(\lambda)} .$$</div>
+  <p>每个孪生类挑一个代表 \(\hat A_a^{(\lambda)}=\hat A_{a1}^{(\lambda)}\)，令 \(\hat C_{ab}^{(\lambda)}=\hat A_{ab}^{(\lambda)}\hat A_a^{(\lambda)}\)。孪生之积与所有项都对易，于是</p>
+  <div class="eq" data-label="b6" data-paper="B6">$$\hat H=\sum_{\alpha}h_\alpha\hat Z_\alpha+\sum_{\lambda=1}^\Lambda\sum_{a=1}^{d_\lambda}\Big[\sum_bh_{ab}^{(\lambda)}\hat C_{ab}^{(\lambda)}\Big]\hat A_a^{(\lambda)} .$$</div>
+  <p>代表们的图就是商图，每个分量都是线图，所以 \(\{\hat A_a^{(\lambda)}\}\) 生成 \(\oplus\,\mathfrak{so}(N_\lambda)\)，只差一组彼此对易的泡利对称：</p>
+  <div class="eq" data-label="b7" data-paper="B7">$$\hat A_a^{(\lambda)}=\hat S_a^{(\lambda)}\hat X_a^{(\lambda)} .$$</div>
+  <p>Chapman 与 Flammia 的图论办法还能直接把 \(\hat S_a^{(\lambda)}\) 写成生成线图的那些泡利项的乘积（式 B8）。代回去：</p>
+  <div class="eq" data-label="b9" data-paper="B9">$$\hat H=\sum_\alpha h_\alpha\hat Z_\alpha+\sum_{\lambda=1}^\Lambda\sum_{a=1}^{d_\lambda}\Big[\sum_bh_{ab}^{(\lambda)}\hat C_{ab}^{(\lambda)}\hat S_a^{(\lambda)}\Big]\hat X_a^{(\lambda)} .$$</div>
+  <p>\(\{\hat Z_\alpha\}\cup\{\hat C_{ab}\}\cup\{\hat S_a\}\) 彼此对易、又与 \(\hat X_a\) 对易，可以写成一组独立生成元 \(G=\{\hat C_1,\dots,\hat C_K\}\) 的乘积；方括号里就成了多项式 \(p_a^{(\lambda)}(\overline C)\)，\(\sum_\alpha h_\alpha\hat Z_\alpha\) 成了 \(p_0(\overline C)\)（式 B10、B11），回到式 (B2)。</p>
+  <p>H₂ 整个哈密顿量就是一片（它属于 NC，“图”一节点“H₂ 的 14 项”可以看到）。\(\mathcal Z\) 有 6 项；剩下 8 项分成两个孪生类 \(\{\hat z_0,\hat z_0\hat z_1,\hat z_2,\hat z_1\hat z_2\hat z_3\}\) 与 \(\{\hat x_0\hat z_1\hat x_2,\hat y_0\hat z_1\hat y_2,\hat x_0\hat z_1\hat x_2\hat z_3,\hat y_0\hat z_1\hat y_2\hat z_3\}\)。代表取 \(\hat z_0\) 与 \(\hat x_0\hat z_1\hat x_2\)，例如 \(\hat y_0\hat z_1\hat y_2=(-\hat z_0\hat z_2)\,\hat x_0\hat z_1\hat x_2\)。这样就得到了“称”一节的{{eq:h2poly}}。</p>
+
+  <h3 class="sub">怎样测：克利福德、中途测量、李群转动</h3>
+  <p>论文的测量步骤（以 Sym-TWC-FF 为例）：先用克利福德幺正 \(\hat U_c\) 把 \(K\) 个独立对称算符变成前 \(K\) 个比特上的 \(\hat z_k\)，测这几个比特得到 \(\vec v\in\{-1,1\}^K\)；这时剩下的比特上是有效哈密顿量 \(\hat H_{\vec v}\)，它属于李代数，用李群里的幺正转成 FC，再用克利福德 \(\hat V_c\) 变成 \(\hat z\) 的多项式，测得 \(\vec w\in\{-1,1\}^{N-K}\)。经典计算机由 \((\vec v,\vec w)\) 算出测得的本征值 \(E_H(\vec v,\vec w)\)。对 H₂，这条线路只有四步：</p>
+
+  <div class="stage" id="lab-circ">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>H₂ 整片的测量线路。CNOT 把 \(\hat z_0\hat z_2\) 变成 \(\hat z_2\)，于是三个对称算符都落在单个比特上；测完比特 1、2、3（<button type="button" class="term" data-g="midcircuit">中途测量</button>），按结果对比特 0 转一个角 \(\theta_{\vec v}\)，再测比特 0</span>
+      <div class="wash-box circuit"><canvas id="circuit" role="img" aria-label="四条量子比特线 q0 到 q3。先是一个 CNOT，控制位 q0、目标位 q2；然后测 q1、q2、q3，经典双线连到 q0 上的 R_y(−θ_v) 门；最后测 q0。右边写着 E = p0(v) + w·r(v)。"></canvas></div>
+      <div class="eq" data-label="ew">$$E_H(\vec v,w)=p_0(\vec v)+w\sqrt{p_1(\vec v)^2+p_2(\vec v)^2},\qquad \theta_{\vec v}=\operatorname{atan2}\big(z_1p_2(\vec v),\,p_1(\vec v)\big),\qquad w=\pm1 .$$</div>
+    </div>
+    <aside class="panel">
+      <div class="tbl-wrap">
+        <table class="small" id="circ-table">
+          <thead><tr><th>\(\vec v=(z_1,z_3,z_{02})\)</th><th class="r">\(p_1\)</th><th class="r">\(z_1p_2\)</th><th class="r">\(\theta_{\vec v}\)</th><th class="r">\(E_{w=-1}\)</th><th class="r">\(E_{w=+1}\)</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="zhu"><b>意思</b>为什么是 \(z_1p_2\)：CNOT(0→2) 把 \(\hat x_0\hat z_1\hat x_2\) 变成 \(\hat x_0\hat z_1\)，测完比特 1 以后 \(\hat z_1\) 只是 \(z_1\)。比特 0 上剩 \(p_0+p_1\hat z+z_1p_2\hat x\)，把布洛赫球上的方向 \((z_1p_2,\,p_1)\) 转回 \(\hat z\) 轴，要绕 \(y\) 轴转 \(-\theta_{\vec v}\)。基态扇区的 \(\theta\) 恰是组态混合角的两倍：布洛赫球上的角是态矢量夹角的两倍。</p>
+    </aside>
+  </div>
+  <p>线路的每一部分都与论文对上：CNOT 是 \(\hat U_c\)；测比特 1、2、3 是测对称算符；\(R_y(-\theta_{\vec v})\) 是 \(\mathfrak{su}(2)\) 对应的李群元素，转角随 \(\vec v\) 变，所以要根据中途测量的结果来定；最后一步测量前不需要 \(\hat V_c\)，因为 \(\hat z_0\) 已经是 \(\hat z\)。</p>
+
+  <h3 class="sub">碎片越大，越省测量</h3>
+  <p>把三种拆法放在一起比：逐项测（14 片），FC（2 片：10 个 \(\hat z\) 型项一片，4 个 \(\hat x\hat y\) 型项一片），NC（整个 \(\hat H\) 一片，就是上面的线路）。态取 \(\psi(\alpha)=\cos\alpha\,|1000\rangle+\sin\alpha\,|0010\rangle\)（BK 基），\(\alpha=0\) 是 HF 态，\(\alpha_0\approx-10.10^\circ\) 是基态。</p>
+  <div class="stage" id="lab-shots">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>上：三种拆法的 \(\epsilon^2M\) 随 \(\alpha\) 变化（逐项与 FC 两条线重合）。下：每种拆法各做 200 次实验，每次共测 1000 发，每个点是一次实验给出的能量估计；竖线是 \(\langle\psi|\hat H|\psi\rangle\)</span>
+      <div class="wash-box curves"><canvas id="curves" role="img" aria-label="横轴是 α，从 −45° 到 45°；纵轴是 ε²M。逐项与 FC 的墨线重合，NC 的朱线在基态处降到 0。竖线标出当前的 α。"></canvas></div>
+      <div class="wash-box shots"><canvas id="shots" role="img" aria-label="三行点图：逐项、FC、NC。每行 200 个点是 200 次实验的能量估计，散得越开，测量越费。在基态处 NC 一行的点全部落在一条竖线上。"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span>态 <i>α</i> =</span><input type="range" id="sh-a" min="-450" max="450" step="1" value="-101" aria-label="态的混合角 α（度）"><output id="sh-a-o"></output></label>
+        <button type="button" class="toggle" id="sh-ground">回到基态</button>
+        <button type="button" class="toggle" id="sh-again">再抽一次</button>
+      </div>
+    </div>
+    <aside class="panel" id="sh-panel" aria-live="polite"></aside>
+  </div>
+  <p>在基态，NC 一片的方差是零：\(\hat H\) 的本征态在每次测量里都给出同一个数，200 次实验的点叠成一条线。逐项与 FC 在这一族态里完全重合：同一片里各项的贡献总是同号叠加，FC 分组没占到便宜。离开基态越远，大碎片的优势越小；在 HF 态（\(\alpha=0\)）三种拆法一样好。论文的表 I 用的是精确基态，正是对大碎片最有利的情形。</p>
+</section>
+
+<!-- ═══════════════ 果：结果 ═══════════════ -->
+<section id="s-guo" aria-labelledby="h-guo">
+  <div class="head"><span class="seal" aria-hidden="true">果</span><h2 id="h-guo">结果：测量次数省了多少</h2></div>
+  <p>论文 III 节与附录 C。分子哈密顿量都在 STO-3G 基组下由 OpenFermion 与 PySCF 生成，用 Bravyi–Kitaev 映射；几何为 H₂：R(H–H) = 1 Å；LiH：R(Li–H) = 1 Å；BeH₂：R(Be–H) = 1 Å，直线形；H₂O：R(O–H) = 1 Å，∠HOH = 107.6°；NH₃：R(N–H) = 1 Å，∠HNH = 107°。每一类都用排序插入拆分（图论部分用 NetworkX），方差用精确基态算。</p>
+  <div class="stage" id="lab-guo">
+    <div class="lab">
+      <span class="plot-title" id="bars-title"></span>
+      <div class="wash-box bars"><canvas id="bars" role="img" aria-label="横向条形图，纵向列出逐项和九类拆法，横轴为对数刻度。最好的一类用朱色标出，FC 的值用竖虚线标出。H₂ 一行另有朱圈标出本页重算的值。"></canvas></div>
+      <div class="ctrl">
+        <div class="chips" id="guo-mol" role="group" aria-label="分子">
+          <button type="button" data-k="H2" aria-pressed="false">H₂</button>
+          <button type="button" data-k="LiH" aria-pressed="true">LiH</button>
+          <button type="button" data-k="BeH2" aria-pressed="false">BeH₂</button>
+          <button type="button" data-k="H2O" aria-pressed="false">H₂O</button>
+          <button type="button" data-k="NH3" aria-pressed="false">NH₃</button>
+        </div>
+        <div class="chips" id="guo-tab" role="group" aria-label="表">
+          <button type="button" data-k="I" aria-pressed="true">表 I：方差指标</button>
+          <button type="button" data-k="II" aria-pressed="false">表 II：最大碎片</button>
+        </div>
+      </div>
+    </div>
+    <aside class="panel" id="guo-panel" aria-live="polite"></aside>
+  </div>
+  <p>论文读出的结论：</p>
+  <ul class="plain">
+    <li>五个分子里，Sym-TWC-AC、Sym-FF、Sym-TWC-FF 三种新碎片的 \(\epsilon^2M\) 都比 FC 小。总体最好的是 Sym-TWC-FF；只有 H₂O 是 Sym-TWC-AC 最好（4.62 对 5.31）。</p>
+    <li>类更一般，贪心算法未必更好。Sym-TWC-FF 严格包含 Sym-TWC-AC，却不总是赢它。TWC-AC 和 TWC-FF 更明显：它们都包含 FC，论文说两者都不如 FC。对着表 I 逐格看：TWC-AC 在每个分子上都不比 FC 好；TWC-FF 只在 LiH 上略好（0.870 对 0.882），其余分子差得多。论文的解释是：一个碎片早早收进了反对易的项，后面能放进来的项就受到很强的限制。在 \(N\) 个比特上，FC 碎片最多可有 \(2^N\) 项，AC 碎片最多只有 \(2N+1\) 项，因为对易在乘积下保持，反对易不保持。</li>
+    <li>表 II 看最大的那一片：除 NH₃ 外，Sym-TWC-FF 的最大碎片 L1 范数不小于其余各类，项数也不少于其余各类；NH₃ 上 FC、NC、TWC-AC、Sym-FF 的最大碎片 L1 范数都比它大，项数最多的是 Sym-FF。这对只需要一片的应用有用，例如上下文子空间 VQE 先用一片非上下文碎片的基态作初始近似。</li>
+  </ul>
+</section>
+
+<!-- ═══════════════ 思：结论与追问 ═══════════════ -->
+<section id="s-si" aria-labelledby="h-si">
+  <div class="head"><span class="seal" aria-hidden="true">思</span><h2 id="h-si">结论与可以追问的地方</h2></div>
+  <p>论文的主线可以压成一句：把泡利乘积的对易与反对易条件，按李代数的结构组合起来；测掉泡利对称以后，剩下的有效哈密顿量属于一个紧李代数，用对应李群里的幺正就能测。可解性完全由反对易关系刻画，所以能用高效的图算法拆分。新的 Sym-TWC-AC 与 Sym-TWC-FF 碎片给出了更少的测量次数。</p>
+  <p>论文最后提的两个方向：</p>
+  <ul class="plain">
+    <li><strong>更好的划分算法。</strong>FC 是 TWC-AC 和 TWC-FF 的子集，所以最优的 TWC 拆分不会比最优的 FC 拆分差；排序插入在这两类上却明显更差，说明差在算法。</li>
+    <li><strong>更一般的可解哈密顿量。</strong>一是取不同李代数元素的多项式 \(\hat H_p=p(\hat H^{(1)},\dots,\hat H^{(\Lambda)})\)：若 \(\sum_\lambda\hat H^{(\lambda)}\) 是 TWC-FF，把它转成 FC 的那个 \(\hat U\) 也把 \(\hat H_p\) 转成 FC。麻烦在于这时的可解性依赖于系数的具体数值，没法只用反相容图刻画。二是“伪装的自由费米子”（Fendley；Elman、Chapman、Flammia；Chapman、Elman、Mann）：它们也有多项式时间的图论判据，可以直接放进排序插入；但其中的 \(\mathfrak{so}(N)\) 生成元是许多泡利项的线性组合，对角化线路会更深。</li>
+  </ul>
+  <p>读这篇论文时值得记下的几个问题：</p>
+  <ul class="plain">
+    <li>FF 的图论判据要不要求连通（“图”一节的读者笔记）。按连通理解才能复现 H₂ 的数，可以向作者确认 NetworkX 实现里的具体写法。</li>
+    <li>\(\epsilon^2M\) 依赖于态。表 I 用精确基态；在 VQE 实际走过的近似态上，大碎片的优势会缩小（“线”一节的 \(\alpha\) 曲线）。</li>
+    <li>排序插入里系数并列的项谁先谁后，可能影响结果。H₂ 里有一组四项、四组两项并列，这一页把 384 种先后都试了，结果不变；大分子是否也不敏感，论文没有讨论。</li>
+  </ul>
+</section>
+
+<!-- ═══════════════ 练：小题 ═══════════════ -->
+<section id="s-lian" aria-labelledby="h-lian">
+  <div class="head"><span class="seal" aria-hidden="true">练</span><h2 id="h-lian">六道小题</h2></div>
+  <div class="quiz">
+    <div>
+      <p><span class="qn">一</span>两个比特上最多能找几个两两反对易的泡利串？它们生成哪个李代数？</p>
+      <details><summary>看答案</summary><div>
+        <p>\(2N+1=5\) 个，例如 \(\hat x\hat I,\hat y\hat I,\hat z\hat x,\hat z\hat y,\hat z\hat z\)。连同 10 个两两乘积 \(i\hat A_i\hat A_j\) 一共 15 个，正好是两比特上全部 15 个非恒等泡利串：这是 \(\mathfrak{so}(6)\)，它与 \(\mathfrak{su}(4)\) 同构。这一页的核验脚本逐一确认了这 15 个串各不相同、对易子封闭。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">二</span>为什么两个孪生泡利项一定对易？</p>
+      <details><summary>看答案</summary><div>
+        <p>如果 \(\hat P\)、\(\hat Q\) 反对易，图上 \(\hat Q\) 就是 \(\hat P\) 的邻居。孪生要求两者邻居相同，于是 \(\hat Q\) 也是它自己的邻居；可是一个点不会与自己相连（泡利串与自己对易）。矛盾。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">三</span>AC 哈密顿量 \(\hat H=\sum_ic_i\hat A_i\) 的本征值是什么？</p>
+      <details><summary>看答案</summary><div>
+        <p>\(\hat H^2=\sum_ic_i^2+\sum_{i\neq j}c_ic_j\hat A_i\hat A_j\)，后一个和里 \(\hat A_i\hat A_j+\hat A_j\hat A_i=0\) 两两抵消，所以 \(\hat H^2=|c|^2\)，本征值只能是 \(\pm|c|\)。在五边形图里，这是“星形”的情形：\(\varepsilon_1=|c|\)，\(\varepsilon_2=0\)。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">四</span>写出一组泡利项，使它的反相容图是爪；它属于哪一类？</p>
+      <details><summary>看答案</summary><div>
+        <p>中心 \(\hat z_0\)，三片叶子 \(\hat x_0\)、\(\hat x_0\hat z_1\)、\(\hat x_0\hat z_2\)：叶子两两对易，各与 \(\hat z_0\) 反对易。三片叶子是孪生，孪生之积 \(\hat z_1\)、\(\hat z_2\) 是对称算符，\(\hat H=c_0\hat z_0+(c_1+c_2\hat z_1+c_3\hat z_2)\hat x_0\)，是 NC。爪不是线图，所以它不是 FF。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">五</span>为什么 FC 碎片最多可以有 \(2^N\) 项，AC 碎片最多只有 \(2N+1\) 项？</p>
+      <details><summary>看答案</summary><div>
+        <p>两两对易的泡利串在乘法下封闭（差一个相位），极大的一组是一个稳定子群，含 \(2^N\) 个元素（连恒等算符）。两两反对易的泡利串，乘起来就不再反对易，长不成群；\(N\) 个比特上的泡利群里，两两反对易的串至多 \(2N+1\) 个。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">六</span>H₂ 的 BK 哈密顿量里，为什么 \(\hat z_1\)、\(\hat z_3\) 与每一项都对易？</p>
+      <details><summary>看答案</summary><div>
+        <p>BK 编码里第 1 个比特存 \(n_0+n_1\)、第 3 个比特存 \(n_0+n_1+n_2+n_3\)（模 2），所以 \(\hat z_3=(-1)^N\)、\(\hat z_1=(-1)^{n_{\sigma_g}}\)。哈密顿量守恒电子数；成键轨道上电子数的奇偶由空间反演对称守恒。守恒量与 \(\hat H\) 对易，在这里又恰好是单个 \(\hat z\)，这就是“量子比特删减”能删掉这两个比特的原因。</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 析：注释总表 ═══════════════ -->
+<section id="s-gloss" aria-labelledby="h-gloss">
+  <div class="head"><span class="seal" aria-hidden="true">析</span><h2 id="h-gloss">注释总表</h2></div>
+  <p>正文里带虚线的词都在这里，按出现的先后排列。每条先说“意思”，再说“在这里”它起什么作用；英文名附在后面，方便查原文。</p>
+  <dl class="gloss">
+    <div class="gl" id="g-vqe"><dt>变分量子本征求解器<small>variational quantum eigensolver, VQE</small></dt><dd><p><b>意思</b>一种量子—经典混合算法：量子计算机按一组参数制备试探态 \(|\psi(\theta)\rangle\) 并测量能量，经典计算机调参数使能量最小。</p><p><b>在这里</b>每一轮都要估计一次 \(\langle\hat H\rangle\)，测量次数是主要开销，这篇论文就是为了减少它。</p></dd></div>
+    <div class="gl" id="g-mapping"><dt>费米子到量子比特的映射<small>Jordan–Wigner / Bravyi–Kitaev transformation</small></dt><dd><p><b>意思</b>把费米子的产生、湮灭算符写成量子比特上的泡利算符，并保持反对易关系。Jordan–Wigner 让第 \(p\) 个比特存第 \(p\) 个轨道的占据数；Bravyi–Kitaev 让一部分比特存若干占据数之和的奇偶。</p><p><b>在这里</b>论文用 BK。两种映射只差一个计算基的置换（一个克利福德线路），反相容图同构，所以图论结论不受影响。</p></dd></div>
+    <div class="gl" id="g-pauli"><dt>泡利串<small>Pauli string / Pauli product</small></dt><dd><p><b>意思</b>\(N\) 个单比特泡利矩阵 \(\hat I,\hat x,\hat y,\hat z\) 的张量积，如 \(\hat x_0\hat z_1\hat x_2\)。任意两个泡利串要么对易、要么反对易。</p><p><b>在这里</b>反相容图的顶点。</p></dd></div>
+    <div class="gl" id="g-cs"><dt>柯西–施瓦茨不等式<small>Cauchy–Schwarz inequality</small></dt><dd><p><b>意思</b>\((\sum_ia_ib_i)^2\le(\sum_ia_i^2)(\sum_ib_i^2)\)，等号当且仅当两个向量成比例。</p><p><b>在这里</b>一步给出式 (24) 的下界和最优分配 \(m_\alpha\propto\sqrt{V_\alpha}\)。</p></dd></div>
+    <div class="gl" id="g-clifford"><dt>克利福德幺正<small>Clifford unitary</small></dt><dd><p><b>意思</b>把泡利串变成泡利串（可差一个符号）的幺正，由阿达马门、相位门、CNOT 生成，经典计算机能高效模拟。</p><p><b>在这里</b>把对称算符和嘉当子代数的生成元变成单比特 \(\hat z\)。</p></dd></div>
+    <div class="gl" id="g-acgraph"><dt>反相容图<small>anti-compatibility graph</small></dt><dd><p><b>意思</b>顶点是哈密顿量的泡利项，两项反对易就连边。Chapman 与 Flammia 叫它“挫折图”（frustration graph）。</p><p><b>在这里</b>九种可解类各对应它的一种结构，拆分就是给它的顶点分组。</p></dd></div>
+    <div class="gl" id="g-compact"><dt>紧李代数<small>compact Lie algebra</small></dt><dd><p><b>意思</b>紧李群的李代数，例如 \(\mathfrak{su}(n)\)、\(\mathfrak{so}(n)\)。它的元素在适当的内积下是“反厄米”的，指数映射给出幺正矩阵。</p><p><b>在这里</b>极大环面定理对紧李代数成立，这是一切“可解”的来源。</p></dd></div>
+    <div class="gl" id="g-uea"><dt>泛包络代数<small>universal enveloping algebra, UEA</small></dt><dd><p><b>意思</b>由李代数生成元的所有多项式组成的结合代数，乘法满足 \(XY-YX=[X,Y]\)。</p><p><b>在这里</b>说明任何哈密顿量都是某个李代数生成元的多项式；只有一次的部分好解。</p></dd></div>
+    <div class="gl" id="g-torus"><dt>极大环面定理<small>maximal torus theorem</small></dt><dd><p><b>意思</b>连通紧李群 \(G\) 里所有极大环面互相共轭；对李代数来说，每个元素都能被某个 \(\operatorname{Ad}_g\) 转进一个固定的嘉当子代数。</p><p><b>在这里</b>保证式 (4) 的 \(\hat H\) 能被式 (5) 的 \(\hat U\) 转成彼此对易的项之和。可参看 Hall《Lie Groups, Lie Algebras, and Representations》第 11 章。</p></dd></div>
+    <div class="gl" id="g-csa"><dt>嘉当子代数<small>Cartan subalgebra, CSA</small></dt><dd><p><b>意思</b>对紧李代数来说，就是极大的阿贝尔子代数：里面的元素两两对易，再多加一个就不行了。</p><p><b>在这里</b>转到 CSA 里，就能同时对角化。\(\mathfrak{so}(5)\) 的 CSA 是二维的，对应 \(\varepsilon_1\)、\(\varepsilon_2\) 两个数。</p></dd></div>
+    <div class="gl" id="g-majorana"><dt>马约拉纳算符<small>Majorana operator</small></dt><dd><p><b>意思</b>厄米算符 \(\gamma_u\)，满足 \(\{\gamma_u,\gamma_v\}=2\delta_{uv}\)。一个费米子模式可以拆成两个：\(\hat a=(\gamma_1+i\gamma_2)/2\)。</p><p><b>在这里</b>\(\{i\gamma_u\gamma_v\}_{u\lt v}\) 张成 \(\mathfrak{so}(N)\)；每个 \(\gamma\) 是根图的一个顶点。</p></dd></div>
+    <div class="gl" id="g-freefermion"><dt>自由费米子<small>free fermions</small></dt><dd><p><b>意思</b>马约拉纳算符的二次型 \(\sum h_{uv}i\gamma_u\gamma_v\)：粒子之间没有相互作用，单粒子问题（对角化 \(h\)）解完，整个多体问题就解完了。</p><p><b>在这里</b>FF、TWC-FF 名字的由来；转动由 \(SO(N)\) 完成，至多 \(N(N-1)/2\) 个吉文斯转动。</p></dd></div>
+    <div class="gl" id="g-givens"><dt>吉文斯转动<small>Givens rotation</small></dt><dd><p><b>意思</b>只在两个坐标的平面里转一个角、其余坐标不动的正交矩阵。任何 \(SO(N)\) 矩阵都能写成至多 \(N(N-1)/2\) 个吉文斯转动的乘积。</p><p><b>在这里</b>每个吉文斯转动对应一个泡利指数门 \(\exp(-i\tfrac\varphi2\hat O_{uv})\)。</p></dd></div>
+    <div class="gl" id="g-directsum"><dt>直和<small>direct sum</small></dt><dd><p><b>意思</b>李代数 \(\mathcal A_1\oplus\mathcal A_2\)：元素是 \((X_1,X_2)\)，两部分的括号各算各的，不同部分之间括号为零。</p><p><b>在这里</b>论文标题里的“direct sum”：几个互相对易的 \(\mathfrak{so}(N_\lambda)\) 拼成一个大的可解类。</p></dd></div>
+    <div class="gl" id="g-bell"><dt>贝尔测量<small>Bell measurement</small></dt><dd><p><b>意思</b>在四个贝尔态组成的基里测两个比特，等价于同时测 \(\hat x\hat x\) 和 \(\hat z\hat z\)。线路是 CNOT 加一个阿达马门再读数。</p><p><b>在这里</b>“和”一节的直和转完以后，最后一步就是贝尔测量。</p></dd></div>
+    <div class="gl" id="g-symmetry"><dt>泡利对称<small>Pauli symmetry</small></dt><dd><p><b>意思</b>与哈密顿量每一项都对易的泡利串。它的本征值是 \(\pm1\)，把希尔伯特空间切成两半，\(\hat H\) 不会把两半混起来。</p><p><b>在这里</b>式 (9)–(13) 的 \(\hat C_k\)；在图上是孤立点，或孪生之积。</p></dd></div>
+    <div class="gl" id="g-realsym"><dt>实对称矩阵<small>real symmetric matrix</small></dt><dd><p><b>意思</b>元素都是实数、且 \(A^{\mathsf T}=A\) 的矩阵。泡利串在计算基下是实对称的，当且仅当其中 \(\hat y\) 的个数为偶数。</p><p><b>在这里</b>实轨道下的 \(\hat H_e\) 是实对称的，这是论文 II.C 节的第一个麻烦。</p></dd></div>
+    <div class="gl" id="g-nc"><dt>非上下文哈密顿量<small>noncontextual Hamiltonian</small></dt><dd><p><b>意思</b>Kirby 与 Love 的定义：去掉与所有项对易的那些项以后，“对易”在剩下的项上是等价关系。这样的哈密顿量的测量结果能用一个经典的隐变量模型复现。</p><p><b>在这里</b>就是 Sym-AC：商图是完全图。H₂ 整体是一片 NC。</p></dd></div>
+    <div class="gl" id="g-clique"><dt>团<small>clique</small></dt><dd><p><b>意思</b>图里两两相连的一组顶点，即完全子图。</p><p><b>在这里</b>AC 块是团；Krausz 分解把线图的边分成团。</p></dd></div>
+    <div class="gl" id="g-linegraph"><dt>线图<small>line graph</small></dt><dd><p><b>意思</b>图 \(R\) 的线图 \(L(R)\)：\(R\) 的每条边是 \(L(R)\) 的一个顶点，两条边共用端点就在 \(L(R)\) 里相连。Beineke 证明：一张图是线图，当且仅当它不含九个特定的导出子图，其中最小的是爪 \(K_{1,3}\)。</p><p><b>在这里</b>生成 \(\mathfrak{so}(N)\) 的泡利项的反相容图是线图：FF、TWC-FF 的判据。</p></dd></div>
+    <div class="gl" id="g-root"><dt>根图<small>root graph</small></dt><dd><p><b>意思</b>线图 \(G=L(R)\) 里的那个 \(R\)。Whitney 定理：除了三角形（既是 \(K_3\) 的线图、也是爪的线图）这个例外，连通线图的根图是唯一的。</p><p><b>在这里</b>根图的顶点就是马约拉纳模，边就是泡利项。</p></dd></div>
+    <div class="gl" id="g-krausz"><dt>Krausz 分解<small>Krausz decomposition</small></dt><dd><p><b>意思</b>把图的边分成若干个团，使每个顶点至多属于两个团。存在这样的分解，当且仅当图是线图（Krausz，1943）。</p><p><b>在这里</b>由它直接造出根图；本页的判别器用回溯搜索求它。</p></dd></div>
+    <div class="gl" id="g-twin"><dt>孪生<small>twin vertices / twin Pauli operators</small></dt><dd><p><b>意思</b>图里邻居集合完全相同的两个顶点。孪生的两个泡利项对易，乘积与所有项都对易。</p><p><b>在这里</b>同一孪生类的项可以合成“对称多项式 × 一个代表”。</p></dd></div>
+    <div class="gl" id="g-quotient"><dt>无孪生商图<small>twin-free quotient graph</small></dt><dd><p><b>意思</b>把每个孪生类缩成一个点得到的图，类与类之间有边当且仅当成员相连。</p><p><b>在这里</b>Sym-X 的判据：去掉孤立点，商图属于 X。</p></dd></div>
+    <div class="gl" id="g-si"><dt>排序插入<small>sorted insertion</small></dt><dd><p><b>意思</b>Crawford 等人的贪心拆分法：系数按绝对值从大到小，逐项放进第一个能容纳它的碎片。</p><p><b>在这里</b>论文对每一类都用它；本页用它重算了 H₂ 一行。</p></dd></div>
+    <div class="gl" id="g-midcircuit"><dt>中途测量<small>mid-circuit measurement</small></dt><dd><p><b>意思</b>线路还没结束时就测一部分比特，并根据结果决定后面的门。</p><p><b>在这里</b>先测对称算符，再按扇区选李群转动的角度。</p></dd></div>
+  </dl>
+</section>
+
+<footer>
+  <p><strong>录。</strong>论文：S. Patel, A. F. Izmaylov, Exactly solvable Hamiltonian fragments obtained from a direct sum of Lie algebras, <a href="https://arxiv.org/abs/2402.09376">arXiv:2402.09376</a>（2024）。前作（式 (9)–(13) 的来源）：S. Patel, T.-C. Yen, A. F. Izmaylov, Extension of exactly-solvable Hamiltonians using symmetries of Lie algebras, <a href="https://arxiv.org/abs/2305.18251">arXiv:2305.18251</a>（2023）。</p>
+  <p>图论部分：A. Chapman, S. T. Flammia, Characterization of solvable spin models via graph invariants, <i>Quantum</i> 4, 278 (2020)；W. M. Kirby, P. J. Love, Classical simulation of noncontextual Pauli Hamiltonians, <i>Physical Review A</i> 102, 032418 (2020)；O. Crawford 等, Efficient quantum measurement of Pauli operators in the presence of finite sampling error, <i>Quantum</i> 5, 385 (2021)（排序插入）；L. W. Beineke, Characterizations of derived graphs, <i>Journal of Combinatorial Theory</i> 9, 129–135 (1970)（九个禁用子图）。H₂ 的积分对照 A. Szabo, N. S. Ostlund,《Modern Quantum Chemistry》第 3 章；BK 编码按 J. T. Seeley, M. J. Richard, P. J. Love, <i>Journal of Chemical Physics</i> 137, 224109 (2012)。极大环面定理见 B. C. Hall,《Lie Groups, Lie Algebras, and Representations》第 2 版第 11 章。</p>
+  <p>图里的数都是浏览器现算的：H₂ 的 STO-3G 积分（只有 s 型高斯函数，重叠、动能、核吸引、双电子积分都有闭式，Boys 函数用误差函数算）、最小基下由对称性定死的分子轨道、Jordan–Wigner 矩阵与 BK 置换、泡利展开、雅可比对角化、排序插入与九类图论判据（Krausz 分解用回溯搜索）、反对称矩阵的标准形与吉文斯分解。构建前，verify.mjs 用同一份代码复核了 {{verified}} 条结论，包括 Szabo–Ostlund 表中的积分、表 I 与表 II 的 H₂ 一行、8 个扇区给出的 16 个能级、测量线路把 H₂ 化成对角阵，以及 Hasse 图里每一条包含关系。LiH 到 NH₃ 四行是论文原表的数，这一页没有重算。</p>
+  <p>页面不联网：公式字体已内嵌，中文用本机的楷体和宋体。页面跟随系统的深色、浅色模式。</p>
+</footer>
+</div>
+
+<div id="pop" role="dialog" aria-labelledby="pop-title" hidden>
+  <div class="pop-top"><h3 id="pop-title"></h3><button type="button" id="pop-close">关闭</button></div>
+  <div id="pop-body"></div>
+  <a id="pop-more" href="#s-gloss">在注释总表里看这一条</a>
+</div>
+
+<script data-inline="presets.js">/*__PRESETS__*/</script>
+<script data-inline="frag.js">/*__FRAG__*/</script>
+<script data-inline="ink.js">/*__INK__*/</script>
+<script data-inline="app.js">/*__APP__*/</script>
+</body>
+</html>

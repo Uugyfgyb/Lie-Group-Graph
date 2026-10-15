@@ -1,0 +1,37 @@
+/* page.css — 这一页在 ink.css 之上补的样式：各互动图的画幅、题跋里的小表、读者笔记、普通列表。颜色全部取 ink.css 的变量。 */
+.cite-line { font-size: .88rem; line-height: 1.75; color: var(--ink-soft); max-width: 44em; }
+.cite-line i { font-style: italic; }
+.wash-box.dials { aspect-ratio: 2 / 1; }
+.wash-box.sectors { aspect-ratio: 2 / 1; }
+.wash-box.circuit { aspect-ratio: 16 / 7; }
+.wash-box.curves { aspect-ratio: 16 / 8; }
+.wash-box.shots { aspect-ratio: 16 / 7; }
+.wash-box.bars { aspect-ratio: 16 / 10; }
+.wash-box.hasse { aspect-ratio: 6 / 5; }
+.wash-box.rootbox { aspect-ratio: 4 / 3; }
+.panel .wash-box { width: 100%; }
+#sectors, #graph { cursor: pointer; }
+#sectors:focus-visible, #graph:focus-visible { outline: 2px solid var(--cinnabar); outline-offset: -2px; }
+
+ol.plain, ul.plain { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: .45rem; max-width: 44em; }
+ol.plain li::marker { color: var(--ink-pale); }
+.boxed.reader { border-style: dashed; border-color: var(--cinnabar); background: var(--cinnabar-wash); }
+table.classes td { vertical-align: top; }
+table.classes td:first-child { white-space: nowrap; }
+#circ-table tr.on td { color: var(--cinnabar); }
+#circ-table td, #circ-table th { padding-right: .7rem; }
+.lines { display: flex; flex-direction: column; gap: .45rem; font-family: var(--serif); font-size: .93rem; }
+.lines p { max-width: none; }
+.tag { display: inline-block; font-family: var(--num); font-size: .8rem; line-height: 1.5; border: 1px solid var(--line); border-radius: 3px; padding: 0 .4em; margin: 0 .3em .25em 0; white-space: nowrap; }
+.tag.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.tag.red { border-color: var(--cinnabar); color: var(--cinnabar); }
+.kv dd .sm { font-size: .84rem; color: var(--ink-soft); }
+
+@media (max-width: 620px) {
+  .wash-box.sectors { aspect-ratio: 4 / 5; }
+  .wash-box.dials { aspect-ratio: 1 / 1.15; }
+  .wash-box.circuit { aspect-ratio: 4 / 3; }
+  .wash-box.curves { aspect-ratio: 4 / 3; }
+  .wash-box.shots { aspect-ratio: 4 / 3; }
+  .wash-box.bars { aspect-ratio: 3 / 4; }
+}
