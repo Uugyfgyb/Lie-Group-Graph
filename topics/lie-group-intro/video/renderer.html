@@ -15,7 +15,7 @@ html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; backgro
 #cv { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
 .ov { position: absolute; opacity: 0; color: var(--ink); }
 #title { left: 110px; top: 66px; display: flex; align-items: center; gap: 24px; }
-#title .seal { display: grid; place-items: center; width: 74px; height: 74px; background: var(--cinnabar); color: var(--seal-text); font-family: var(--brush); font-size: 50px; line-height: 1; border-radius: 8px 5px 10px 5px; transform: rotate(-3deg); }
+#title .seal { font-family: "Ma Shan Zheng", "STKaiti", "KaiTi", "Kaiti SC", serif; display: grid; place-items: center; width: 74px; height: 74px; background: var(--cinnabar); color: var(--seal-text); font-size: 50px; line-height: 1; border-radius: 8px 5px 10px 5px; transform: rotate(-3deg); }
 #title h1 { margin: 0; font-family: var(--brush); font-weight: 400; font-size: 58px; letter-spacing: .04em; }
 .fx { position: absolute; opacity: 0; color: var(--ink); white-space: nowrap; }
 .fx.c { transform: translateX(-50%); text-align: center; }
@@ -25,6 +25,11 @@ html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; backgro
 .fx.big { font-family: var(--brush); }
 #sub { left: 50%; bottom: 46px; width: 1640px; text-wrap: balance; transform: translateX(-50%); text-align: center; font: 40px/1.45 var(--serif); letter-spacing: .02em;
   text-shadow: 0 0 6px var(--paper), 0 0 12px var(--paper), 0 0 18px var(--paper), 0 0 2px var(--paper); }
+/* 英文版：Palatino，标题卡用斜体，字幕略小 */
+html.en { --brush: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif; --serif: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif; }
+html.en .fx.big { font-style: italic; }
+html.en #sub { font-size: 38px; letter-spacing: 0; }
+html.en #title h1 { letter-spacing: .01em; }
 #corner { position: absolute; right: 64px; top: 52px; font: 22px var(--serif); letter-spacing: .2em; color: var(--ink-pale); }
 </style>
 </head>

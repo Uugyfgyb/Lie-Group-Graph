@@ -1,15 +1,16 @@
 # 科普动画：连珠成圆，以切知圆
 
-和专题页对应的中文动画。成片 [`lie-group-intro-voice.mp4`](./lie-group-intro-voice.mp4)：3 分 41 秒，1920 × 1080，30 fps，H.264 + AAC，中文真人配音，字幕烧在画面里，[`poster.jpg`](./poster.jpg) 是专题页播放器的海报。七场依次是：开场、连（从点群到圆）、切（李代数）、卷（指数映射与平面的流）、括（李括号）、覆（*SU*(2) 与自旋）、收尾。画面用页面同一套水墨笔触，数值部分调用 `../source/lie.js` 现算：级数部分和、2×2 矩阵的 exp、球面四段弧和群换位子都是真实计算的结果，风车、转盘和闭路是示意。
+和专题页对应的动画。成片 [`lie-group-intro-voice.mp4`](./lie-group-intro-voice.mp4)：3 分 41 秒，1920 × 1080，30 fps，H.264 + AAC，中文真人配音，字幕烧在画面里，[`poster.jpg`](./poster.jpg) 是专题页播放器的海报。英文版 [`lie-group-intro-en.mp4`](./lie-group-intro-en.mp4)：3 分 59 秒，英文合成旁白（Microsoft Zira），字幕与画面文字全部英文，封面 [`cover-en.jpg`](./cover-en.jpg)。七场依次是：开场、连（从点群到圆）、切（李代数）、卷（指数映射与平面的流）、括（李括号）、覆（*SU*(2) 与自旋）、收尾。画面用页面同一套水墨笔触，数值部分调用 `../source/lie.js` 现算：级数部分和、2×2 矩阵的 exp、球面四段弧和群换位子都是真实计算的结果，风车、转盘和闭路是示意。
 
 ## 文件
 
 | 文件 | 作用 |
 |---|---|
-| `script.mjs` | 旁白稿：每场若干句，`say` 是念的（避开希腊字母），`sub` 是字幕 |
-| `renderer.html` / `renderer.js` | 逐帧渲染器：`renderAt(t)` 只依赖时间 *t* 和时间轴，画布画图，KaTeX 排公式，DOM 叠字幕；`?tl=` 选时间轴文件 |
-| `render.mjs` | Chrome 里逐帧截图，经管道交给 ffmpeg 与旁白合成 MP4；`--stills` 只截几帧 |
-| `tts.ps1`、`build-audio.mjs` | 合成旁白：Windows 离线语音（默认 Microsoft Huihui）逐句合成，拼成 `out/narration.wav` 与时间轴 `out/timeline.js` |
+| `script.mjs` / `script-en.mjs` | 中文 / 英文旁白稿：每场若干句（两份逐句对应），`say` 是念的（避开希腊字母），`sub` 是字幕 |
+| `renderer.html` / `renderer.js` | 逐帧渲染器：`renderAt(t)` 只依赖时间 *t* 和时间轴，画布画图，KaTeX 排公式，DOM 叠字幕；`?tl=` 选时间轴文件，`?lang=en` 切英文画面；`renderCover()` 画封面 |
+| `render.mjs` | Chrome 里逐帧截图，经管道交给 ffmpeg 与旁白合成 MP4；`--stills` 只截几帧，`--cover` 出封面，`--lang en` 英文画面 |
+| `tts.ps1`、`build-audio.mjs` | 合成旁白：Windows 离线语音逐句合成（OneCore 语音如 Huihui 走 WinRT，桌面语音如 Zira Desktop 走 System.Speech），拼成 `out/narration*.wav` 与时间轴 `out/timeline*.js` |
+| `timeline-en.js` | 英文版成片所用的时间轴 |
 | `align-voice.mjs` | 真人录音逐句对齐：以合成旁白的时间轴为参照，在每个预期句界附近找停顿；`--set k=a-b` 手动指定句界 |
 | `splice-voice.mjs` | 两次录音拼接：重录切块、逐块识别、动态规划分句，与第一次录音的其余各句按统一停顿重排，写出 `out/narration-user.wav` 与 `out/timeline-user.js`，并逐句识别核对 |
 | `asr.ps1` | Windows 离线中文识别器（zh-CN 听写），只用于核对切分是否正确 |
@@ -36,6 +37,14 @@ deno run -A video/build-audio.mjs                                   # 先要有�
 deno run -A video/align-voice.mjs video/out/voice/take1.m4a --set 18=156.03-156.84
 deno run -A video/splice-voice.mjs video/out/voice/take2.m4a video/out/voice/take1.m4a
 deno run -A video/render.mjs --tl timeline-user.js --audio narration-user.wav --name lie-group-intro-voice.mp4
+```
+
+英文版（合成旁白，Microsoft Zira Desktop 语速 −1；桌面语音不认 SSML 的百分比语速，所以用 `--sapi-rate`）：
+
+```bash
+deno run -A video/build-audio.mjs --script script-en.mjs --tag -en --lang en-US --voice "Microsoft Zira Desktop" --sapi-rate -1
+deno run -A video/render.mjs --tl timeline-en.js --audio narration-en.wav --lang en --name lie-group-intro-en.mp4
+deno run -A video/render.mjs --tl timeline-en.js --lang en --cover out/cover-en.png   # 封面；时长标签取自时间轴
 ```
 
 本片的 `align-voice.mjs` 还用了 `--set 0=6.14-6.60 --set 2=25.78-26.59 --set 3=28.79-29.49 --set 4=37.60-38.05 --set 13=112.67-113.50`：第一次录音前 80 秒很闷，识别器听不出字，这几处按原始录音里 ≥ 0.35 s 的停顿手动定句界（这几句最后都换成了重录）；第 13、18 句界由识别结果判定。

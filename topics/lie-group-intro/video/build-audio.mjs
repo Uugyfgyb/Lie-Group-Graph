@@ -1,15 +1,18 @@
 // 旁白：script.mjs → 每句一个 WAV（tts.ps1，Windows 离线语音）→ 拼成一条 narration.wav，并写出时间轴 timeline.js。
 // 运行：deno run -A video/build-audio.mjs [--voice "Microsoft Huihui"] [--rate -4%]
+// 英文版：deno run -A video/build-audio.mjs --script script-en.mjs --tag -en --lang en-US --voice "Microsoft Zira Desktop" --sapi-rate -1
+//   → out/audio-en/、out/narration-en.wav、out/timeline-en.js。桌面版（SAPI）语音不认 SSML 的百分比语速，改用 --sapi-rate（−10…10）。
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
-import { scenes } from "./script.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
+const { scenes } = await import("./" + arg("--script", "script.mjs"));
+const tag = arg("--tag", ""), lang = arg("--lang", "zh-CN"), sapiRate = arg("--sapi-rate", null);
 const voice = arg("--voice", "Microsoft Huihui"), rate = arg("--rate", "-4%");
-const dir = path.join(here, "out", "audio"); fs.mkdirSync(dir, { recursive: true });
+const dir = path.join(here, "out", "audio" + tag); fs.mkdirSync(dir, { recursive: true });
 
 // 节奏（秒）：开场留白、句间停顿、换场停顿、片尾留白
 const LEAD = 1.2, GAP = 0.5, SCENE_GAP = 1.3, TAIL = 3.0;
@@ -17,10 +20,11 @@ const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, 
 const items = [];
 scenes.forEach((sc, si) => sc.lines.forEach((ln, li) => {
   const file = path.join(dir, `${String(si).padStart(2, "0")}-${String(li).padStart(2, "0")}.wav`);
-  items.push({ file, ssml: `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-CN"><prosody rate="${rate}">${esc(ln.say)}</prosody></speak>`, si, li });
+  const body = sapiRate === null ? `<prosody rate="${rate}">${esc(ln.say)}</prosody>` : esc(ln.say);
+  items.push({ file, ssml: `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${lang}">${body}</speak>`, si, li });
 }));
 fs.writeFileSync(path.join(dir, "lines.json"), JSON.stringify(items.map(({ file, ssml }) => ({ file, ssml }))), "utf8");
-execFileSync("powershell", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", path.join(here, "tts.ps1"), "-List", path.join(dir, "lines.json"), "-Voice", voice], { stdio: "inherit" });
+execFileSync("powershell", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", path.join(here, "tts.ps1"), "-List", path.join(dir, "lines.json"), "-Voice", voice, ...(sapiRate === null ? [] : ["-Rate", String(sapiRate)])], { stdio: "inherit" });
 
 // 读 WAV：只接受 PCM，所有句子格式必须一致
 function readWav(f) {
@@ -67,7 +71,7 @@ const pcm = Buffer.concat(parts), hdr = Buffer.alloc(44);
 hdr.write("RIFF", 0); hdr.writeUInt32LE(36 + pcm.length, 4); hdr.write("WAVE", 8); hdr.write("fmt ", 12); hdr.writeUInt32LE(16, 16);
 hdr.writeUInt16LE(1, 20); hdr.writeUInt16LE(F.channels, 22); hdr.writeUInt32LE(F.rate, 24); hdr.writeUInt32LE(F.rate * bps, 28); hdr.writeUInt16LE(bps, 32); hdr.writeUInt16LE(F.bits, 34);
 hdr.write("data", 36); hdr.writeUInt32LE(pcm.length, 40);
-fs.writeFileSync(path.join(here, "out", "narration.wav"), Buffer.concat([hdr, pcm]));
+fs.writeFileSync(path.join(here, "out", `narration${tag}.wav`), Buffer.concat([hdr, pcm]));
 const TL = { duration: +t.toFixed(3), voice, rate, sampleRate: F.rate, scenes: sceneSpans, lines };
-fs.writeFileSync(path.join(here, "out", "timeline.js"), "window.TL = " + JSON.stringify(TL, null, 1) + ";\n");
+fs.writeFileSync(path.join(here, "out", `timeline${tag}.js`), "window.TL = " + JSON.stringify(TL, null, 1) + ";\n");
 console.log(JSON.stringify({ duration: TL.duration, format: F, lines: lines.length, scenes: sceneSpans.map((s) => `${s.id} ${s.start}–${s.end}`) }, null, 1));

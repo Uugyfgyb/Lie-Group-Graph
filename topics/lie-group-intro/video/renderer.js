@@ -9,6 +9,16 @@
     wash: "rgba(27,28,26,0.09)", line: "rgba(27,28,26,0.22)",
     brush: '"Ma Shan Zheng","STKaiti","KaiTi","Kaiti SC",serif', serif: '"Noto Serif SC","Songti SC","STSong","SimSun",serif',
   };
+  // 语言：?lang=en 时所有画面文字换成英文，字体换成 Palatino；朱印仍用楷体
+  const LANG = new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh";
+  const T = (zh, en) => (LANG === "en" ? en : zh);
+  P.sealFont = P.brush;
+  if (LANG === "en") {
+    P.serif = P.brush = '"Palatino Linotype","Book Antiqua",Palatino,Georgia,serif';
+    document.documentElement.lang = "en";
+    document.documentElement.classList.add("en");
+    document.getElementById("corner").textContent = "Lie Group Graph";
+  }
   const clamp01 = (x) => Math.max(0, Math.min(1, x));
   const ramp = (u, a, b) => clamp01((u - a) / (b - a));
   const ease = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
@@ -148,7 +158,7 @@
     if (alpha <= 0) return;
     c.save(); c.globalAlpha = alpha; c.translate(x, y); c.rotate(-3 * D2R); c.fillStyle = P.red;
     c.beginPath(); c.roundRect(-s / 2, -s / 2, s, s, s * 0.1); c.fill();
-    c.fillStyle = P.seal; c.font = `${s * 0.68}px ${P.brush}`; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(ch, 0, s * 0.04); c.restore();
+    c.fillStyle = P.seal; c.font = `${s * 0.68}px ${P.sealFont}`; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(ch, 0, s * 0.04); c.restore();
   }
 
   /* ── 圆相：卷首图，开场和结尾共用 ── */
@@ -185,7 +195,7 @@
       const sw = R * 0.24, sx = cx + R * 1.35, sy = cy + R * 0.7;
       c.save(); c.globalAlpha = sealAlpha; c.translate(sx, sy); c.rotate(-3 * D2R); c.fillStyle = P.red;
       c.beginPath(); c.roundRect(-sw / 2, -sw, sw, sw * 2, 5); c.fill();
-      c.fillStyle = P.seal; c.font = `${sw * 0.78}px ${P.brush}`; c.textAlign = "center"; c.textBaseline = "middle";
+      c.fillStyle = P.seal; c.font = `${sw * 0.78}px ${P.sealFont}`; c.textAlign = "center"; c.textBaseline = "middle";
       c.fillText("李", 0, -sw * 0.48); c.fillText("群", 0, sw * 0.48); c.restore();
     }
   }
@@ -194,7 +204,7 @@
   const scenes = {};
 
   scenes.open = (c, u, S) => {
-    enso(c, 960, 430, 245, { beads: E(u, 0.2, 1.4), reveal: E(u, 1.0, 3.6), tangent: E(u, 3.3, 4.2), threads: E(u, 4.0, 5.6), labels: E(u, 4.6, 5.4), sealAlpha: E(u, 5.4, 6.0) });
+    enso(c, 960, T(430, 395), T(245, 232), { beads: E(u, 0.2, 1.4), reveal: E(u, 1.0, 3.6), tangent: E(u, 3.3, 4.2), threads: E(u, 4.0, 5.6), labels: E(u, 4.6, 5.4), sealAlpha: E(u, 5.4, 6.0) });
   };
 
   scenes.lian = (c, u, S) => {
@@ -244,16 +254,16 @@
       const step = 360 / n, k = Math.round(th / step);
       if (th > 1 && Math.abs(th - k * step) < 0.6) { const q = at(k * step * D2R, Rr); ring(c, q[0], q[1], 26, { color: P.red, w: 3.2 }); }
       text(c, [mi("θ"), rm(` = ${Math.round(th)}°`)], 140, 230, { size: 46, color: P.soft });
-      text(c, [zh(`${n} 个转动`)], 140, 292, { size: 34, color: P.pale });
-    } else text(c, [zh("转多少度都重合")], 140, 230, { size: 40, color: P.soft, alpha: E(u, L(3) + 0.4 * D(3), L(3) + 0.6 * D(3)) * (1 - E(u, L(4), L(4) + 0.5)) });
+      text(c, [zh(T(`${n} 个转动`, `${n} rotations`))], 140, 292, { size: 34, color: P.pale });
+    } else text(c, [zh(T("转多少度都重合", "Every angle works"))], 140, 230, { size: 40, color: P.soft, alpha: E(u, L(3) + 0.4 * D(3), L(3) + 0.6 * D(3)) * (1 - E(u, L(4), L(4) + 0.5)) });
     // 45° 对不上：朱色叉
     if (u >= L(1) + 1.2 && u < L(2)) {
       const fa = E(u, L(1) + 1.2, L(1) + 1.6), tip = at(45 * D2R + 0.62, Rf + 8);
       line(c, [[tip[0] - 16, tip[1] - 16], [tip[0] + 16, tip[1] + 16]], { w: 5, color: P.red, alpha: fa });
       line(c, [[tip[0] + 16, tip[1] - 16], [tip[0] - 16, tip[1] + 16]], { w: 5, color: P.red, alpha: fa });
-      text(c, [zh("对不上")], tip[0] + 28, tip[1] - 6, { size: 34, color: P.red, alpha: fa });
+      text(c, [zh(T("对不上", "no match"))], tip[0] + 28, tip[1] - 6, { size: 34, color: P.red, alpha: fa });
     }
-    if (u >= L(4)) text(c, [bz("李群 "), mi("G"), rm(" = "), mi("SO"), rm("(2)")], 140, 230, { size: 50, color: P.ink, align: "left", alpha: E(u, L(4) + 0.3, L(4) + 1.1) });
+    if (u >= L(4)) text(c, [bz(T("李群 ", "Lie group ")), mi("G"), rm(" = "), mi("SO"), rm("(2)")], 140, T(230, 190), { size: T(50, 44), color: P.ink, align: "left", alpha: E(u, L(4) + 0.3, L(4) + 1.1) });
   };
 
   scenes.qie = (c, u, S) => {
@@ -325,7 +335,7 @@
       dot(c, free[0], free[1], 9, { color: P.red, alpha: thrA });
       dot(c, E0[0], E0[1], 11, { color: P.red });
       text(c, [mi("e")], E0[0] + 20, E0[1] + 30, { size: 40, color: P.red });
-      text(c, [zh("长 "), mi("θ"), zh(" 的切线")], E0[0] + 22, cy - th * R * 0.55, { size: 32, color: P.red, alpha: (1 - w) * (u < L(2) ? 1 : 0) });
+      text(c, T([zh("长 "), mi("θ"), zh(" 的切线")], [zh("tangent of length "), mi("θ")]), E0[0] + 22, cy - th * R * 0.55, { size: 32, color: P.red, alpha: (1 - w) * (u < L(2) ? 1 : 0) });
       // 级数：各项首尾相接
       if (u >= L(2) - 0.1) {
         const { sums } = Lie.expSeries(th, 8);
@@ -353,7 +363,7 @@
     if (fa > 0) {
       const ox = 640, oy = 560, s = 150, A = { rot: [[0, -1], [1, 0]], shear: [[0, 1], [0, 0]], squeeze: [[1, 0], [0, -1]] };
       const t1 = L(4) + 0.55 * D(4), t2 = L(4) + 0.78 * D(4), t3 = L(5) + D(5) + 1.2;
-      const ph = u < t1 ? ["rot", L(4) + 0.6, t1, 1.25, "转动"] : u < t2 ? ["shear", t1, t2, 1, "剪切"] : ["squeeze", t2, t3, 0.8, "挤压"];
+      const ph = u < t1 ? ["rot", L(4) + 0.6, t1, 1.25, T("转动", "Rotate")] : u < t2 ? ["shear", t1, t2, 1, T("剪切", "Shear")] : ["squeeze", t2, t3, 0.8, T("挤压", "Squeeze")];
       const [kind, p0, p1, tMax, name] = ph, tt = tMax * E(u, p0 + 0.15, p0 + Math.min(1.6, (p1 - p0) * 0.8)), pa = fa * E(u, p0, p0 + 0.3);
       const M = Lie.exp2(A[kind], tt), X = (x) => ox + x * s, Y = (y) => oy - y * s;
       c.save(); c.beginPath(); c.rect(90, 180, 1100, 720); c.clip();
@@ -367,10 +377,10 @@
         const vis = pts.filter((q) => q[0] > 110 && q[0] < 1170 && q[1] > 200 && q[1] < 880);
         if (vis.length > 6) for (const f of kind === "rot" ? [0.15, 0.65] : [0.5]) midHead(c, vis, f, { size: 14, color: P.soft, alpha: 0.8 * pa });
       }
-      const glyph = (T, color, alpha) => {
-        c.save(); c.translate(ox, oy); c.scale(s, -s); c.transform(T[0][0], T[1][0], T[0][1], T[1][1], 0, 0); c.scale(0.01, -0.01);
-        c.font = `190px ${P.brush}`; c.textAlign = "center"; c.textBaseline = "middle"; c.fillStyle = color; c.globalAlpha = alpha; c.shadowColor = color; c.shadowBlur = alpha > 0.5 ? 3 : 0;
-        c.fillText("李", 0, 8); c.restore();
+      const glyph = (Mt, color, alpha) => {
+        c.save(); c.translate(ox, oy); c.scale(s, -s); c.transform(Mt[0][0], Mt[1][0], Mt[0][1], Mt[1][1], 0, 0); c.scale(0.01, -0.01);
+        c.font = T(`190px ${P.sealFont}`, `italic bold 132px ${P.brush}`); c.textAlign = "center"; c.textBaseline = "middle"; c.fillStyle = color; c.globalAlpha = alpha; c.shadowColor = color; c.shadowBlur = alpha > 0.5 ? 3 : 0;
+        c.fillText(T("李", "Lie"), 0, 8); c.restore();
       };
       glyph([[1, 0], [0, 1]], P.pale, 0.35 * pa); glyph(M, P.ink, 0.92 * pa);
       line(c, circlePts(X(0), Y(0), s, 120), { w: 2, color: P.red, alpha: 0.45 * pa, dash: [4, 7] });
@@ -379,7 +389,7 @@
       c.restore();
       text(c, [bz(name)], 150, 240, { size: 64, color: P.ink, alpha: pa });
       const aa = E(u, L(5) + 0.4, L(5) + 1.2);
-      text(c, [zh("面积始终 = π")], 150, 316, { size: 38, color: P.red, alpha: aa * fa });
+      text(c, [zh(T("面积始终 = π", "Area stays π"))], 150, 316, { size: 38, color: P.red, alpha: aa * fa });
     }
   };
 
@@ -408,7 +418,7 @@
     const nrm = Math.hypot(1, 1, 0.3), p0 = [1 / nrm, -1 / nrm, 0.3 / nrm], seq = [["y", -1], ["x", -1], ["y", 1], ["x", 1]];
     let q = p0; const legs = seq.map(([ax, sg]) => { const pts = []; for (let i = 0; i <= 48; i++) pts.push(Lie.apply(Lie.rot(ax, (sg * eps * i) / 48), q)); q = pts[48]; return pts; });
     const legT = (i) => [L(1) + D(1) * (0.16 + 0.205 * i), L(1) + D(1) * (0.16 + 0.205 * i) + D(1) * 0.17];
-    const tags = ["①", "②", "③", "④"], names = ["绕 y 轴退一步", "绕 x 轴退一步", "绕 y 轴进一步", "绕 x 轴进一步"];
+    const tags = ["①", "②", "③", "④"], names = T(["绕 y 轴退一步", "绕 x 轴退一步", "绕 y 轴进一步", "绕 x 轴进一步"], ["step back around y", "step back around x", "step forward around y", "step forward around x"]);
     let cur = null;
     legs.forEach((pts, i) => {
       const [a, b] = legT(i), f = E(u, a, b); if (f <= 0) return;
@@ -428,7 +438,7 @@
       line(c, [P0, P4], { w: 3.4, color: P.red, dash: [8, 6], alpha: Math.max(0.4, ga) });
       dot(c, P4[0], P4[1], 10, { color: P.red });
       ring(c, pz[0], pz[1], 20, { color: P.red, w: 3.4, alpha: ga });
-      text(c, [zh("≈ 绕 "), mi("z"), zh(" 转 "), mi("ε"), rm("2", { s: "sup" })], pz[0] + 34, pz[1] + 46, { size: 40, color: P.red, alpha: ga });
+      text(c, T([zh("≈ 绕 "), mi("z"), zh(" 转 "), mi("ε"), rm("2", { s: "sup" })], [zh("≈ turn around "), mi("z"), zh(" by "), mi("ε"), rm("2", { s: "sup" })]), pz[0] + 34, pz[1] + 46, { size: 40, color: P.red, alpha: ga });
     } else if (cur) dot(c, cur[0], cur[1], 9, { color: P.ink });
   };
 
@@ -495,15 +505,15 @@
     so3ball(c, xs[1], cy, sz, th, al[1]);
     const hi = u >= L(2) && u < L(3) + 0.3 ? u - L(2) : 0;
     su2circle(c, xs[2], cy, sz, th, al[2], hi);
-    text(c, [zh("转盘")], xs[0], cy + sz / 2 + 44, { size: 36, color: P.ink, align: "center", alpha: al[0] });
-    text(c, [mi("SO"), rm("(3)"), zh(" 里的转动")], xs[1], cy + sz / 2 + 44, { size: 36, color: P.ink, align: "center", alpha: al[1] });
-    text(c, [mi("SU"), rm("(2)"), zh(" 里的相位")], xs[2], cy + sz / 2 + 44, { size: 36, color: P.ink, align: "center", alpha: al[2] });
+    text(c, [zh(T("转盘", "Turntable"))], xs[0], cy + sz / 2 + 44, { size: 36, color: P.ink, align: "center", alpha: al[0] });
+    text(c, T([mi("SO"), rm("(3)"), zh(" 里的转动")], [zh("Rotation in "), mi("SO"), rm("(3)")]), xs[1], cy + sz / 2 + 44, { size: 36, color: P.ink, align: "center", alpha: al[1] });
+    text(c, T([mi("SU"), rm("(2)"), zh(" 里的相位")], [zh("Phase in "), mi("SU"), rm("(2)")]), xs[2], cy + sz / 2 + 44, { size: 36, color: P.ink, align: "center", alpha: al[2] });
     text(c, [mi("θ"), rm(` = ${Math.round(th)}°`)], 960, 205, { size: 50, color: P.soft, align: "center", alpha: E(u, L(1) - 0.3, L(1) + 0.2) });
     const back = u >= L(2) && u < L(3) + 0.5 ? E(u, L(2), L(2) + 0.5) : 0;
-    text(c, [zh("回到原样")], xs[0], cy - sz / 2 + 44, { size: 32, color: P.red, align: "center", alpha: back });
-    text(c, [zh("回到 "), mi("I")], xs[1], cy - sz / 2 + 44, { size: 32, color: P.red, align: "center", alpha: back });
+    text(c, [zh(T("回到原样", "Back to start"))], xs[0], cy + sz / 2 - 34, { size: 32, color: P.red, align: "center", alpha: back });
+    text(c, [zh(T("回到 ", "Back to ")), mi("I")], xs[1], cy + sz / 2 - 34, { size: 32, color: P.red, align: "center", alpha: back });
     const two = E(u, L(3) + 0.8 * D(3), L(3) + 0.8 * D(3) + 0.5);
-    if (two > 0) text(c, [zh("转两圈，三处都回到起点")], 960, 262, { size: 34, color: P.red, align: "center", alpha: two * (1 - E(u, L(4), L(4) + 0.4)) });
+    if (two > 0) text(c, [zh(T("转两圈，三处都回到起点", "Two turns: all three are back"))], 960, 262, { size: 34, color: P.red, align: "center", alpha: two * (1 - E(u, L(4), L(4) + 0.4)) });
   };
 
   scenes.end = (c, u, S) => {
@@ -511,7 +521,8 @@
     const out = 1 - E(u, L(1) - 0.2, L(1) + 0.8);
     if (out > 0) {
       enso(c, 640, 560, 235, { alpha: out * E(u, 0, 0.8) });
-      const rows = [["切", "单位元处的切线", "李代数"], ["卷", "指数映射", "卷回群里"], ["括", "李括号", "转动不能交换"]];
+      const rows = T([["切", "单位元处的切线", "李代数"], ["卷", "指数映射", "卷回群里"], ["括", "李括号", "转动不能交换"]],
+        [["切", "Tangent at the identity", "Lie algebra"], ["卷", "Exponential map", "back into the group"], ["括", "Lie bracket", "rotations don't commute"]]);
       rows.forEach(([s, a, b], i) => {
         const ra = out * E(u, L(0) + D(0) * [0.05, 0.38, 0.7][i], L(0) + D(0) * [0.05, 0.38, 0.7][i] + 0.6), y = 360 + i * 150;
         sealBox(c, s, 1210, y, 74, ra);
@@ -531,26 +542,36 @@
   }
   fx("lian", { tex: String.raw`R(\theta)=\begin{pmatrix}\cos\theta&-\sin\theta\\ \sin\theta&\cos\theta\end{pmatrix}`, x: 1230, y: 300, from: (S) => S.L(4) + 0.5 });
   fx("lian", { tex: String.raw`R(\alpha)\,R(\beta)=R(\alpha+\beta)`, x: 1230, y: 470, size: 42, from: (S) => S.L(4) + 1.4 });
-  fx("lian", { html: "群 + 光滑流形 = 李群", x: 1230, y: 560, size: 40, cls: "cap", from: (S) => S.L(4) + 2.4 });
+  fx("lian", { html: T("群 + 光滑流形 = 李群", "group + smooth manifold = Lie group"), x: 1230, y: 560, size: T(40, 34), cls: "cap", from: (S) => S.L(4) + 2.4 });
   fx("qie", { tex: String.raw`\mathfrak g=T_eG`, x: 1250, y: 270, size: 56, cls: "red", from: (S) => S.L(2) + 1.0 });
-  fx("qie", { html: "李代数：单位元处的切空间", x: 1250, y: 360, size: 36, cls: "cap", from: (S) => S.L(2) + 1.6 });
+  fx("qie", { html: T("李代数：单位元处的切空间", "Lie algebra = tangent space at <i>e</i>"), x: 1250, y: 360, size: T(36, 34), cls: "cap", from: (S) => S.L(2) + 1.6 });
   fx("qie", { tex: String.raw`J=\frac{dR}{d\theta}\Big|_{\theta=0}=\begin{pmatrix}0&-1\\1&0\end{pmatrix}`, x: 1250, y: 440, size: 44, from: (S) => S.L(3) + 0.3 });
   fx("juan", { tex: String.raw`\exp(X)=I+X+\frac{X^2}{2!}+\frac{X^3}{3!}+\cdots`, x: 1190, y: 300, size: 42, from: (S) => S.L(1) + 0.3, until: (S) => S.L(4) + 0.3 });
   fx("juan", { tex: String.raw`e^{i\theta}=\cos\theta+i\sin\theta`, x: 1190, y: 450, size: 46, cls: "red", from: (S) => S.L(3) + 0.6, until: (S) => S.L(4) + 0.3 });
   fx("juan", { tex: String.raw`\exp(\theta J)=R(\theta)`, x: 1190, y: 545, size: 44, from: (S) => S.L(3) + 1.3, until: (S) => S.L(4) + 0.3 });
   fx("juan", { tex: String.raw`\det\exp X=e^{\operatorname{tr}X}`, x: 1260, y: 330, size: 52, from: (S) => S.L(5) + 0.3 });
-  fx("juan", { html: "tr <i>X</i> = 0  ⟹  面积不变", x: 1260, y: 440, size: 38, cls: "cap", from: (S) => S.L(5) + 1.0 });
+  fx("juan", { html: T("tr <i>X</i> = 0  ⟹  面积不变", "tr <i>X</i> = 0  ⟹  area preserved"), x: 1260, y: 440, size: 38, cls: "cap", from: (S) => S.L(5) + 1.0 });
   fx("kuo", { tex: String.raw`e^{\varepsilon X}e^{\varepsilon Y}e^{-\varepsilon X}e^{-\varepsilon Y}=I+\varepsilon^2[X,Y]+O(\varepsilon^3)`, x: 1140, y: 300, size: 34, from: (S) => S.L(3) + 0.2 });
   fx("kuo", { tex: String.raw`[L_x,L_y]=L_z`, x: 1140, y: 420, size: 60, cls: "red", from: (S) => S.L(3) + 1.6 });
   fx("kuo", { tex: String.raw`[\hat J_x,\hat J_y]=i\hbar\,\hat J_z`, x: 1140, y: 590, size: 52, from: (S) => S.L(4) + 0.3 });
-  fx("kuo", { html: "角动量对易关系（<i>Ĵ</i> = <i>iħL</i>）", x: 1140, y: 690, size: 34, cls: "cap", from: (S) => S.L(4) + 1.0 });
+  fx("kuo", { html: T("角动量对易关系（<i>Ĵ</i> = <i>iħL</i>）", "angular-momentum commutators (<i>Ĵ</i> = <i>iħL</i>)"), x: 1140, y: 690, size: 34, cls: "cap", from: (S) => S.L(4) + 1.0 });
   fx("fu", { tex: String.raw`U_z(2\pi)=\begin{pmatrix}e^{-i\pi}&0\\0&e^{i\pi}\end{pmatrix}=-I`, x: 960, y: 780, size: 40, cls: "c", from: (S) => S.L(4) + 0.2 });
-  fx("fu", { html: "中子干涉实验：Rauch 等，Werner 等（1975）", x: 960, y: 900, size: 28, cls: "c cap", from: (S) => S.L(4) + 1.2 });
-  fx("open", { html: "连珠成圆，以切知圆", x: 960, y: 760, size: 92, cls: "c big", from: () => 0.8 });
-  fx("open", { html: "三分钟看懂李群", x: 960, y: 890, size: 36, cls: "c cap", from: () => 1.6 });
-  fx("end", { html: "连珠成圆，以切知圆", x: 960, y: 330, size: 104, cls: "c big", from: (S) => S.L(1) + 0.4 });
-  fx("end", { html: "互动图解：uugyfgyb.github.io/Lie-Group-Graph", x: 960, y: 520, size: 40, cls: "c red", from: (S) => S.L(1) + 1.6 });
-  fx("end", { html: "李群图解 · Lie Group Graph", x: 960, y: 600, size: 30, cls: "c cap", from: (S) => S.L(1) + 2.2 });
+  fx("fu", { html: T("中子干涉实验：Rauch 等，Werner 等（1975）", "Neutron interferometry: Rauch et al.; Werner et al. (1975)"), x: 960, y: 900, size: 28, cls: "c cap", from: (S) => S.L(4) + 1.2 });
+  if (LANG === "en") {
+    fx("open", { html: "Beads into a circle,", x: 960, y: 650, size: 76, cls: "c big", from: () => 0.8 });
+    fx("open", { html: "the circle from its tangent", x: 960, y: 740, size: 76, cls: "c big", from: () => 1.1 });
+    fx("open", { html: "Lie groups in three minutes", x: 960, y: 850, size: 36, cls: "c cap", from: () => 1.6 });
+    fx("end", { html: "Beads into a circle,", x: 960, y: 270, size: 88, cls: "c big", from: (S) => S.L(1) + 0.4 });
+    fx("end", { html: "the circle from its tangent", x: 960, y: 375, size: 88, cls: "c big", from: (S) => S.L(1) + 0.7 });
+    fx("end", { html: "Interactive explainer (in Chinese): uugyfgyb.github.io/Lie-Group-Graph", x: 960, y: 540, size: 36, cls: "c red", from: (S) => S.L(1) + 1.6 });
+    fx("end", { html: "Lie Group Graph", x: 960, y: 610, size: 30, cls: "c cap", from: (S) => S.L(1) + 2.2 });
+  } else {
+    fx("open", { html: "连珠成圆，以切知圆", x: 960, y: 760, size: 92, cls: "c big", from: () => 0.8 });
+    fx("open", { html: "三分钟看懂李群", x: 960, y: 890, size: 36, cls: "c cap", from: () => 1.6 });
+    fx("end", { html: "连珠成圆，以切知圆", x: 960, y: 330, size: 104, cls: "c big", from: (S) => S.L(1) + 0.4 });
+    fx("end", { html: "互动图解：uugyfgyb.github.io/Lie-Group-Graph", x: 960, y: 520, size: 40, cls: "c red", from: (S) => S.L(1) + 1.6 });
+    fx("end", { html: "李群图解 · Lie Group Graph", x: 960, y: 600, size: 30, cls: "c cap", from: (S) => S.L(1) + 2.2 });
+  }
 
   /* ── 每一场的时间：L(i) 第 i 句开始、D(i) 时长（相对本场起点） ── */
   const SC = TL.scenes.map((s, si) => {
@@ -581,6 +602,48 @@
     else subEl.style.opacity = "0";
     return si;
   };
-  window.renderReady = Promise.all(["40px KaTeX_Main", "italic 40px KaTeX_Math", "40px KaTeX_Fraktur", `40px ${P.brush}`].map((f) => document.fonts.load(f, "李群eG")))
+  /* ── 封面：左边大字标题，右边圆相。按缩略图（约 320 px 宽）也认得出字来定字号 ── */
+  window.renderCover = () => {
+    for (const el of [titleEl, subEl, document.getElementById("corner"), fxBox]) el.style.visibility = "hidden";
+    const c = ctx;
+    c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = "source-over"; c.filter = "none";
+    c.drawImage(paper, 0, 0);
+    const g = c.createRadialGradient(1380, 560, 40, 1380, 560, 620); g.addColorStop(0, "rgba(27,28,26,0.08)"); g.addColorStop(1, "rgba(27,28,26,0)");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    enso(c, 1390, 548, 330, { sealAlpha: 1 });
+    c.save(); c.textBaseline = "alphabetic"; c.letterSpacing = "6px";
+    let ulY = 846, ulW = 500;
+    if (LANG === "en") {
+      const m = Math.floor(TL.duration / 60), s = Math.round(TL.duration - 60 * m);
+      c.fillStyle = P.pale; c.font = `30px ${P.serif}`; c.letterSpacing = "5px"; c.fillText("LIE GROUP GRAPH · ANIMATED EXPLAINER", 128, 236);
+      c.letterSpacing = "2px"; c.fillStyle = P.ink; c.shadowColor = "rgba(27,28,26,0.35)"; c.shadowBlur = 3;
+      c.font = `170px ${P.brush}`; c.fillText("Lie Groups", 112, 470);
+      c.shadowBlur = 0; c.fillStyle = P.red; c.font = `italic 84px ${P.brush}`; c.fillText("in three minutes", 122, 590);
+      c.fillStyle = P.soft; c.font = `italic 44px ${P.brush}`; c.letterSpacing = "1px"; c.fillText("Beads into a circle,", 126, 718); c.fillText("the circle from its tangent.", 126, 776);
+      ulY = 618; ulW = 600;
+      window.__chips = ["English narration", `${m} min ${s} s`, "Interactive page"];
+    } else {
+      c.fillStyle = P.pale; c.font = `34px ${P.serif}`; c.letterSpacing = "10px"; c.fillText("李群图解 · 科普动画", 128, 236);
+      c.letterSpacing = "6px"; c.fillStyle = P.ink; c.shadowColor = "rgba(27,28,26,0.35)"; c.shadowBlur = 3;
+      c.font = `168px ${P.brush}`; c.fillText("连珠成圆，", 116, 470); c.fillText("以切知圆", 116, 676);
+      c.shadowBlur = 0; c.fillStyle = P.red; c.font = `70px ${P.brush}`; c.fillText("三分钟看懂李群", 124, 818);
+      window.__chips = ["中文配音", "3 分 41 秒", "附互动图解页"];
+    }
+    c.restore();
+    // 副标题下一道朱笔
+    const ul = Array.from({ length: 40 }, (_, i) => { const x = 128 + (i / 39) * ulW; return [x, ulY + 4 * Math.sin(i / 6)]; });
+    stroke(c, ul, { w: 9, w1: 4, color: P.red, alpha: 0.85, taper: [0.08, 0.35] });
+    // 底部三枚小签
+    let x = 128;
+    for (const label of window.__chips) {
+      c.save(); c.font = `${T(34, 30)}px ${P.serif}`; const w = c.measureText(label).width + 44;
+      c.strokeStyle = P.ink; c.globalAlpha = 0.7; c.lineWidth = 2; c.beginPath(); c.roundRect(x, 900, w, 60, 30); c.stroke();
+      c.globalAlpha = 1; c.fillStyle = P.soft; c.textBaseline = "middle"; c.fillText(label, x + 22, 931); c.restore();
+      x += w + 18;
+    }
+    return true;
+  };
+
+  window.renderReady = Promise.all(["40px KaTeX_Main", "italic 40px KaTeX_Math", "40px KaTeX_Fraktur", `40px ${P.brush}`, `40px ${P.sealFont}`, `italic 40px ${P.brush}`].map((f) => document.fonts.load(f, "李群eG")))
     .then(() => document.fonts.ready).then(() => { window.renderAt(0); return true; });
 })();

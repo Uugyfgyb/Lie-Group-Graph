@@ -13,7 +13,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const out = path.join(here, "out");
 const arg = (k, d = null) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const FPS = 30;
-const tlFile = arg("--tl", "timeline.js"), audioFile = arg("--audio", "narration.wav");
+const tlFile = arg("--tl", "timeline.js"), audioFile = arg("--audio", "narration.wav"), lang = arg("--lang", "zh");
 const tlText = fs.readFileSync(path.join(out, tlFile), "utf8");
 const TL = JSON.parse(tlText.replace(/^window\.TL = /, "").replace(/;\s*$/, ""));
 
@@ -23,9 +23,19 @@ const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, de
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-await page.goto(pathToFileURL(path.join(here, "renderer.html")).href + "?tl=" + encodeURIComponent(tlFile), { waitUntil: "load" });
+await page.goto(pathToFileURL(path.join(here, "renderer.html")).href + "?tl=" + encodeURIComponent(tlFile) + "&lang=" + lang, { waitUntil: "load" });
 await page.evaluate(() => window.renderReady);
 if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
+
+// 封面：--cover 输出路径（相对 video/），PNG
+const cover = arg("--cover");
+if (cover) {
+  await page.evaluate(() => window.renderCover());
+  const target = path.resolve(here, cover); fs.mkdirSync(path.dirname(target), { recursive: true });
+  await page.screenshot({ path: target });
+  console.log("cover →", target, errors.length ? errors : "");
+  await browser.close(); process.exit(errors.length ? 1 : 0);
+}
 
 const stills = arg("--stills");
 if (stills) {
