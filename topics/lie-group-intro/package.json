@@ -1,0 +1,16 @@
+{
+  "name": "lie-group-intro",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "李群入门（连珠成圆，以切知圆）：水墨风格单文件页的构建、数值核验与浏览器验收脚本（Node ≥ 18 或 Deno ≥ 2 均可运行）",
+  "scripts": {
+    "verify": "node source/verify.mjs",
+    "build": "node source/build.mjs",
+    "qa": "node source/qa-browser.mjs"
+  },
+  "devDependencies": {
+    "katex": "0.16.11",
+    "playwright-core": "1.49.1"
+  }
+}

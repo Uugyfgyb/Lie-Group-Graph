@@ -1,0 +1,501 @@
+{
+  "date": "2026-10-15",
+  "browser": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  "fail": [],
+  "results": [
+    {
+      "name": "desktop-light",
+      "steps": [
+        {
+          "control": "lian-n",
+          "changed": true
+        },
+        {
+          "control": "lian-th",
+          "changed": true
+        },
+        {
+          "control": "qie-k",
+          "changed": true
+        },
+        {
+          "control": "juan-n",
+          "changed": true
+        },
+        {
+          "control": "juan-th",
+          "changed": true
+        },
+        {
+          "control": "liu-t",
+          "changed": true
+        },
+        {
+          "control": "kuo-e",
+          "changed": true
+        },
+        {
+          "control": "fu-th",
+          "changed": true
+        },
+        {
+          "control": "loop-s",
+          "changed": true
+        },
+        {
+          "control": "liu-kind:rot",
+          "changed": true
+        },
+        {
+          "control": "liu-kind:squeeze",
+          "changed": true
+        },
+        {
+          "control": "liu-kind:spiral",
+          "changed": true
+        },
+        {
+          "control": "loop-kind:2",
+          "changed": true
+        },
+        {
+          "control": "fu-play",
+          "value": "623"
+        },
+        {
+          "control": "term:bracket",
+          "popVisible": true,
+          "popTitle": "李括号Lie bracket · commutator"
+        }
+      ]
+    },
+    {
+      "name": "desktop-light",
+      "overflow": 0,
+      "wide": [
+        "math.",
+        "semantics.",
+        "mrow.",
+        "mi.",
+        "mo."
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 470,
+          "h": 470,
+          "inkFrac": 0.1217
+        },
+        {
+          "id": "lian",
+          "w": 618,
+          "h": 618,
+          "inkFrac": 0.1662
+        },
+        {
+          "id": "qie",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0238
+        },
+        {
+          "id": "juan",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0133
+        },
+        {
+          "id": "liu",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0556
+        },
+        {
+          "id": "kuo",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0269
+        },
+        {
+          "id": "fu-obj",
+          "w": 246,
+          "h": 246,
+          "inkFrac": 0.0559
+        },
+        {
+          "id": "fu-so3",
+          "w": 246,
+          "h": 246,
+          "inkFrac": 0.0592
+        },
+        {
+          "id": "fu-su2",
+          "w": 246,
+          "h": 246,
+          "inkFrac": 0.0533
+        },
+        {
+          "id": "loop",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0271
+        }
+      ],
+      "panels": [
+        {
+          "id": "lian-panel",
+          "len": 137
+        },
+        {
+          "id": "qie-panel",
+          "len": 188
+        },
+        {
+          "id": "juan-panel",
+          "len": 227
+        },
+        {
+          "id": "liu-panel",
+          "len": 199
+        },
+        {
+          "id": "kuo-panel",
+          "len": 287
+        },
+        {
+          "id": "fu-panel",
+          "len": 138
+        },
+        {
+          "id": "loop-panel",
+          "len": 119
+        }
+      ],
+      "bg": "rgb(236, 235, 227)",
+      "title": "李群水墨图解",
+      "net": 0,
+      "errors": []
+    },
+    {
+      "name": "desktop-dark",
+      "overflow": 0,
+      "wide": [
+        "math.",
+        "semantics.",
+        "mrow.",
+        "mi.",
+        "mo."
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 470,
+          "h": 470,
+          "inkFrac": 0.1182
+        },
+        {
+          "id": "lian",
+          "w": 618,
+          "h": 618,
+          "inkFrac": 0.166
+        },
+        {
+          "id": "qie",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0233
+        },
+        {
+          "id": "juan",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.013
+        },
+        {
+          "id": "liu",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0555
+        },
+        {
+          "id": "kuo",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0263
+        },
+        {
+          "id": "fu-obj",
+          "w": 246,
+          "h": 246,
+          "inkFrac": 0.0553
+        },
+        {
+          "id": "fu-so3",
+          "w": 246,
+          "h": 246,
+          "inkFrac": 0.0583
+        },
+        {
+          "id": "fu-su2",
+          "w": 246,
+          "h": 246,
+          "inkFrac": 0.0527
+        },
+        {
+          "id": "loop",
+          "w": 772,
+          "h": 578,
+          "inkFrac": 0.0265
+        }
+      ],
+      "panels": [
+        {
+          "id": "lian-panel",
+          "len": 137
+        },
+        {
+          "id": "qie-panel",
+          "len": 188
+        },
+        {
+          "id": "juan-panel",
+          "len": 227
+        },
+        {
+          "id": "liu-panel",
+          "len": 199
+        },
+        {
+          "id": "kuo-panel",
+          "len": 287
+        },
+        {
+          "id": "fu-panel",
+          "len": 138
+        },
+        {
+          "id": "loop-panel",
+          "len": 119
+        }
+      ],
+      "bg": "rgb(20, 22, 21)",
+      "title": "李群水墨图解",
+      "net": 0,
+      "errors": []
+    },
+    {
+      "name": "mobile-light",
+      "overflow": 0,
+      "wide": [
+        "math.",
+        "semantics.",
+        "mrow.",
+        "mo.",
+        "mi."
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 600,
+          "h": 600,
+          "inkFrac": 0.1312
+        },
+        {
+          "id": "lian",
+          "w": 712,
+          "h": 712,
+          "inkFrac": 0.1692
+        },
+        {
+          "id": "qie",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0413
+        },
+        {
+          "id": "juan",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0334
+        },
+        {
+          "id": "liu",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0857
+        },
+        {
+          "id": "kuo",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0547
+        },
+        {
+          "id": "fu-obj",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.0352
+        },
+        {
+          "id": "fu-so3",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.034
+        },
+        {
+          "id": "fu-su2",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.0323
+        },
+        {
+          "id": "loop",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0492
+        }
+      ],
+      "panels": [
+        {
+          "id": "lian-panel",
+          "len": 137
+        },
+        {
+          "id": "qie-panel",
+          "len": 188
+        },
+        {
+          "id": "juan-panel",
+          "len": 227
+        },
+        {
+          "id": "liu-panel",
+          "len": 199
+        },
+        {
+          "id": "kuo-panel",
+          "len": 287
+        },
+        {
+          "id": "fu-panel",
+          "len": 138
+        },
+        {
+          "id": "loop-panel",
+          "len": 119
+        }
+      ],
+      "bg": "rgb(236, 235, 227)",
+      "title": "李群水墨图解",
+      "net": 0,
+      "errors": []
+    },
+    {
+      "name": "mobile-dark",
+      "overflow": 0,
+      "wide": [
+        "math.",
+        "semantics.",
+        "mrow.",
+        "mo.",
+        "mi."
+      ],
+      "canv": [
+        {
+          "id": "hero",
+          "w": 600,
+          "h": 600,
+          "inkFrac": 0.1287
+        },
+        {
+          "id": "lian",
+          "w": 712,
+          "h": 712,
+          "inkFrac": 0.169
+        },
+        {
+          "id": "qie",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0407
+        },
+        {
+          "id": "juan",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.033
+        },
+        {
+          "id": "liu",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0854
+        },
+        {
+          "id": "kuo",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0539
+        },
+        {
+          "id": "fu-obj",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.035
+        },
+        {
+          "id": "fu-so3",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.0335
+        },
+        {
+          "id": "fu-su2",
+          "w": 712,
+          "h": 444,
+          "inkFrac": 0.032
+        },
+        {
+          "id": "loop",
+          "w": 712,
+          "h": 534,
+          "inkFrac": 0.0485
+        }
+      ],
+      "panels": [
+        {
+          "id": "lian-panel",
+          "len": 137
+        },
+        {
+          "id": "qie-panel",
+          "len": 188
+        },
+        {
+          "id": "juan-panel",
+          "len": 227
+        },
+        {
+          "id": "liu-panel",
+          "len": 199
+        },
+        {
+          "id": "kuo-panel",
+          "len": 287
+        },
+        {
+          "id": "fu-panel",
+          "len": 138
+        },
+        {
+          "id": "loop-panel",
+          "len": 119
+        }
+      ],
+      "bg": "rgb(20, 22, 21)",
+      "title": "李群水墨图解",
+      "net": 0,
+      "errors": []
+    }
+  ]
+}

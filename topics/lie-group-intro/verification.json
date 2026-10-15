@@ -1,0 +1,271 @@
+{
+  "generated": "2026-10-15",
+  "script": "source/verify.mjs",
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "so(3) 括号 [Lx,Ly]=Lz 及其轮换",
+      "ok": true,
+      "residuals": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lx, Ly, Lz 都反对称（Xᵀ = −X）",
+      "ok": true,
+      "residuals": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "雅可比恒等式（so(3) 基）",
+      "ok": true,
+      "residual": 0
+    },
+    {
+      "name": "exp(θL_k) 等于绕 k 轴转 θ 的矩阵",
+      "ok": true,
+      "maxResidual": 8.005932084973442e-16
+    },
+    {
+      "name": "det exp X = e^{tr X}（2–5 阶随机矩阵各 20 个）",
+      "ok": true,
+      "maxRelResidual": 1.3655743202889425e-14
+    },
+    {
+      "name": "反对称 X 的 exp 是转动：RᵀR = I 且 det R = 1",
+      "ok": true,
+      "maxResidual": 7.78079927962642e-15
+    },
+    {
+      "name": "J² = −I",
+      "ok": true
+    },
+    {
+      "name": "Σ(iθ)ᵏ/k! 的部分和误差 ≤ 余项上界 Σ_{k>N}θᵏ/k!",
+      "ok": true
+    },
+    {
+      "name": "N = 40 时部分和与 e^{iθ} 的差（θ ≤ 2π）",
+      "ok": true,
+      "maxError": 8.841546773918879e-15
+    },
+    {
+      "name": "θ = 1.8 时误差随 N 的变化（页面默认态附近）",
+      "ok": true,
+      "table": [
+        {
+          "N": 0,
+          "error": 1.5666538192549666,
+          "bound": 5.049647464412945
+        },
+        {
+          "N": 2,
+          "error": 0.9147775311074653,
+          "bound": 1.6296474644129457
+        },
+        {
+          "N": 4,
+          "error": 0.15251517394604824,
+          "bound": 0.22024746441294601
+        },
+        {
+          "N": 6,
+          "error": 0.011911941738179067,
+          "bound": 0.015544264412946086
+        },
+        {
+          "N": 8,
+          "error": 0.0005394677907131691,
+          "bound": 0.0006639164129460836
+        },
+        {
+          "N": 12,
+          "error": 3.320194765085803e-7,
+          "bound": 3.83198718551252e-7
+        }
+      ]
+    },
+    {
+      "name": "2×2 闭式 exp(tA)（Cayley–Hamilton）与级数一致",
+      "ok": true,
+      "maxRelResidual": 7.33205787436001e-15
+    },
+    {
+      "name": "预设的分类：转=椭圆、剪=抛物、挤=双曲、螺=迹非零",
+      "ok": true,
+      "kinds": {
+        "rot": "elliptic",
+        "shear": "parabolic",
+        "squeeze": "hyperbolic",
+        "spiral": "trace"
+      }
+    },
+    {
+      "name": "各预设在 t = 1.5 时 det = e^{t·trA}",
+      "ok": true,
+      "table": [
+        {
+          "preset": "rot",
+          "t": 1.5,
+          "det": 1,
+          "expTrace": 1
+        },
+        {
+          "preset": "shear",
+          "t": 1.5,
+          "det": 1,
+          "expTrace": 1
+        },
+        {
+          "preset": "squeeze",
+          "t": 1.5,
+          "det": 1.0000000000000002,
+          "expTrace": 1
+        },
+        {
+          "preset": "spiral",
+          "t": 1.5,
+          "det": 2.117000016612675,
+          "expTrace": 2.117000016612675
+        }
+      ]
+    },
+    {
+      "name": "随机两万个 X ∈ sl(2,ℝ)：tr exp X ≥ −2",
+      "ok": true,
+      "minTrace": -1.9599946076951273,
+      "target": -2.5
+    },
+    {
+      "name": "剪切 exp(tN) = [[1,t],[0,1]]（N² = 0，级数在第二项截断）",
+      "ok": true
+    },
+    {
+      "name": "φ/ε² → 1，转轴 → +z",
+      "ok": true,
+      "table": [
+        {
+          "epsDeg": 40,
+          "phiDeg": 26.870853856721578,
+          "eps2Deg": 27.925268031909273,
+          "ratio": 0.9622415736893608,
+          "axisTiltDeg": 27.23631347517071,
+          "secondOrderResidualOverEps2": 0.7210994708897152
+        },
+        {
+          "epsDeg": 30,
+          "phiDeg": 15.363862865032266,
+          "eps2Deg": 15.707963267948964,
+          "ratio": 0.9780938879823579,
+          "axisTiltDeg": 20.75357098368479,
+          "secondOrderResidualOverEps2": 0.5357898558721973
+        },
+        {
+          "epsDeg": 20,
+          "phiDeg": 6.911764289401769,
+          "eps2Deg": 6.981317007977318,
+          "ratio": 0.9900373069298997,
+          "axisTiltDeg": 14.0019421655169,
+          "secondOrderResidualOverEps2": 0.35327175288836526
+        },
+        {
+          "epsDeg": 10,
+          "phiDeg": 1.7409200098794007,
+          "eps2Deg": 1.7453292519943295,
+          "ratio": 0.9974736903596324,
+          "axisTiltDeg": 7.053226656798686,
+          "secondOrderResidualOverEps2": 0.17510690002309903
+        },
+        {
+          "epsDeg": 5,
+          "phiDeg": 0.43605574132838665,
+          "eps2Deg": 0.4363323129985824,
+          "ratio": 0.9993661444225961,
+          "axisTiltDeg": 3.533293598159699,
+          "secondOrderResidualOverEps2": 0.0873397761959208
+        },
+        {
+          "epsDeg": 2.5,
+          "phiDeg": 0.10906577688764633,
+          "eps2Deg": 0.1090830782496456,
+          "ratio": 0.9998413927964184,
+          "axisTiltDeg": 1.7674865948127119,
+          "secondOrderResidualOverEps2": 0.04364244494338013
+        },
+        {
+          "epsDeg": 1,
+          "phiDeg": 0.017452849547874114,
+          "eps2Deg": 0.017453292519943295,
+          "ratio": 0.9999746195699937,
+          "axisTiltDeg": 0.7070888325264708,
+          "secondOrderResidualOverEps2": 0.017453883081427528
+        }
+      ]
+    },
+    {
+      "name": "‖g − I − ε²Lz‖/ε² 在 ε 减半时约减半（余项是三阶）",
+      "ok": true,
+      "at10deg": 0.17510690002309903,
+      "at5deg": 0.0873397761959208,
+      "ratio": 2.004892932520216
+    },
+    {
+      "name": "页面默认态 ε = 30°：终点与 R_z(ε²)p₀ 的距离远小于回程差",
+      "ok": true,
+      "gap": 0.22489925892200724,
+      "missFromPrediction": 0.04410250605442245
+    },
+    {
+      "name": "BCH：截到 ½[X,Y] 余项是三阶（减半缩 8 倍），再加两项后是四阶（缩 16 倍）",
+      "ok": true,
+      "table": [
+        {
+          "s": 0.2,
+          "residual2": 0.0023023224366583027,
+          "residual3": 0.00032041670862852746
+        },
+        {
+          "s": 0.1,
+          "residual2": 0.0002796277278741359,
+          "residual3": 0.000020577050833743037
+        },
+        {
+          "s": 0.05,
+          "residual2": 0.00003442555488764503,
+          "residual3": 0.0000013007620345555126
+        }
+      ],
+      "shrink2": 8.12267888743578,
+      "shrink3": 15.819227719676247
+    },
+    {
+      "name": "su(2) 括号 [t_x,t_y]=t_z 及轮换（t_k = −iσ_k/2）",
+      "ok": true,
+      "residuals": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "toSO3(exp(θ t_n)) = 绕 n 转 θ",
+      "ok": true,
+      "maxResidual": 5.900916318210353e-16
+    },
+    {
+      "name": "U 与 −U 映到同一个转动（二对一）",
+      "ok": true,
+      "maxResidual": 0
+    },
+    {
+      "name": "绕 z 转 2π：U = −I，R = I；转 4π：U = I",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="水墨风格的李群自学页：从点群到圆周群，在单位元处取切线得到李代数，用指数映射卷回群里，用李括号量转动的不可交换，再看 SU(2) 双覆盖 SO(3) 与自旋。七幅可拖动的互动图，凡用到数学分析的地方都有朱批注释。">
+<title>李群水墨图解</title>
+<style data-inline="katex">/*__KATEX_CSS__*/</style>
+<style data-inline="ink.css">/*__CSS__*/</style>
+</head>
+<body>
+<div class="scroll">
+
+<header class="top">
+  <div class="top-grid">
+    <div class="top-text">
+      <!--repo-only--><div class="crumbs"><a href="../../index.html">Lie Group Graph</a><span>／</span><span>入门：从圆到自旋</span></div><!--/repo-only-->
+      <div class="eyebrow">李群与李代数 · 水墨图解</div>
+      <h1><span>连珠成圆，</span><span>以切知圆</span></h1>
+      <p class="lede">分子的点群只有有限个对称操作：氨分子可以转 120°，不能转 1°。圆盘、球、原子核外的电子云却能转任意角度，对称操作连成一整片，可以求导。这样的群叫<strong>李群</strong>。在单位元处求导，得到一个线性空间，叫<strong>李代数</strong>；用指数映射，又能把它卷回群里。这一页讲这一来一回，再看它在角动量和自旋里的样子。</p>
+      <nav class="route" aria-label="本页路线">
+        <a href="#s-lian"><b>连</b><span>从点群到圆</span></a><i aria-hidden="true">→</i>
+        <a href="#s-qie"><b>切</b><span>李代数</span></a><i aria-hidden="true">→</i>
+        <a href="#s-juan"><b>卷</b><span>指数映射</span></a><i aria-hidden="true">→</i>
+        <a href="#s-kuo"><b>括</b><span>李括号</span></a><i aria-hidden="true">→</i>
+        <a href="#s-fu"><b>覆</b><span>SU(2) 与自旋</span></a><i aria-hidden="true">→</i>
+        <a href="#s-yong"><b>用</b><span>物理与化学</span></a><i aria-hidden="true">→</i>
+        <a href="#s-quiz"><b>练</b><span>五道小题</span></a><i aria-hidden="true">→</i>
+        <a href="#s-gloss"><b>析</b><span>注释总表</span></a>
+      </nav>
+    </div>
+    <figure class="hero-fig">
+      <div class="hero"><canvas id="hero" role="img" aria-label="一笔圆相代表圆周群 G。左上方是一串由疏到密的墨点，连成圆。右侧朱点是单位元 e，过 e 的朱色竖线是切线，也就是李代数。几条朱色虚线从切线绕回圆上，表示指数映射。"></canvas></div>
+      <figcaption>墨圈是圆周群 \(G=SO(2)\)，左上的墨珠由疏到密连成它。朱点是单位元 \(e\)，朱线是 \(e\) 处的切线 \(\mathfrak g=T_eG\)。虚线把切线上的点像绕线一样卷回圆上：这就是 \(\exp\)。</figcaption>
+    </figure>
+  </div>
+  <div class="howto">
+    <p class="zhu"><b>意思</b>这样的红字是<strong>朱批</strong>。正文里凡是用到数学分析的地方（求导、极限、级数收敛、泰勒展开、交换求和次序），旁边都有一条，用白话说这一步在做什么、凭什么可以这样做。</p>
+    <p>带虚线的词可以点，比如<button type="button" class="term" data-g="liegroup">李群</button>，会弹出它的意思和英文名。全部注释汇总在卷末“析”一节。</p>
+    <div class="legend" aria-label="标签说明">
+      <span><span class="ev">定义</span>教材里的定义</span>
+      <span><span class="ev k2">定理</span>标准结论</span>
+      <span><span class="ev k3">示意</span>为了讲解画的图</span>
+      <span><span class="ev k4">数值</span>浏览器现算出来的数</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ 连：从点群到圆 ═══════════════ -->
+<section id="s-lian" aria-labelledby="h-lian">
+  <div class="head"><span class="seal" aria-hidden="true">连</span><h2 id="h-lian">从点群到圆：对称操作连成一片</h2></div>
+  <p>先从熟悉的东西说起。一个分子的<button type="button" class="term" data-g="pointgroup">点群</button>，是让分子和自己重合的那些操作：转动、反映、反演。只看转动的话，一个有 \(n\) 次轴的图形（比如下面的风车）只能转 \(360^\circ/n\) 的整数倍，转动群 \(C_n\) 一共 \(n\) 个元素。</p>
+  <p>把 \(n\) 调大，群元越来越密；\(n\to\infty\) 时风车变成圆盘，转多少度都和自己重合。群元不再是一颗颗分开的珠子，而是连成了一整条圆。</p>
+
+  <div class="stage" id="lab-lian">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k3">示意</span>浓墨是转过 \(\theta\) 的风车，淡墨是原来的位置；外圈的墨点是 \(C_n\) 的 \(n\) 个群元，朱色小箭头指着当前的 \(\theta\)</span>
+      <div class="wash-box sq"><canvas id="lian" role="img" aria-label="n 片叶子的风车和外圈的 n 个群元；滑块调 n 和转角 θ"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span>叶数 <i>n</i> =</span><input type="range" id="lian-n" min="2" max="25" step="1" value="6" aria-label="风车的叶数 n，最右端是无穷"><output id="lian-n-o"></output></label>
+        <label class="slider"><span>转角 <i>θ</i> =</span><input type="range" id="lian-th" min="0" max="360" step="1" value="45" aria-label="转角 θ（度）"><output id="lian-th-o"></output></label>
+        <button type="button" class="toggle" id="lian-play" aria-pressed="false">慢慢转</button>
+      </div>
+    </div>
+    <aside class="panel" id="lian-panel" aria-live="polite"></aside>
+  </div>
+
+  <p>这一整条圆就是<strong>二维转动群</strong> \(SO(2)\)。它的元素可以写成矩阵，也可以写成模为 1 的复数：</p>
+  <div class="eq" data-label="so2">$$R(\theta)=\begin{pmatrix}\cos\theta&-\sin\theta\\ \sin\theta&\cos\theta\end{pmatrix},\qquad R(\alpha)R(\beta)=R(\alpha+\beta),\qquad R(\theta)\;\leftrightarrow\;e^{i\theta}.$$</div>
+  <p>群的乘法就是把转角相加。转角可以连续地变，乘积 \(R(\alpha)R(\beta)\) 的每个元素都是 \(\alpha,\beta\) 的光滑函数。李群的定义要的正是这件事：</p>
+  <div class="boxed">
+    <p><span class="ev">定义</span><strong>李群</strong>是一个群 \(G\)，同时是一个<button type="button" class="term" data-g="manifold">光滑流形</button>，并且乘法 \((g,h)\mapsto gh\) 和求逆 \(g\mapsto g^{-1}\) 都是光滑映射。</p>
+    <p>流形的维数叫李群的维数，也就是“描述一个群元要几个连续参数”。\(SO(2)\) 要一个转角，维数是 1；三维转动群 \(SO(3)\) 要转轴的方向（两个数）加转角，维数是 3。</p>
+  </div>
+  <p class="zhu"><b>意思</b>“光滑”是这一页的前提：群元可以连续地变，乘法可以求导。有了导数，就能在<button type="button" class="term" data-g="identity">单位元</button>附近把弯曲的群换成平直的线性空间来算，下一节做的就是这件事。有限的点群走不了这一步：它的元素之间没有“附近”。</p>
+
+  <h3 class="sub">常见的矩阵李群</h3>
+  <p>物理和化学里遇到的李群，几乎都是一组满足某个方程的可逆矩阵。表里的“维数”就是独立参数的个数。</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>群</th><th>条件</th><th class="r">维数</th><th>在哪里见到</th></tr></thead>
+      <tbody>
+        <tr><td class="nw">\(GL(n,\mathbb R)\)</td><td class="nw">\(\det A\neq0\)</td><td class="r">\(n^2\)</td><td>所有可逆线性变换</td></tr>
+        <tr><td class="nw">\(SL(n,\mathbb R)\)</td><td class="nw">\(\det A=1\)</td><td class="r">\(n^2-1\)</td><td>保持面积、体积的线性变换</td></tr>
+        <tr><td class="nw">\(O(n)\)</td><td class="nw">\(A^{\mathsf T}A=I\)</td><td class="r">\(\tfrac{n(n-1)}{2}\)</td><td>转动加反映</td></tr>
+        <tr><td class="nw">\(SO(n)\)</td><td class="nw">\(A^{\mathsf T}A=I,\ \det A=1\)</td><td class="r">\(\tfrac{n(n-1)}{2}\)</td><td>转动；\(SO(3)\) 有 3 个参数</td></tr>
+        <tr><td class="nw">\(U(n)\)</td><td class="nw">\(A^{\dagger}A=I\)</td><td class="r">\(n^2\)</td><td>量子力学里的幺正变换</td></tr>
+        <tr><td class="nw">\(SU(n)\)</td><td class="nw">\(A^{\dagger}A=I,\ \det A=1\)</td><td class="r">\(n^2-1\)</td><td>\(SU(2)\) 管自旋，\(SU(3)\) 管夸克的色</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="zhu"><b>意思</b>为什么用方程圈出来的矩阵集合是光滑流形？<button type="button" class="term" data-g="closed">闭子群定理</button>说：\(GL(n)\) 里任何一个闭子群自动是李群。表里的条件都是“某个连续函数取定值”，满足条件的矩阵组成闭集，所以都适用，不必逐个去造坐标。</p>
+</section>
+
+<!-- ═══════════════ 切：李代数 ═══════════════ -->
+<section id="s-qie" aria-labelledby="h-qie">
+  <div class="head"><span class="seal" aria-hidden="true">切</span><h2 id="h-qie">在单位元处取切线：李代数</h2></div>
+  <p>圆是弯的，弯的东西不好算。可是把单位元 \(e\) 附近的一小段放大，它就越来越像一条直线：这条直线是圆在 \(e\) 处的<button type="button" class="term" data-g="tangent">切空间</button>。拖动下面的放大倍数看。</p>
+
+  <div class="stage" id="lab-qie">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k3">示意</span>放大单位元 \(e=R(0)\) 附近：墨线是圆，朱色虚线是 \(e\) 处的切线，朱箭头是切向量 \(J\)；短朱线标出圆离切线有多远</span>
+      <div class="wash-box"><canvas id="qie" role="img" aria-label="单位元附近的圆弧与切线，可调放大倍数"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span>放大</span><input type="range" id="qie-k" min="0" max="1000" step="1" value="314" aria-label="放大倍数（对数刻度）"><output id="qie-k-o"></output></label>
+      </div>
+    </div>
+    <aside class="panel" id="qie-panel" aria-live="polite"></aside>
+  </div>
+
+  <p>切空间是线性空间：切向量可以相加、数乘。它比群本身好算得多，又保留了群在 \(e\) 附近的全部信息（第四节会说清“全部”指什么）。于是给它一个名字：</p>
+  <div class="boxed">
+    <p><span class="ev">定义</span>李群 \(G\) 在单位元处的切空间 \(T_eG\) 叫做 \(G\) 的<strong>李代数</strong>，记作 \(\mathfrak g\)（德文花体的 g）。对矩阵李群，\(\mathfrak g\) 就是所有落在 \(G\) 里、过 \(I\) 的光滑曲线 \(\gamma(t)\)（\(\gamma(0)=I\)）在 \(t=0\) 处的速度 \(\gamma'(0)\) 组成的集合。</p>
+    <p>习惯上用对应的小写花体：\(SO(n)\) 的李代数记作 \(\mathfrak{so}(n)\)，\(SU(2)\) 的记作 \(\mathfrak{su}(2)\)。</p>
+  </div>
+
+  <p>下面对三个群算出它们的李代数。每一步只用一件事：对定义这个群的方程求导。</p>
+  <ol class="deriv">
+    <li>
+      <div class="step">
+        <p>先算 \(SO(2)\)。对 \(R(\theta)\) 逐个元素求导，在 \(\theta=0\) 取值：</p>
+        <div class="eq" data-label="J">$$J=\frac{dR}{d\theta}\Big|_{\theta=0}=\begin{pmatrix}-\sin\theta&-\cos\theta\\ \cos\theta&-\sin\theta\end{pmatrix}_{\theta=0}=\begin{pmatrix}0&-1\\1&0\end{pmatrix}.$$</div>
+        <p>\(\mathfrak{so}(2)=\{aJ: a\in\mathbb R\}\) 是一条直线，就是图里那条朱线。\(J\) 作用在点 \(e\)，即向量 \((1,0)\) 上，得到 \((0,1)\)：竖直向上，正是圆在这一点的切向。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>矩阵值函数的导数就是逐个元素求导：\(\big(\gamma'(t)\big)_{ij}=\gamma_{ij}'(t)\)。“对群元求导”不需要新工具，只是四个普通的实函数各求一次导。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>一般的 \(SO(n)\)。设 \(\gamma(t)\) 是 \(SO(n)\) 里过 \(I\) 的光滑曲线，它对所有 \(t\) 满足 \(\gamma(t)^{\mathsf T}\gamma(t)=I\)。两边对 \(t\) 求导，再令 \(t=0\)，记 \(X=\gamma'(0)\)：</p>
+        <div class="eq" data-label="so">$$\gamma'(t)^{\mathsf T}\gamma(t)+\gamma(t)^{\mathsf T}\gamma'(t)=0\quad\xrightarrow{\;t=0\;}\quad X^{\mathsf T}+X=0.$$</div>
+        <p>所以 \(\mathfrak{so}(n)\) 由<button type="button" class="term" data-g="antisym">反对称矩阵</button>组成。\(n\times n\) 反对称矩阵对角线全是 0，上三角的 \(n(n-1)/2\) 个元素决定一切，这正是 \(SO(n)\) 的维数。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>这里用了<button type="button" class="term" data-g="product">乘积求导法则</button>：矩阵乘积的每个元素是若干个“两函数之积”的和，逐项用 \((fg)'=f'g+fg'\)，就得到 \((AB)'=A'B+AB'\)。矩阵不能交换，两项的左右顺序要保持。右边的 \(I\) 是常数，导数为 0。</p>
+        <p class="zhu"><b>意思</b>这一步只说明“切向量一定反对称”。反过来，“每个反对称矩阵都是某条曲线的切向量”，要等下一节的指数映射来补：\(\exp(tX)\) 就是那条曲线。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>\(SL(n)\)。曲线满足 \(\det\gamma(t)=1\)。在 \(t=0\) 附近 \(\gamma(t)=I+tX+O(t^2)\)，而</p>
+        <div class="eq" data-label="det">$$\det(I+tX)=1+t\operatorname{tr}X+O(t^2).$$</div>
+        <p>对 \(t\) 求导再令 \(t=0\)，得 \(\operatorname{tr}X=0\)：\(\mathfrak{sl}(n)\) 由<button type="button" class="term" data-g="trace">迹</button>为零的矩阵组成，维数 \(n^2-1\)。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>把行列式按定义展开成 \(n!\) 个乘积之和，每个乘积从每行各取一个元素。非对角元都带因子 \(t\)；一个排列只要不是恒等，就至少挪动两个位置，取到至少两个非对角元，所以这些乘积是 \(O(t^2)\)。剩下对角线那一项 \(\prod_i(1+tX_{ii})=1+t\sum_iX_{ii}+O(t^2)\)。</p>
+        <p class="zhu"><b>意思</b><button type="button" class="term" data-g="bigO">\(O(t^2)\)</button> 表示“不超过某个常数乘 \(t^2\) 的项”。它除以 \(t\) 之后仍趋于 0，所以求一阶导数时不起作用。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>回到 \(SO(3)\)。\(3\times3\) 反对称矩阵有 3 个独立元素，取下面三个作基。它们分别是绕 \(x,y,z\) 轴转动的“速度”，叫做 \(\mathfrak{so}(3)\) 的<button type="button" class="term" data-g="generator">生成元</button>：</p>
+        <div class="eq" data-label="Lk">$$L_x=\begin{pmatrix}0&0&0\\0&0&-1\\0&1&0\end{pmatrix},\quad L_y=\begin{pmatrix}0&0&1\\0&0&0\\-1&0&0\end{pmatrix},\quad L_z=\begin{pmatrix}0&-1&0\\1&0&0\\0&0&0\end{pmatrix}.$$</div>
+        <p>\(L_z\) 就是把 \(J\) 放进左上角：绕 \(z\) 轴转动时 \(z\) 坐标不动，\(xy\) 平面里是一个 \(SO(2)\)。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>\(L_x\) 是 \(R_x(\theta)=\begin{pmatrix}1&0&0\\0&\cos\theta&-\sin\theta\\0&\sin\theta&\cos\theta\end{pmatrix}\) 在 \(\theta=0\) 处的导数，算法和第一步完全一样。物理书常把它们乘上 \(i\hbar\) 写成角动量算符，第四节末尾会说到。</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ═══════════════ 卷：指数映射 ═══════════════ -->
+<section id="s-juan" aria-labelledby="h-juan">
+  <div class="head"><span class="seal" aria-hidden="true">卷</span><h2 id="h-juan">指数映射：把切线卷回圆上</h2></div>
+  <p>反过来，手里有一个切向量 \(X\in\mathfrak g\)，怎样回到群里？让一个点从 \(I\) 出发，每时每刻按 \(X\) 规定的方式运动：速度等于“当前位置乘 \(X\)”。</p>
+  <div class="eq" data-label="ode">$$\gamma'(t)=\gamma(t)\,X,\quad \gamma(0)=I\qquad\Longrightarrow\qquad \gamma(t)=\exp(tX)=\sum_{k=0}^{\infty}\frac{(tX)^k}{k!}=I+tX+\frac{t^2X^2}{2!}+\frac{t^3X^3}{3!}+\cdots$$</div>
+  <p>这就是<button type="button" class="term" data-g="expmap">指数映射</button>。曲线 \(t\mapsto\exp(tX)\) 满足 \(\exp(sX)\exp(tX)=\exp\big((s+t)X\big)\)，叫做<button type="button" class="term" data-g="oneparam">单参数子群</button>。</p>
+  <ol class="deriv">
+    <li>
+      <div class="step">
+        <p>级数对任何方阵都收敛，而且可以逐项求导：</p>
+        <div class="eq" data-label="conv">$$\Big\|\frac{X^k}{k!}\Big\|\le\frac{\|X\|^k}{k!},\qquad \frac{d}{dt}\exp(tX)=\sum_{k\ge1}\frac{k\,t^{k-1}X^k}{k!}=\exp(tX)\,X.$$</div>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>矩阵范数满足<button type="button" class="term" data-g="submult">\(\|AB\|\le\|A\|\,\|B\|\)</button>，所以第 \(k\) 项的大小不超过实数 \(\|X\|^k/k!\)。后者加起来是 \(e^{\|X\|}\)，有限。被一个收敛的正项级数压住，矩阵级数就<button type="button" class="term" data-g="absconv">绝对收敛</button>。</p>
+        <p class="zhu"><b>意思</b>对 \(t\) 来说，这是一个系数为矩阵的幂级数，收敛半径无穷大。幂级数在收敛半径以内可以逐项求导，所以把求导号伸进求和号里是合法的。求出来正好是 \(\exp(tX)X\)，说明 \(\exp(tX)\) 确实解了 \(\gamma'=\gamma X\)。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>对 \(SO(2)\) 算一次。\(J^2=-I\)，所以 \(J\) 的偶次幂是 \(\pm I\)，奇次幂是 \(\pm J\)：</p>
+        <div class="eq" data-label="euler">$$\exp(\theta J)=\Big(1-\frac{\theta^2}{2!}+\frac{\theta^4}{4!}-\cdots\Big)I+\Big(\theta-\frac{\theta^3}{3!}+\cdots\Big)J=\cos\theta\,I+\sin\theta\,J=R(\theta).$$</div>
+        <p>这是欧拉公式 \(e^{i\theta}=\cos\theta+i\sin\theta\) 的矩阵版，\(J\) 扮演 \(i\) 的角色。切线上长 \(\theta\) 的一段 \(\theta J\)，卷回来是圆上转角 \(\theta\) 的那一点：卷首图里的虚线画的就是这件事。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>把一个级数按奇偶项拆成两个级数，要求原级数绝对收敛（上一步刚证过）。只是条件收敛的级数，重排之后可能收敛到别的值，甚至发散。</p>
+      </div>
+    </li>
+  </ol>
+
+  <p>下图把 \(e^{i\theta}=\sum(i\theta)^k/k!\) 的各项首尾相接画出来。第 0 项从原点走到 \(1\)，也就是 \(e\)；第 1 项 \(i\theta\) 竖直向上，正是 \(e\) 处长 \(\theta\) 的切线段；后面的项一项一项把它往回卷，最后落到圆上的 \(e^{i\theta}\)。</p>
+  <div class="stage" id="lab-juan">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>前 \(N+1\) 项首尾相接。朱色一段是第 1 项 \(i\theta\)，朱圈是 \(e^{i\theta}\)，圆上的朱弧是切线段卷回来的样子。比例尺随部分和自动缩放</span>
+      <div class="wash-box"><canvas id="juan" role="img" aria-label="exp(iθ) 级数部分和的折线，逐项逼近单位圆上的点"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span><i>θ</i> =</span><input type="range" id="juan-th" min="0" max="6.28" step="0.01" value="1.8" aria-label="θ（弧度）"><output id="juan-th-o"></output></label>
+        <label class="slider"><span>项数 <i>N</i> =</span><input type="range" id="juan-n" min="0" max="24" step="1" value="4" aria-label="部分和取到第 N 项"><output id="juan-n-o"></output></label>
+      </div>
+    </div>
+    <aside class="panel" id="juan-panel" aria-live="polite"></aside>
+  </div>
+
+  <h3 class="sub">指数映射还让平面流动起来</h3>
+  <p>一个 \(2\times2\) 实矩阵 \(A\) 不只给出群里的一条曲线，还给出平面上的一个<strong>流</strong>：把每一点 \(x\) 送到 \(\exp(tA)\,x\)。\(A\) 规定的是每一点的速度 \(Ax\)。所谓“李代数的元素是无穷小变换”，指的就是这个。下面选几个 \(A\)，看一个字在流里怎样变形。</p>
+  <div class="stage" id="lab-liu">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>淡墨是原来的字，浓墨是 \(\exp(tA)\) 作用后的字；细线是流线，小箭头指流向；朱线是单位圆被送到的地方</span>
+      <div class="chips" id="liu-kind" role="group" aria-label="选矩阵 A">
+        <button type="button" data-k="rot" aria-pressed="false">转：椭圆型</button>
+        <button type="button" data-k="shear" aria-pressed="true">剪：抛物型</button>
+        <button type="button" data-k="squeeze" aria-pressed="false">挤：双曲型</button>
+        <button type="button" data-k="spiral" aria-pressed="false">螺：迹不为零</button>
+      </div>
+      <div class="wash-box"><canvas id="liu" role="img" aria-label="平面上的流线和被 exp(tA) 变形的“李”字"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span><i>t</i> =</span><input type="range" id="liu-t" min="-2" max="2" step="0.01" value="0.9" aria-label="流动时间 t"><output id="liu-t-o"></output></label>
+        <button type="button" class="toggle" id="liu-play" aria-pressed="false">流动</button>
+      </div>
+    </div>
+    <aside class="panel" id="liu-panel" aria-live="polite"></aside>
+  </div>
+  <p>前三个 \(A\) 的迹都是 0，字被转、被剪、被挤，面积始终不变；第四个 \(A\) 的迹是 \(0.5\)，字一边转一边按 \(e^{0.5t}\) 改变面积。原因是一条对所有方阵都成立的公式：</p>
+  <div class="eq" data-label="dettr">$$\det\exp(X)=e^{\operatorname{tr}X}.$$</div>
+  <p>所以 \(\operatorname{tr}X=0\) 当且仅当 \(\det\exp(tX)=1\) 对所有 \(t\) 成立。这是式 {{eq:det}} 的整体版本：迹为零的矩阵卷回来，正好落在 \(SL(n)\) 里。</p>
+  <p class="zhu"><b>意思</b>令 \(f(t)=\det\exp(tX)\)。由 \(\exp\big((t+h)X\big)=\exp(tX)\exp(hX)\) 和式 {{eq:det}}，\(f(t+h)=f(t)\big(1+h\operatorname{tr}X+O(h^2)\big)\)，所以 \(f'(t)=\operatorname{tr}X\cdot f(t)\)，且 \(f(0)=1\)。这个一阶线性常微分方程的唯一解是 \(f(t)=e^{t\operatorname{tr}X}\)，取 \(t=1\) 即得。</p>
+  <p class="zhu"><b>意思</b>指数映射不一定到得了群里的每个元素。对 \(X\in\mathfrak{sl}(2,\mathbb R)\)，按 \(\det X\) 为正、零、负，\(\operatorname{tr}\exp X\) 分别是 \(2\cos\omega\)、\(2\)、\(2\cosh\lambda\)，总是 \(\ge-2\)；而 \(\operatorname{diag}(-2,-\tfrac12)\in SL(2,\mathbb R)\) 的迹是 \(-2.5\)，所以它不是任何 \(\exp X\)。\(SO(n)\)、\(SU(n)\) 这类<button type="button" class="term" data-g="compact">紧致</button>连通的群没有这个问题，指数映射是满射。</p>
+</section>
+
+<!-- ═══════════════ 括：李括号 ═══════════════ -->
+<section id="s-kuo" aria-labelledby="h-kuo">
+  <div class="head"><span class="seal" aria-hidden="true">括</span><h2 id="h-kuo">李括号：先转 x 再转 y，和反过来差多少</h2></div>
+  <p>在 \(SO(2)\) 里，先转 \(\alpha\) 再转 \(\beta\)，与先转 \(\beta\) 再转 \(\alpha\) 一样：它是交换群。\(SO(3)\) 不是。拿一本书试一下：绕 \(x\) 轴转 \(90^\circ\) 再绕 \(y\) 轴转 \(90^\circ\)，和反过来的顺序相比，书最后的朝向不同。</p>
+  <p>转角很小的时候差多少？做一个来回：绕 \(y\) 转 \(-\varepsilon\)，绕 \(x\) 转 \(-\varepsilon\)，绕 \(y\) 转 \(+\varepsilon\)，绕 \(x\) 转 \(+\varepsilon\)。转动如果可以交换，四步正好抵消，点回到起点。实际上差一点：</p>
+
+  <div class="stage" id="lab-kuo">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>球面上一点依次走四段弧 ①②③④。墨点是起点 \(p_0\)，朱点是终点，朱圈是“绕 \(z\) 轴转 \(\varepsilon^2\)”预测的位置。左右拖动球可以换角度</span>
+      <div class="wash-box"><canvas id="kuo" class="drag" tabindex="0" role="img" aria-label="单位球面上的四段弧路径，终点与起点之间差一个绕 z 轴的小转动；可拖动或用方向键转动视角"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span><i>ε</i> =</span><input type="range" id="kuo-e" min="2" max="60" step="1" value="30" aria-label="每一步的转角 ε（度）"><output id="kuo-e-o"></output></label>
+        <button type="button" class="toggle" id="kuo-play" aria-pressed="false">走一遍</button>
+      </div>
+    </div>
+    <aside class="panel" id="kuo-panel" aria-live="polite"></aside>
+  </div>
+
+  <p>终点没有回到起点，离开的量几乎正好是“绕 \(z\) 轴转 \(\varepsilon^2\)”。\(\varepsilon\) 越小，这个“几乎”越准。要展开到二阶才看得到原因：</p>
+  <ol class="deriv">
+    <li>
+      <div class="step">
+        <p>每个因子展开到 \(\varepsilon^2\)：\(e^{\pm\varepsilon X}=I\pm\varepsilon X+\tfrac{\varepsilon^2}{2}X^2+O(\varepsilon^3)\)。四个相乘：</p>
+        <div class="eq" data-label="gc">$$e^{\varepsilon X}e^{\varepsilon Y}e^{-\varepsilon X}e^{-\varepsilon Y}=I+\varepsilon^2\,(XY-YX)+O(\varepsilon^3).$$</div>
+        <p>右边从右往左作用：先 \(e^{-\varepsilon Y}\)，最后 \(e^{\varepsilon X}\)，就是图里 ①②③④ 的顺序（\(X=L_x\)，\(Y=L_y\)）。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>一阶项是 \(\varepsilon(X+Y-X-Y)=0\)，完全抵消，这就是“小转动近似可以交换”。二阶项有两个来源：四个因子各自的 \(\tfrac{\varepsilon^2}{2}X^2\) 一类项，合计 \(\varepsilon^2(X^2+Y^2)\)；从两个不同因子各取一个一阶项相乘，按左右顺序是 \(\varepsilon^2(XY-X^2-XY-YX-Y^2+XY)\)。两者相加只剩 \(\varepsilon^2(XY-YX)\)。</p>
+        <p class="zhu"><b>意思</b>“\(+O(\varepsilon^3)\)”能放心丢掉，因为乘积的每个元素都是 \(\varepsilon\) 的光滑函数，<button type="button" class="term" data-g="taylor">带余项的泰勒公式</button>保证余项不超过某个常数乘 \(|\varepsilon|^3\)。除以 \(\varepsilon^2\) 后它趋于 0，所以图上 \(\varphi/\varepsilon^2\to1\)。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>于是定义<button type="button" class="term" data-g="bracket">李括号</button> \([X,Y]=XY-YX\)。直接相乘可以验证</p>
+        <div class="eq" data-label="so3br">$$[L_x,L_y]=L_z,\qquad [L_y,L_z]=L_x,\qquad [L_z,L_x]=L_y.$$</div>
+        <p>代回式 {{eq:gc}}：先 \(x\) 后 \(y\) 再倒回来，净效果是 \(I+\varepsilon^2L_z\approx\exp(\varepsilon^2L_z)\)，即绕 \(z\) 轴转 \(\varepsilon^2\)。这就是图里朱圈的位置。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>三条合写成一条：\([L_i,L_j]=\sum_k\epsilon_{ijk}L_k\)，\(\epsilon_{ijk}\) 是列维-奇维塔符号。这些系数叫<button type="button" class="term" data-g="structconst">结构常数</button>。换一组基它们会变，但给定了基，它们就完全决定了李代数。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>物理里把生成元乘上 \(i\hbar\)，写成角动量算符 \(\hat J_k=i\hbar L_k\)。代入上式：</p>
+        <div class="eq" data-label="Jcomm">$$[\hat J_x,\hat J_y]=(i\hbar)^2[L_x,L_y]=-\hbar^2L_z=i\hbar\,\hat J_z.$$</div>
+        <p>量子力学课上的角动量对易关系，就是 \(\mathfrak{so}(3)\) 的李括号换了个写法。转动算符 \(\exp(-i\theta\,\boldsymbol n\cdot\hat{\boldsymbol J}/\hbar)=\exp(\theta\,\boldsymbol n\cdot\boldsymbol L)\) 是同一个指数映射。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>为什么要乘 \(i\)：反对称实矩阵 \(L_k\) 的本征值是纯虚数；乘上 \(i\) 变成<button type="button" class="term" data-g="hermitian">厄米矩阵</button>，本征值是实数，才能当作可观测量（角动量的测量值）。\(\hbar\) 只是给它配上角动量的单位。</p>
+      </div>
+    </li>
+  </ol>
+  <div class="boxed">
+    <p><span class="ev">定义</span>抽象地说，<strong>李代数</strong>是一个线性空间 \(\mathfrak g\) 带一个运算 \([\cdot,\cdot]\)，满足三条：双线性；反对称 \([X,Y]=-[Y,X]\)；<button type="button" class="term" data-g="jacobi">雅可比恒等式</button></p>
+    <div class="eq">$$[X,[Y,Z]]+[Y,[Z,X]]+[Z,[X,Y]]=0.$$</div>
+    <p>矩阵的 \(XY-YX\) 自动满足这三条。李群的切空间 \(T_eG\) 配上式 {{eq:gc}} 里冒出来的这个括号，就是它的李代数。</p>
+  </div>
+
+  <h3 class="sub">括号决定乘法</h3>
+  <p>括号不只是量“差多少”。<button type="button" class="term" data-g="bch">BCH 公式</button>说，两个群元的乘积可以完全用括号写出来：</p>
+  <div class="eq" data-label="bch">$$e^{X}e^{Y}=\exp\Big(X+Y+\tfrac12[X,Y]+\tfrac1{12}\big[X,[X,Y]\big]-\tfrac1{12}\big[Y,[X,Y]\big]+\cdots\Big).$$</div>
+  <p>省略号里全是越来越长的嵌套括号。所以在单位元附近，群的乘法表完全由李代数（线性空间加括号）决定。这是标题“以切知圆”的意思：切空间不只是一个近似，它带着群在 \(e\) 附近的全部信息。</p>
+  <p class="zhu"><b>意思</b>如果 \(X,Y\) 可交换，所有括号为零，公式退回熟悉的 \(e^Xe^Y=e^{X+Y}\)。一般情况下这个级数只在 \(X,Y\) 足够小时收敛，所以说的是“单位元附近”。</p>
+</section>
+
+<!-- ═══════════════ 覆：SU(2) 与自旋 ═══════════════ -->
+<section id="s-fu" aria-labelledby="h-fu">
+  <div class="head"><span class="seal" aria-hidden="true">覆</span><h2 id="h-fu">同一个李代数，两个群：SU(2) 与自旋</h2></div>
+  <p>\(2\times2\) 幺正、行列式为 1 的复矩阵组成 \(SU(2)\)。照第二节的办法对 \(U^\dagger U=I\) 和 \(\det U=1\) 求导，它的李代数由无迹的<button type="button" class="term" data-g="antiherm">反厄米矩阵</button>组成。取基 \(t_k=-\tfrac{i}{2}\sigma_k\)，\(\sigma_k\) 是<button type="button" class="term" data-g="pauli">泡利矩阵</button>：</p>
+  <div class="eq" data-label="su2">$$[t_x,t_y]=t_z,\qquad [t_y,t_z]=t_x,\qquad [t_z,t_x]=t_y.$$</div>
+  <p>和式 {{eq:so3br}} 一字不差：\(\mathfrak{su}(2)\) 与 \(\mathfrak{so}(3)\) 是同一个李代数。按上一节，\(SU(2)\) 和 \(SO(3)\) 在单位元附近也就一模一样。离单位元远了呢？把同一个生成元分别在两个群里卷起来，绕 \(z\) 轴转 \(\theta\)：</p>
+  <div class="eq" data-label="Uz">$$R_z(\theta)=\exp(\theta L_z),\qquad U_z(\theta)=\exp(\theta\,t_z)=\begin{pmatrix}e^{-i\theta/2}&0\\0&e^{i\theta/2}\end{pmatrix}.$$</div>
+  <p>\(\theta=2\pi\) 时 \(R_z=I\)，\(U_z\) 却是 \(-I\)。要转到 \(4\pi\)，\(U_z\) 才回到 \(I\)。</p>
+
+  <div class="stage" id="lab-fu">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k3">示意</span>同一个 \(\theta\)，三处看：转盘本身、\(SO(3)\) 里的转动、\(SU(2)\) 里的相位</span>
+      <div class="trio">
+        <figure><div class="wash-box sq"><canvas id="fu-obj" role="img" aria-label="绕竖直轴转动的转盘"></canvas></div><figcaption><b>转盘</b>　绕竖直轴转了 \(\theta\)。</figcaption></figure>
+        <figure><div class="wash-box sq"><canvas id="fu-so3" role="img" aria-label="SO(3) 的球模型中，绕 z 轴转动对应的点沿竖直直径移动"></canvas></div><figcaption><b>\(SO(3)\) 的球</b>　每个转动画成球内一点：方向是转轴，到球心的距离是转角（0 到 \(\pi\)）。</figcaption></figure>
+        <figure><div class="wash-box sq"><canvas id="fu-su2" role="img" aria-label="单位圆上的相位 e^(−iθ/2)"></canvas></div><figcaption><b>\(SU(2)\) 的相位</b>　朱点是 \(U_z\) 左上角的 \(e^{-i\theta/2}\)。</figcaption></figure>
+      </div>
+      <div class="ctrl">
+        <label class="slider"><span><i>θ</i> =</span><input type="range" id="fu-th" min="0" max="720" step="1" value="360" aria-label="转角 θ（度），最大 720"><output id="fu-th-o"></output></label>
+        <button type="button" class="toggle" id="fu-play" aria-pressed="false">转两圈</button>
+      </div>
+    </div>
+    <aside class="panel" id="fu-panel" aria-live="polite"></aside>
+  </div>
+
+  <p>两个群之间有一个映射，把 \(U\in SU(2)\) 送到它在三维空间里对应的转动：</p>
+  <div class="eq" data-label="cover">$$R(U)_{ij}=\tfrac12\operatorname{tr}\big(\sigma_iU\sigma_jU^{\dagger}\big),\qquad R(-U)=R(U).$$</div>
+  <p>它保持乘法，\(R(UV)=R(U)R(V)\)，是一个<button type="button" class="term" data-g="homo">同态</button>；\(U\) 与 \(-U\) 送到同一个转动，每个转动在 \(SU(2)\) 里恰有两个原像。这叫<button type="button" class="term" data-g="cover">双覆盖</button>，\(SO(3)\cong SU(2)/\{\pm I\}\)。</p>
+  <p class="zhu"><b>意思</b>为什么恰好是 \(\pm U\)：若 \(R(U)=I\)，则 \(U\sigma_jU^\dagger=\sigma_j\) 对每个 \(j\) 成立，\(U\) 与三个泡利矩阵都对易，只能是单位矩阵的倍数 \(cI\)；再由 \(\det U=c^2=1\) 得 \(c=\pm1\)。</p>
+
+  <h3 class="sub">转 2π 的那一圈为什么缩不掉</h3>
+  <p>在 \(SO(3)\) 里，“绕 \(z\) 轴从 0 转到 \(2\pi\)”是一条从 \(I\) 出发又回到 \(I\) 的闭路。在 \(SU(2)\) 里，同一个过程从 \(I\) 走到 \(-I\)，根本没闭合。这个差别在 \(SO(3)\) 内部也看得出来：这条闭路不能连续地缩成一点，走两遍（\(4\pi\)）的那条却可以。</p>
+  <p>还用上面的球。球半径是 \(\pi\)，球面上每一对对径点代表同一个转动：绕 \(\boldsymbol n\) 转 \(\pi\) 与绕 \(-\boldsymbol n\) 转 \(\pi\) 相同。转 \(2\pi\) 的闭路从球心出发，走到球面，从对面<strong>跳</strong>回来，再走回球心。下图试着收缩它：把转轴从 \(+z\) 慢慢倒向 \(-z\)。</p>
+  <div class="stage" id="lab-loop">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k3">示意</span>球的竖直截面。墨线是闭路，箭头是走向；朱色虚弧连起两个对径点，表示从这里跳到对面</span>
+      <div class="chips" id="loop-kind" role="group" aria-label="选闭路">
+        <button type="button" data-k="2" aria-pressed="false">转 2π：一圈</button>
+        <button type="button" data-k="4" aria-pressed="true">转 4π：两圈</button>
+      </div>
+      <div class="wash-box"><canvas id="loop" role="img" aria-label="SO(3) 球模型截面上的闭路及其收缩过程"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span>收缩 <i>s</i> =</span><input type="range" id="loop-s" min="0" max="2" step="0.005" value="0.6" aria-label="收缩进度 s"><output id="loop-s-o"></output></label>
+        <button type="button" class="toggle" id="loop-play" aria-pressed="false">试着收缩</button>
+      </div>
+    </div>
+    <aside class="panel" id="loop-panel" aria-live="polite"></aside>
+  </div>
+  <p>一圈的时候，把转轴倒过去，只会把闭路变成“反着走一圈”，那一对跳跃点始终在。两圈的时候，只倒第二圈的转轴，它就变成第一圈倒着走，两圈首尾相消，整条闭路收回球心。用拓扑的话说，\(SO(3)\) 的<button type="button" class="term" data-g="simply">基本群</button>是 \(\mathbb Z_2\)：转 \(2\pi\) 的闭路是那个非零元，走两遍等于零。\(SU(2)\) 作为空间是三维球面 \(S^3\)，单连通，任何闭路都缩得掉。</p>
+  <p class="zhu"><b>意思</b>“连续地缩成一点”是说存在一族闭路 \(\gamma_s\)，对 \(s\) 和路上的参数都连续，\(\gamma_0\) 是原来的闭路，最后一条是停在原地的常值闭路。图里转轴倾斜的角度就是这个 \(s\)。倾斜的过程中，每一圈都还是“绕某个轴转 \(2\pi\)”，所以每一刻都是 \(SO(3)\) 里一条合格的闭路。</p>
+  <p><strong>这件事可以测量。</strong>自旋 \(\tfrac12\) 的粒子按 \(SU(2)\) 变换：绕任何轴转 \(2\pi\)，态矢量乘以 \(-1\)。单个粒子看不出整体的符号，但让中子束分成两路，只让其中一路的自旋在磁场中进动 \(2\pi\)，再合起来干涉，条纹就会反相；进动 \(4\pi\) 才复原。1975 年两个中子干涉实验组分别观测到了这一点（Rauch 等；Werner 等，见卷末）。</p>
+  <p class="zhu"><b>意思</b>李代数相同、群不同，这是普遍现象。<button type="button" class="term" data-g="lie3">李第三定理</button>和它的配套结论说：每个有限维实李代数恰好对应一个单连通的李群；有同一个李代数的其他连通李群，都是它除以中心里的一个离散子群。\(\mathfrak{so}(3)\) 对应的单连通群是 \(SU(2)\)，\(SO(3)\) 是它除以 \(\{\pm I\}\)。</p>
+</section>
+
+<!-- ═══════════════ 用：物理与化学 ═══════════════ -->
+<section id="s-yong" aria-labelledby="h-yong">
+  <div class="head"><span class="seal" aria-hidden="true">用</span><h2 id="h-yong">在物理和化学里遇到它们</h2></div>
+  <p>李群通过它的<button type="button" class="term" data-g="rep">表示</button>进入物理：群元变成作用在态空间上的矩阵，李代数的生成元变成可观测量。表里列几个最常见的。</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>群</th><th>生成元</th><th>在哪里遇到</th></tr></thead>
+      <tbody>
+        <tr><td class="nw">\(U(1)\cong SO(2)\)</td><td class="nw">1 个</td><td>波函数的整体相位。平面转子 \(\psi\propto e^{im\phi}\)：转一圈要回到原值，所以 \(m\) 是整数，这正是 \(U(1)\) 的不可约表示的标号。</td></tr>
+        <tr><td class="nw">\(SO(3)\)</td><td class="nw">3 个：\(L_x,L_y,L_z\)</td><td>轨道角动量，\([\hat J_x,\hat J_y]=i\hbar\hat J_z\)。球对称势中 \(l\) 相同、\(m\) 不同的 \(2l+1\) 个态能量相同，因为球谐函数 \(Y_{lm}\)（\(m=-l,\dots,l\)）张成 \(SO(3)\) 的一个 \(2l+1\) 维<button type="button" class="term" data-g="irrep">不可约表示</button>。</td></tr>
+        <tr><td class="nw">点群 \(\subset O(3)\)</td><td class="nw">有限群，无</td><td>分子的点群是 \(O(3)\) 的有限子群。把 \(SO(3)\) 的表示限制到点群上，\(2l+1\) 重简并按点群的不可约表示劈裂：\(d\) 轨道（\(l=2\)）在八面体场 \(O_h\) 里分成 \(t_{2g}\)（3 个）和 \(e_g\)（2 个）。</td></tr>
+        <tr><td class="nw">\(SU(2)\)</td><td class="nw">3 个：\(\sigma_k/2\)</td><td>电子、质子、中子的自旋 \(\tfrac12\)。核磁共振里，自旋在静磁场中的拉莫尔进动 \(\exp(-i\omega_0t\,\sigma_z/2)\) 就是绕磁场方向的 \(SU(2)\) 转动。</td></tr>
+        <tr><td class="nw">\(SL(2,\mathbb R)\)</td><td class="nw">3 个</td><td>傍轴光学的 ABCD 光线传输矩阵：入射和出射在同一种介质中时，行列式为 1。</td></tr>
+        <tr><td class="nw">洛伦兹群 \(SO^+(1,3)\)</td><td class="nw">6 个：3 转动 + 3 推进</td><td>狭义相对论。两个不同方向推进的括号是一个转动，所以接连两次推进会多出一个转动（托马斯进动）。</td></tr>
+        <tr><td class="nw">\(SU(3)\)</td><td class="nw">8 个</td><td>强相互作用里夸克的“色”；8 个生成元对应 8 种胶子。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ 练：五道小题 ═══════════════ -->
+<section id="s-quiz" aria-labelledby="h-quiz">
+  <div class="head"><span class="seal" aria-hidden="true">练</span><h2 id="h-quiz">五道小题</h2></div>
+  <div class="quiz">
+    <div>
+      <p><span class="qn">一</span>\(SO(3)\) 是三维的，\(SU(2)\) 也是三维的。各自从李代数数一数参数。</p>
+      <details><summary>看答案</summary><div>
+        <p>\(\mathfrak{so}(3)\) 是 \(3\times3\) 反对称矩阵，独立元素 3 个。\(\mathfrak{su}(2)\) 是 \(2\times2\) 无迹反厄米矩阵 \(\begin{pmatrix}ia&b+ic\\-b+ic&-ia\end{pmatrix}\)，实参数 \(a,b,c\) 共 3 个。维数相同不意外：两者是同一个李代数。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">二</span>算 \(\exp\begin{pmatrix}0&t\\0&0\end{pmatrix}\)。</p>
+      <details><summary>看答案</summary><div>
+        <p>记 \(N=\begin{pmatrix}0&1\\0&0\end{pmatrix}\)，\(N^2=0\)，级数在第二项就停了：\(\exp(tN)=I+tN=\begin{pmatrix}1&t\\0&1\end{pmatrix}\)。这是流图里“剪”那一档的变换。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">三</span>一维李代数的括号是多少？这为什么说明 \(SO(2)\) 可以交换？</p>
+      <details><summary>看答案</summary><div>
+        <p>一维时任何两个元素都是同一个 \(J\) 的倍数，\([aJ,bJ]=ab[J,J]=0\)（反对称性给出 \([J,J]=-[J,J]\)）。括号为零，式 {{eq:bch}} 退成 \(e^Xe^Y=e^{X+Y}=e^Ye^X\)。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">四</span>为什么 \(\begin{pmatrix}-2&0\\0&-\tfrac12\end{pmatrix}\) 在 \(SL(2,\mathbb R)\) 里，却不等于任何 \(\exp X\)（\(X\in\mathfrak{sl}(2,\mathbb R)\)）？</p>
+      <details><summary>看答案</summary><div>
+        <p>由凯莱-哈密顿定理，\(X^2=-\det X\cdot I\)。按 \(\det X\) 为正、零、负，\(\exp X\) 的迹分别是 \(2\cos\omega\)、\(2\)、\(2\cosh\lambda\)，都 \(\ge-2\)。这个矩阵的迹是 \(-2.5\)。流图里“转、剪、挤”三档正好是这三种情形。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">五</span>自旋向上的态 \(|{\uparrow}\rangle\) 绕 \(z\) 轴转 \(2\pi\) 变成什么？绕 \(x\) 轴转 \(2\pi\) 呢？</p>
+      <details><summary>看答案</summary><div>
+        <p>绕 \(z\)：\(U_z(2\pi)=\operatorname{diag}(e^{-i\pi},e^{i\pi})=-I\)，态变成 \(-|{\uparrow}\rangle\)。绕 \(x\)：\(\exp(2\pi\,t_x)=\cos\pi\,I-i\sin\pi\,\sigma_x=-I\)，也是 \(-|{\uparrow}\rangle\)。绕任何轴转 \(2\pi\) 都得 \(-I\)。</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 析：注释总表 ═══════════════ -->
+<section id="s-gloss" aria-labelledby="h-gloss">
+  <div class="head"><span class="seal" aria-hidden="true">析</span><h2 id="h-gloss">注释总表</h2></div>
+  <p>正文里带虚线的词都在这里，按出现的先后排列。每条先说“意思”，再说“在这里”它起什么作用；英文名附在后面，方便查书。</p>
+  <dl class="gloss">
+    <div class="gl" id="g-liegroup"><dt>李群<small>Lie group</small></dt><dd><p><b>意思</b>一个群，同时是光滑流形，乘法和求逆都是光滑映射。直观地说：群元可以用几个连续参数描述，参数稍变，群元稍变，乘积也稍变。</p><p><b>在这里</b>\(SO(2)\)、\(SO(3)\)、\(SU(2)\)、\(SL(2,\mathbb R)\) 都是李群。有限群可以看成零维李群，但它的李代数只有零向量，没什么可算。</p></dd></div>
+    <div class="gl" id="g-pointgroup"><dt>点群<small>point group</small></dt><dd><p><b>意思</b>保持一点不动、让分子与自身重合的对称操作（转动、反映、反演、旋转反映）组成的群。</p><p><b>在这里</b>分子的点群是 \(O(3)\) 的有限子群。本页从它的转动部分 \(C_n\) 出发，让 \(n\to\infty\) 得到 \(SO(2)\)。</p></dd></div>
+    <div class="gl" id="g-manifold"><dt>光滑流形<small>smooth manifold</small></dt><dd><p><b>意思</b>每一小块看上去都像 \(\mathbb R^n\) 的空间，而且相邻小块的坐标之间可以光滑地换算。圆、球面、环面都是。</p><p><b>在这里</b>群元“连续地变”和“可以求导”都靠它。</p></dd></div>
+    <div class="gl" id="g-identity"><dt>单位元<small>identity element</small></dt><dd><p><b>意思</b>乘任何元素都不改变它的那个元素 \(e\)：\(eg=ge=g\)。矩阵群里是单位矩阵 \(I\)，转动群里是“不转”。</p><p><b>在这里</b>李代数是单位元处的切空间。</p></dd></div>
+    <div class="gl" id="g-closed"><dt>闭子群定理<small>closed-subgroup theorem</small></dt><dd><p><b>意思</b>李群的闭子群自动是李群（而且是嵌入的子流形）。对矩阵群这是冯·诺依曼证明的，一般情形归功于嘉当。</p><p><b>在这里</b>保证常见矩阵李群那张表里的群都是李群。</p></dd></div>
+    <div class="gl" id="g-tangent"><dt>切空间<small>tangent space</small></dt><dd><p><b>意思</b>流形在一点处所有可能的“速度方向”组成的线性空间：取过这一点的光滑曲线，看它在这一点的导数。维数等于流形的维数。</p><p><b>在这里</b>单位元处的切空间 \(T_eG\) 就是李代数。</p></dd></div>
+    <div class="gl" id="g-antisym"><dt>反对称矩阵<small>skew-symmetric matrix</small></dt><dd><p><b>意思</b>满足 \(X^{\mathsf T}=-X\) 的实矩阵：对角元为 0，\((i,j)\) 与 \((j,i)\) 两个元素互为相反数。</p><p><b>在这里</b>\(\mathfrak{so}(n)\) 的元素。\(n=3\) 时三个独立元素恰好对应一个三维向量 \(\boldsymbol\omega\)，\(X\boldsymbol v=\boldsymbol\omega\times\boldsymbol v\)：角速度。</p></dd></div>
+    <div class="gl" id="g-product"><dt>乘积求导法则<small>product rule</small></dt><dd><p><b>意思</b>\((fg)'=f'g+fg'\)。对矩阵函数逐个元素用它，得到 \((AB)'=A'B+AB'\)；矩阵乘法不交换，左右顺序不能换。</p><p><b>在这里</b>对 \(\gamma^{\mathsf T}\gamma=I\) 求导，推出 \(\mathfrak{so}(n)\) 由反对称矩阵组成。</p></dd></div>
+    <div class="gl" id="g-trace"><dt>迹<small>trace</small></dt><dd><p><b>意思</b>方阵对角元之和 \(\operatorname{tr}X\)，也等于全部本征值之和。</p><p><b>在这里</b>它是 \(\det(I+tX)\) 的一阶项；\(\operatorname{tr}X=0\) 刻画 \(\mathfrak{sl}(n)\)。</p></dd></div>
+    <div class="gl" id="g-bigO"><dt>大 O 记号<small>big-O notation</small></dt><dd><p><b>意思</b>\(O(t^2)\) 表示一个量，当 \(t\) 足够小时，它的绝对值不超过某个常数乘 \(t^2\)。</p><p><b>在这里</b>只关心一阶导数时，\(O(t^2)\) 的项可以直接丢掉：它除以 \(t\) 之后仍趋于 0。</p></dd></div>
+    <div class="gl" id="g-generator"><dt>生成元<small>generator</small></dt><dd><p><b>意思</b>李代数的一组基，用指数映射可以“生成”群在单位元附近的元素。</p><p><b>在这里</b>\(L_x,L_y,L_z\) 是 \(\mathfrak{so}(3)\) 的生成元，\(\exp(\theta L_k)\) 是绕各轴的转动。物理书也常把 \(i\hbar L_k\) 叫生成元。</p></dd></div>
+    <div class="gl" id="g-expmap"><dt>指数映射<small>exponential map</small></dt><dd><p><b>意思</b>\(\exp:\mathfrak g\to G\)，\(X\mapsto\sum_kX^k/k!\)。\(\exp(tX)\) 是从 \(I\) 出发、初速度为 \(X\) 的单参数子群。</p><p><b>在这里</b>把切空间里的直线 \(tX\) 卷成群里过 \(e\) 的曲线。</p></dd></div>
+    <div class="gl" id="g-oneparam"><dt>单参数子群<small>one-parameter subgroup</small></dt><dd><p><b>意思</b>从实数加法群到 \(G\) 的光滑同态 \(t\mapsto\exp(tX)\)，满足 \(\exp(sX)\exp(tX)=\exp\big((s+t)X\big)\)。</p><p><b>在这里</b>流图里每个 \(A\) 都给出一个单参数子群 \(\exp(tA)\)，拖动 \(t\) 就是沿它走。</p></dd></div>
+    <div class="gl" id="g-submult"><dt>范数的次可乘性<small>submultiplicativity</small></dt><dd><p><b>意思</b>\(\|AB\|\le\|A\|\,\|B\|\)。弗罗贝尼乌斯范数（全部元素平方和开根号）和算子范数都满足。</p><p><b>在这里</b>由它得到 \(\|X^k\|\le\|X\|^k\)，于是 \(\exp\) 的级数被 \(e^{\|X\|}\) 压住。</p></dd></div>
+    <div class="gl" id="g-absconv"><dt>绝对收敛<small>absolute convergence</small></dt><dd><p><b>意思</b>\(\sum_k\|a_k\|<\infty\)。绝对收敛的级数怎样重排、分组，和都不变。</p><p><b>在这里</b>允许把 \(\exp(\theta J)\) 的级数按奇偶项拆开，分别凑成 \(\cos\theta\) 和 \(\sin\theta\)。</p></dd></div>
+    <div class="gl" id="g-compact"><dt>紧致<small>compact</small></dt><dd><p><b>意思</b>对实数空间或矩阵空间的子集来说，就是有界闭集。</p><p><b>在这里</b>\(SO(n)\)、\(SU(n)\) 紧致，连通紧致李群的指数映射是满射。\(SL(2,\mathbb R)\) 无界，不紧致，\(\exp\) 到不了 \(\operatorname{diag}(-2,-\tfrac12)\)。</p></dd></div>
+    <div class="gl" id="g-taylor"><dt>带余项的泰勒公式<small>Taylor’s theorem with remainder</small></dt><dd><p><b>意思</b>\(f(\varepsilon)=f(0)+f'(0)\varepsilon+\tfrac12f''(0)\varepsilon^2+R(\varepsilon)\)，\(f\) 三阶连续可导时，在有界区间上 \(|R(\varepsilon)|\le C|\varepsilon|^3\)。</p><p><b>在这里</b>保证四个转动相乘后丢掉的确实是三阶小量，\(\varphi/\varepsilon^2\to1\) 才成立。</p></dd></div>
+    <div class="gl" id="g-bracket"><dt>李括号<small>Lie bracket · commutator</small></dt><dd><p><b>意思</b>矩阵情形 \([X,Y]=XY-YX\)，也叫对易子。</p><p><b>在这里</b>它量出两个无穷小转动不能交换的程度：群换位子 \(=I+\varepsilon^2[X,Y]+O(\varepsilon^3)\)。</p></dd></div>
+    <div class="gl" id="g-structconst"><dt>结构常数<small>structure constants</small></dt><dd><p><b>意思</b>在一组基 \(\{X_i\}\) 下写 \([X_i,X_j]=\sum_kc_{ijk}X_k\)，系数 \(c_{ijk}\) 就是结构常数。</p><p><b>在这里</b>\(\mathfrak{so}(3)\) 在基 \(L_k\) 下、\(\mathfrak{su}(2)\) 在基 \(t_k\) 下，结构常数都是 \(\epsilon_{ijk}\)，所以两者是同一个李代数。</p></dd></div>
+    <div class="gl" id="g-hermitian"><dt>厄米矩阵<small>Hermitian matrix</small></dt><dd><p><b>意思</b>\(A^\dagger=A\)：共轭转置等于自己。本征值都是实数，本征向量可以取成正交的。</p><p><b>在这里</b>\(i\hbar L_k\) 是厄米的，可以当作角动量算符。</p></dd></div>
+    <div class="gl" id="g-jacobi"><dt>雅可比恒等式<small>Jacobi identity</small></dt><dd><p><b>意思</b>\([X,[Y,Z]]+[Y,[Z,X]]+[Z,[X,Y]]=0\)。改写成 \([X,[Y,Z]]=[[X,Y],Z]+[Y,[X,Z]]\)，就是“对括号求括号满足乘积法则”。</p><p><b>在这里</b>抽象李代数的三条公理之一。</p></dd></div>
+    <div class="gl" id="g-bch"><dt>BCH 公式<small>Baker–Campbell–Hausdorff formula</small></dt><dd><p><b>意思</b>把 \(\log(e^Xe^Y)\) 写成 \(X\)、\(Y\) 和它们的嵌套括号的级数，前几项见式 {{eq:bch}}。</p><p><b>在这里</b>说明单位元附近群的乘法完全由李代数决定。</p></dd></div>
+    <div class="gl" id="g-antiherm"><dt>反厄米矩阵<small>anti-Hermitian matrix</small></dt><dd><p><b>意思</b>\(A^\dagger=-A\)，本征值是纯虚数。乘上 \(i\) 就变成厄米矩阵。</p><p><b>在这里</b>对 \(U^\dagger U=I\) 求导得 \(X^\dagger+X=0\)，和 \(\mathfrak{so}(n)\) 的推导一样；再由 \(\det U=1\) 得无迹，这就是 \(\mathfrak{su}(n)\)。</p></dd></div>
+    <div class="gl" id="g-pauli"><dt>泡利矩阵<small>Pauli matrices</small></dt><dd><p><b>意思</b>\(\sigma_x=\begin{pmatrix}0&1\\1&0\end{pmatrix}\)，\(\sigma_y=\begin{pmatrix}0&-i\\i&0\end{pmatrix}\)，\(\sigma_z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}\)；\(\sigma_x\sigma_y=i\sigma_z\) 及其轮换。</p><p><b>在这里</b>\(t_k=-\tfrac i2\sigma_k\) 是 \(\mathfrak{su}(2)\) 的基；\(\tfrac12\sigma_k\) 是以 \(\hbar\) 为单位的自旋 \(\tfrac12\) 角动量。</p></dd></div>
+    <div class="gl" id="g-homo"><dt>同态<small>homomorphism</small></dt><dd><p><b>意思</b>保持乘法的映射：\(\phi(gh)=\phi(g)\phi(h)\)。</p><p><b>在这里</b>\(SU(2)\to SO(3)\) 是同态；它在单位元处的导数把 \(t_k\) 送到 \(L_k\)，是两个李代数之间的同构。</p></dd></div>
+    <div class="gl" id="g-cover"><dt>双覆盖<small>double cover</small></dt><dd><p><b>意思</b>二对一的满同态，并且在每个点附近是一一的、双方连续。</p><p><b>在这里</b>\(SU(2)\to SO(3)\)：\(U\) 与 \(-U\) 有同一个像。</p></dd></div>
+    <div class="gl" id="g-simply"><dt>基本群与单连通<small>fundamental group · simply connected</small></dt><dd><p><b>意思</b>把从同一点出发、能连续变形成彼此的闭路看成一类，这些类在“接着走”的运算下组成基本群 \(\pi_1\)。所有闭路都能缩成一点，就叫单连通。</p><p><b>在这里</b>\(\pi_1\big(SO(3)\big)=\mathbb Z_2\)，\(SU(2)\cong S^3\) 单连通。</p></dd></div>
+    <div class="gl" id="g-lie3"><dt>李第三定理<small>Lie’s third theorem</small></dt><dd><p><b>意思</b>每个有限维实李代数都是某个李群的李代数。配合李第二定理（单连通群之间，李代数的同态能提升成群的同态），单连通的那个群在同构意义下唯一。</p><p><b>在这里</b>\(\mathfrak{so}(3)\cong\mathfrak{su}(2)\) 对应的单连通群是 \(SU(2)\)。</p></dd></div>
+    <div class="gl" id="g-rep"><dt>表示<small>representation</small></dt><dd><p><b>意思</b>群到某个线性空间上的可逆线性变换的同态 \(\rho:G\to GL(V)\)：每个群元变成一个矩阵，乘法变成矩阵乘法。</p><p><b>在这里</b>量子态空间上的转动算符是 \(SO(3)\) 或 \(SU(2)\) 的表示。</p></dd></div>
+    <div class="gl" id="g-irrep"><dt>不可约表示<small>irreducible representation</small></dt><dd><p><b>意思</b>没有非平凡不变子空间的表示：不能拆成更小的、各自封闭的部分。</p><p><b>在这里</b>球谐函数 \(Y_{lm}\)（\(m=-l,\dots,l\)）张成 \(SO(3)\) 的 \(2l+1\) 维不可约表示，所以球对称势中它们简并。</p></dd></div>
+  </dl>
+</section>
+
+<footer>
+  <p><strong>录。</strong>定义和定理是教材里的标准内容，可对照：Brian C. Hall，《Lie Groups, Lie Algebras, and Representations: An Elementary Introduction》，第 2 版，Springer GTM 222（2015），第 1–5 章（矩阵李群、指数映射、BCH 公式、\(SU(2)\to SO(3)\)）；John Stillwell，《Naive Lie Theory》，Springer UTM（2008）；J. J. Sakurai 与 J. Napolitano，《Modern Quantum Mechanics》第 3 章（转动、\(SU(2)\)、转 \(2\pi\) 变号与中子干涉）。</p>
+  <p>中子干涉实验：H. Rauch, A. Zeilinger, G. Badurek, A. Wilfing, W. Bauspiess, U. Bonse, Verification of coherent spinor rotation of fermions, <i>Physics Letters A</i> 54, 425–427 (1975)，<a href="https://doi.org/10.1016/0375-9601(75)90798-7">doi:10.1016/0375-9601(75)90798-7</a>；S. A. Werner, R. Colella, A. W. Overhauser, C. F. Eagen, Observation of the phase shift of a neutron due to precession in a magnetic field, <i>Physical Review Letters</i> 35, 1053–1055 (1975)，<a href="https://doi.org/10.1103/PhysRevLett.35.1053">doi:10.1103/PhysRevLett.35.1053</a>。</p>
+  <p>图里的数都是浏览器现算的：矩阵指数用“缩小再平方”加泰勒级数，\(2\times2\) 的流用凯莱-哈密顿闭式，转角和转轴从矩阵的迹和反对称部分读出。构建前，verify.mjs 用同一份代码复核了 23 条结论（括号关系、\(\det\exp X=e^{\operatorname{tr}X}\)、\(\varphi/\varepsilon^2\to1\)、BCH 的阶、\(SU(2)\to SO(3)\) 二对一等）。风车、转盘、\(SO(3)\) 球截面上的闭路是为讲解画的示意；卷首的墨珠与绕线也是示意，但绕线的形状是精确的：切线上长 \(s\) 的点正好落在圆上转角 \(s\) 处。</p>
+  <p>页面不联网：公式字体已内嵌，中文用本机的楷体和宋体。页面跟随系统的深色、浅色模式。</p>
+</footer>
+</div>
+
+<div id="pop" role="dialog" aria-labelledby="pop-title" hidden>
+  <div class="pop-top"><h3 id="pop-title"></h3><button type="button" id="pop-close">关闭</button></div>
+  <div id="pop-body"></div>
+  <a id="pop-more" href="#s-gloss">在注释总表里看这一条</a>
+</div>
+
+<script data-inline="lie.js">/*__LIE__*/</script>
+<script data-inline="ink.js">/*__INK__*/</script>
+<script data-inline="app.js">/*__APP__*/</script>
+</body>
+</html>
