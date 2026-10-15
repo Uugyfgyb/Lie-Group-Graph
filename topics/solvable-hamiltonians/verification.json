@@ -1,0 +1,482 @@
+{
+  "generated": "2026-10-15",
+  "script": "source/verify.mjs",
+  "passed": 38,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "泡利串乘法表（含 i 的幂）与矩阵乘积一致",
+      "ok": true,
+      "maxResidual": 0
+    },
+    {
+      "name": "对易判据：反对易位置个数为偶 ⇔ 矩阵对易",
+      "ok": true
+    },
+    {
+      "name": "式 (A1)：exp(Σ X_i P_i) = Σ U_i P_i + (1 − Σ P_i)（20 组随机 8×8，投影不完备）",
+      "ok": true,
+      "maxResidual": 3.610599285515185e-15
+    },
+    {
+      "name": "式 (8)(9)：U = Σ U_i P_i = exp(Σ X_i P_i)，U H U† = Σ D_i P_i",
+      "ok": true,
+      "maxResidual": 1.9564335720948573e-14
+    },
+    {
+      "name": "式 (A8)–(A10)：Π e^{X_j P} = (Π e^{X_j}) P + (1 − P)（X_j 互不对易）",
+      "ok": true,
+      "maxResidual": 0
+    },
+    {
+      "name": "三比特上 7 = 2N+1 个泡利串两两反对易",
+      "ok": true,
+      "set": [
+        "XII",
+        "YII",
+        "ZXI",
+        "ZYI",
+        "ZZX",
+        "ZZY",
+        "ZZZ"
+      ]
+    },
+    {
+      "name": "{A_i} ∪ {A_iA_j} 对易子封闭、个数 L(L+1)/2（L = 2…7）",
+      "ok": true
+    },
+    {
+      "name": "式 (20)(21)：U H U† = a·A_L，a = ‖p‖（L = 2…7，各 12 组，含 p_L < 0）",
+      "ok": true,
+      "maxResidual": 4.401920573845709e-15
+    },
+    {
+      "name": "系数空间里逐次转动：前 L−1 个分量归零，最后一个等于 a",
+      "ok": true,
+      "maxResidual": 1.3322676295501878e-15
+    },
+    {
+      "name": "乘积顺序要紧：j = 1 写在最左边时一般转不到 A_L",
+      "ok": true,
+      "reversedFails": 60,
+      "total": 60
+    },
+    {
+      "name": "U_T = CNOT(3→2)·CNOT(3→1) 把 Z₁Z₃, Z₂Z₃ 送到 Z₁, Z₂，把 X₁X₂X₃, X₁X₂Y₃, Z₃ 送到 X₃, Y₃, Z₃",
+      "ok": true,
+      "images": [
+        "1.000ZII",
+        "1.000IZI",
+        "1.000IIX",
+        "1.000IIY",
+        "1.000IIZ"
+      ]
+    },
+    {
+      "name": "原始基里 C₁, C₂ 与每个 A_i 对易，A_i 两两反对易",
+      "ok": true
+    },
+    {
+      "name": "U_T 是连续路径 U_T(s) 在 s = 1 处的值，U_T(0) = I",
+      "ok": true
+    },
+    {
+      "name": "扇区值 ↔ 多项式系数（沃尔什–阿达马）互逆",
+      "ok": true,
+      "maxResidual": 0
+    },
+    {
+      "name": "例一：原始 H 有 16 个泡利项（含常数项），系数全是实数",
+      "ok": true,
+      "terms": [
+        "0.0500 III",
+        "0.1000 IIZ",
+        "-0.2000 IZI",
+        "0.1000 IZZ",
+        "0.0500 XXX",
+        "-0.0800 XXY",
+        "0.1000 XYX",
+        "-0.4500 XYY",
+        "0.3000 YXX",
+        "-0.1200 YXY",
+        "0.1000 YYX",
+        "-0.1500 YYY",
+        "0.3500 ZII",
+        "-0.1500 ZIZ",
+        "-0.2000 ZZI",
+        "0.2500 ZZZ"
+      ]
+    },
+    {
+      "name": "例一：这 15 个非常数项是非上下文的：Z 有 3 项，T 分成 3 个对易类、每类 4 项，对称群生成元 K = 2",
+      "ok": true,
+      "Z": [
+        "IZZ",
+        "ZIZ",
+        "ZZI"
+      ],
+      "classes": [
+        [
+          "IIZ",
+          "IZI",
+          "ZII",
+          "ZZZ"
+        ],
+        [
+          "XXX",
+          "XYY",
+          "YXY",
+          "YYX"
+        ],
+        [
+          "XXY",
+          "XYX",
+          "YXX",
+          "YYY"
+        ]
+      ]
+    },
+    {
+      "name": "U_T H U_T† 的第 v 块 = Σ p_i(v) σ_i + p₀(v)",
+      "ok": true,
+      "maxResidual": 1.1102230246251565e-16
+    },
+    {
+      "name": "进度 s = 0 是原始 H；s = 1 时块外为零；s = 3 时完全对角",
+      "ok": true,
+      "offBlockAt0": 1.6930445948054647,
+      "offBlockAt1": 2.5726911732353946e-16,
+      "offDiagAt3": 3.215280832152319e-16
+    },
+    {
+      "name": "对角元依次是 p₀(v) ± a(v)（q₃ = 0 取 +）",
+      "ok": true,
+      "diag": [
+        0.6609878047916822,
+        -1.0609878047916823,
+        0.43965895873961225,
+        -0.43965895873961225,
+        1.4514725429564428,
+        -0.4514725429564428,
+        0.6302739212103906,
+        -0.8302739212103906
+      ],
+      "expected": [
+        0.6609878047916824,
+        -1.0609878047916823,
+        0.4396589587396122,
+        -0.4396589587396122,
+        1.4514725429564428,
+        -0.4514725429564429,
+        0.6302739212103908,
+        -0.8302739212103908
+      ]
+    },
+    {
+      "name": "式 (23)：指数的乘积形式与 Σ_v U_v P_v 相同",
+      "ok": true,
+      "residual": 4.233311776351954e-16
+    },
+    {
+      "name": "25 组随机扇区值：V U_T H U_T† V† = Σ_v [a(v) Z₃ + p₀(v)] P_v",
+      "ok": true,
+      "maxResidual": 6.661338147750939e-16
+    },
+    {
+      "name": "系数是数（四个扇区相同）时，原始 H 只剩 3 个泡利项，正是 A₁, A₂, A₃",
+      "ok": true,
+      "terms": [
+        "IIZ",
+        "XXX",
+        "XXY"
+      ]
+    },
+    {
+      "name": "各扇区概率之和为 1；按结果加权的平均等于 ⟨ψ|H|ψ⟩",
+      "ok": true,
+      "exact": 0.6274754613756007,
+      "fromOutcomes": 0.6274754613756004,
+      "sectorProbs": [
+        0.11978044208787417,
+        0.1903320942631106,
+        0.48975570997390916,
+        0.200131753675106
+      ]
+    },
+    {
+      "name": "20 万次模拟测量的平均落在 ⟨H⟩ ± 4 个标准误之内",
+      "ok": true,
+      "mean": 0.6265905191488221,
+      "exact": 0.6274754613756007,
+      "standardError": 0.0020876242185433537,
+      "singleShotVariance": 0.8716349755697497
+    },
+    {
+      "name": "单次读数的方差等于 ⟨H²⟩ − ⟨H⟩²",
+      "ok": true,
+      "variance": 0.8716349755697497,
+      "fromH2": 0.8716349755697499
+    },
+    {
+      "name": "判定器：反对易组、对易组、海森堡一对比特都是非上下文的；{X₁, Z₁, X₂, Z₂} 是上下文的",
+      "ok": true,
+      "results": {
+        "ac": {
+          "nc": true,
+          "Z": 0,
+          "classes": 5,
+          "witness": null
+        },
+        "fc": {
+          "nc": true,
+          "Z": 3,
+          "classes": 0,
+          "witness": null
+        },
+        "nc": {
+          "nc": true,
+          "Z": 1,
+          "classes": 2,
+          "witness": null
+        },
+        "ctx": {
+          "nc": false,
+          "Z": 0,
+          "classes": 1,
+          "witness": [
+            "IX",
+            "XI",
+            "IZ"
+          ]
+        }
+      }
+    },
+    {
+      "name": "两比特全部 32767 个子集：判定器与传递性定义一致",
+      "ok": true,
+      "nonContextualSubsets": 1571,
+      "mismatch": 0
+    },
+    {
+      "name": "链：三个 FC 片各自全对易；x₁x₂、y₂y₃、z₂ 两两反对易，所以 FC 至少要 3 片",
+      "ok": true,
+      "table": [
+        {
+          "n": 2,
+          "qubits": 4,
+          "terms": 13,
+          "fcSizes": [
+            6,
+            3,
+            4
+          ],
+          "ncSizes": [
+            10,
+            3
+          ],
+          "evenBonds": 1,
+          "wholeNonContextual": false,
+          "H1NonContextualAsAWhole": false
+        },
+        {
+          "n": 3,
+          "qubits": 6,
+          "terms": 21,
+          "fcSizes": [
+            9,
+            6,
+            6
+          ],
+          "ncSizes": [
+            15,
+            6
+          ],
+          "evenBonds": 2,
+          "wholeNonContextual": false,
+          "H1NonContextualAsAWhole": false
+        },
+        {
+          "n": 4,
+          "qubits": 8,
+          "terms": 29,
+          "fcSizes": [
+            12,
+            9,
+            8
+          ],
+          "ncSizes": [
+            20,
+            9
+          ],
+          "evenBonds": 3,
+          "wholeNonContextual": false,
+          "H1NonContextualAsAWhole": false
+        },
+        {
+          "n": 5,
+          "qubits": 10,
+          "terms": 37,
+          "fcSizes": [
+            15,
+            12,
+            10
+          ],
+          "ncSizes": [
+            25,
+            12
+          ],
+          "evenBonds": 4,
+          "wholeNonContextual": false,
+          "H1NonContextualAsAWhole": false
+        },
+        {
+          "n": 6,
+          "qubits": 12,
+          "terms": 45,
+          "fcSizes": [
+            18,
+            15,
+            12
+          ],
+          "ncSizes": [
+            30,
+            15
+          ],
+          "evenBonds": 5,
+          "wholeNonContextual": false,
+          "H1NonContextualAsAWhole": false
+        }
+      ]
+    },
+    {
+      "name": "链：H₂（偶数键）全对易；H₁ 是 n 个作用在不相交比特对上的非上下文块之和；整个 H 不是非上下文的",
+      "ok": true
+    },
+    {
+      "name": "式 (39) 的求和上限：(37) 里偶数键只有 n − 1 条",
+      "ok": true,
+      "evenBonds": [
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          6,
+          5
+        ]
+      ]
+    },
+    {
+      "name": "H₁ 作为一个整体（n ≥ 2）不是非上下文的：它靠“不相交块之和”可解",
+      "ok": true
+    },
+    {
+      "name": "福克空间：H 是实对称的；n_k（k ∈ S₂）与 a†_i a_j（i, j ∈ S₁）对易；z_k = 2n_k − 1 满足 z_k² = 1",
+      "ok": true,
+      "symH": 0,
+      "commN": 0,
+      "zz": 0
+    },
+    {
+      "name": "64 个斯莱特行列式（4 个 v × S₁ 上 16 种占据）都是 H 的本征态，本征值 Σγ_m n_m + Σλ_kl v_k v_l",
+      "ok": true,
+      "maxResidual": 1.7235296186091125e-15
+    },
+    {
+      "name": "这 64 个态正交归一，正好是整个福克空间的一组本征基",
+      "ok": true,
+      "maxGramError": 1.7763568394002505e-15
+    },
+    {
+      "name": "套上随机轨道转动 U_T 后，U_T† Φ 仍是本征态、能量不变（式 28）",
+      "ok": true,
+      "maxResidual": 1.804377141084104e-14
+    },
+    {
+      "name": "四个扇区的轨道各不相同：最低两条轨道张成的子空间与 v = 00 的重叠都小于 1",
+      "ok": true,
+      "table": [
+        {
+          "v": "00",
+          "gamma": [
+            -1.618,
+            -0.618,
+            0.618,
+            1.618
+          ],
+          "e2": 0,
+          "overlapWith00": 1
+        },
+        {
+          "v": "01",
+          "gamma": [
+            -1.0505,
+            -0.7405,
+            0.9819,
+            1.3092
+          ],
+          "e2": 0.3,
+          "overlapWith00": 0.9601
+        },
+        {
+          "v": "10",
+          "gamma": [
+            -1.3558,
+            -0.0105,
+            1.1821,
+            2.3842
+          ],
+          "e2": 0.4,
+          "overlapWith00": 0.922
+        },
+        {
+          "v": "11",
+          "gamma": [
+            -0.8061,
+            -0.0035,
+            1.2847,
+            2.2248
+          ],
+          "e2": 1.2000000000000002,
+          "overlapWith00": 0.9347
+        }
+      ]
+    },
+    {
+      "name": "表 I：除 NH₃ 外 NC < FC；FNC 比 FC 少约 20%（LiH–NH₃ 平均）",
+      "ok": true,
+      "fncReduction": {
+        "H2": 0.5,
+        "LiH": 0.262,
+        "BeH2": 0.194,
+        "H2O": 0.2,
+        "NH3": 0.172
+      },
+      "averageLiHtoNH3": 0.20700000000000002
+    },
+    {
+      "name": "表 II：GFRO 与 LR 在六个体系上都比 GMF(N/2) 少",
+      "ok": true,
+      "ratioGMFoverGFRO": {
+        "H2": 5,
+        "H4": 1.33,
+        "LiH": 2.42,
+        "BeH2": 2.59,
+        "H2O": 3,
+        "NH3": 1.3
+      }
+    }
+  ]
+}

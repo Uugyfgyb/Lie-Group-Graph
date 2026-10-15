@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="水墨风格的论文图解：Patel、Yen、Izmaylov《Extension of exactly-solvable Hamiltonians using symmetries of Lie algebras》。把李代数元素前面的实数系数换成对称算符的多项式，每个对称扇区各转各的，得到非上下文泡利哈密顿量和平均场可解哈密顿量。七幅互动图，凡用到数学分析的地方都有朱批注释。">
+<title>以符代数，分块而治</title>
+<style data-inline="katex">/*__KATEX_CSS__*/</style>
+<style data-inline="ink.css">/*__CSS__*/</style>
+</head>
+<body>
+<div class="scroll">
+
+<header class="top">
+  <div class="top-grid">
+    <div class="top-text">
+      <!--repo-only--><div class="crumbs"><a href="../../index.html">Lie Group Graph</a><span>／</span><span>论文图解：用对称性扩展可解哈密顿量</span></div><!--/repo-only-->
+      <div class="eyebrow">论文图解 · Patel、Yen、Izmaylov · arXiv:2305.18251</div>
+      <h1><span>以符代数，</span><span>分块而治</span></h1>
+      <p class="lede">要在量子计算机上估计一个分子的能量，常把哈密顿量拆成许多“能一步转到对角”的小片段，一片一片地测。哪些哈密顿量能一步转到对角？李代数给过一个答案：生成元的实系数线性组合。这篇论文往前走了一步：把系数从实数换成<strong>对称算符的多项式</strong>（“符”）。在对称算符的每个共同本征空间里，多项式取定一个数，系数又变回实数；于是整个哈密顿量分成若干块，每块各用一个李群元素转正，拼起来仍是一个幺正变换。得到的新可解类，在量子比特上正好是<strong>非上下文泡利哈密顿量</strong>，在费米子上是<strong>平均场可解</strong>的两体哈密顿量。</p>
+      <nav class="route" aria-label="本页路线">
+        <a href="#s-wen"><b>问</b><span>为什么要可解</span></a><i aria-hidden="true">→</i>
+        <a href="#s-jiu"><b>旧</b><span>一支箭转到底</span></a><i aria-hidden="true">→</i>
+        <a href="#s-fu"><b>符</b><span>系数换成对称</span></a><i aria-hidden="true">→</i>
+        <a href="#s-kuai"><b>块</b><span>分块对角化</span></a><i aria-hidden="true">→</i>
+        <a href="#s-bi"><b>比</b><span>量子比特</span></a><i aria-hidden="true">→</i>
+        <a href="#s-fei"><b>费</b><span>费米子</span></a><i aria-hidden="true">→</i>
+        <a href="#s-lu"><b>路</b><span>测量电路</span></a><i aria-hidden="true">→</i>
+        <a href="#s-ping"><b>评</b><span>结论与局限</span></a><i aria-hidden="true">→</i>
+        <a href="#s-quiz"><b>练</b><span>六道小题</span></a><i aria-hidden="true">→</i>
+        <a href="#s-gloss"><b>析</b><span>注释总表</span></a>
+      </nav>
+    </div>
+    <figure class="hero-fig">
+      <div class="hero"><canvas id="hero" role="img" aria-label="一笔圆相代表系数空间。四支墨箭从圆心指向不同方向，分别标着四个对称扇区 ++、+−、−+、−−。每支箭各有一条朱色虚线弧，转到竖直的朱线上，落点高低不同。"></canvas></div>
+      <figcaption>墨圈是系数空间，竖直的朱线是<strong>嘉当方向</strong>：转到这条线上就对角了。四支墨箭是同一个哈密顿量在四个对称扇区里的系数向量，各沿自己的朱弧转上去，落点的高低就是各扇区的能级。</figcaption>
+    </figure>
+  </div>
+  <div class="howto">
+    <p class="zhu"><b>意思</b>这样的红字是<strong>朱批</strong>。正文里凡是用到数学分析的地方（泰勒展开、级数重排、交换指数、归纳法），旁边都有一条，用白话说这一步在做什么、凭什么可以这样做。</p>
+    <p>带虚线的词可以点，比如<button type="button" class="term" data-g="solvable">精确可解</button>，会弹出它的意思和英文名。全部注释汇总在卷末“析”一节。本页省去算符上的帽子，\(A_i,\,C_k,\,P_{\vec v}\) 都是算符；“原文 (n)” 指论文里的式号。</p>
+    <div class="legend" aria-label="标签说明">
+      <span><span class="ev">定义</span>论文或教材里的定义</span>
+      <span><span class="ev k2">定理</span>论文的结论或标准定理</span>
+      <span><span class="ev k3">示意</span>为了讲解画的图</span>
+      <span><span class="ev k4">数值</span>浏览器现算出来的数</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ 问：为什么要找可精确求解的哈密顿量 ═══════════════ -->
+<section id="s-wen" aria-labelledby="h-wen">
+  <div class="head"><span class="seal" aria-hidden="true">问</span><h2 id="h-wen">为什么要找“可精确求解”的哈密顿量</h2></div>
+  <p>在二次量子化里，分子的电子哈密顿量是产生、湮灭算符的多项式：</p>
+  <div class="eq" data-label="He" data-paper="1">$$H_e=\sum_{pq}h_{pq}\,a_p^\dagger a_q+\sum_{pqrs}g_{pqrs}\,a_p^\dagger a_q\,a_r^\dagger a_s,$$</div>
+  <p>\(h_{pq}\)、\(g_{pqrs}\) 是单电子、双电子积分，下标数的是 \(N\) 个<button type="button" class="term" data-g="spinorb">自旋轨道</button>。经过<button type="button" class="term" data-g="jw">约当–维格纳或布拉维–基塔耶夫变换</button>，它又可以写成 \(N\) 个量子比特上<button type="button" class="term" data-g="pauli">泡利算符</button>的线性组合，项数随 \(N^4\) 增长。</p>
+  <p>直接对角化 \(H_e\) 是指数难的。量子算法的常见做法是把它拆成若干<button type="button" class="term" data-g="fragment">片段</button>：</p>
+  <div class="eq" data-label="split" data-paper="36">$$H_e=\sum_{\alpha=1}^{N_{\rm frag}}H_\alpha,$$</div>
+  <p>每个 \(H_\alpha\) 都“精确可解”：能高效地找到一个幺正变换把它转成对角形式。这样的拆分有三处用场：</p>
+  <div class="two">
+    <div>
+      <p><strong>测量。</strong>在<button type="button" class="term" data-g="vqe">变分量子本征求解器</button>里，要在试探态 \(|\psi\rangle\) 上估计 \(\langle\psi|H_e|\psi\rangle\)。每个可解片段可以先转到计算基、再一次性读出，于是 \(\langle H_e\rangle=\sum_\alpha\langle H_\alpha\rangle\)。片段越少、每片的方差越小，需要的测量次数越少。</p>
+    </div>
+    <div>
+      <p><strong>时间演化。</strong>量子相位估计要实现 \(e^{-iH_et}\)。<button type="button" class="term" data-g="trotter">特罗特–铃木分解</button>把它近似成 \(\prod_\alpha e^{-iH_\alpha t/n}\) 的乘积，可解片段的指数容易做成电路；幺正线性组合（LCU）也用同样的拆分。拆法不同，误差和开销差别很大。</p>
+    </div>
+  </div>
+  <p>所以，可解片段的种类越多、越大，拆分就越省。论文之前已知的几类可以排成一张表：</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>类别</th><th>形式</th><th>转成对角用的幺正变换</th><th>李代数上的理由</th></tr></thead>
+      <tbody>
+        <tr><td>单体（自由费米子）</td><td class="nw">\(\sum h_{pq}a_p^\dagger a_q\)</td><td><button type="button" class="term" data-g="orbrot">轨道转动</button> \(e^{\sum\theta_{pq}(a_p^\dagger a_q-a_q^\dagger a_p)}\)</td><td>\(\mathfrak u(N)\) 的元素，嘉当子代数由 \(n_p\) 生成</td></tr>
+        <tr><td>满秩两体片段（GFRO）</td><td class="nw">\(U^\dagger\big(\sum\lambda_{pq}n_pn_q\big)U\)</td><td>轨道转动</td><td>对称算符 \(U^\dagger n_pU\) 的二次多项式</td></tr>
+        <tr><td>全对易泡利组（FC）</td><td>两两对易的泡利项之和</td><td><button type="button" class="term" data-g="clifford">克利福德变换</button></td><td>对称算符 \(V_c^\dagger z_pV_c\) 的多项式</td></tr>
+        <tr><td>全反对易泡利组（AC）</td><td class="nw">\(\sum c_iA_i\)，\(A_i\) 两两反对易</td><td>\(\mathfrak{so}(L+1)\) 的群元</td><td>李代数的元素（下一节）</td></tr>
+        <tr><td>非上下文泡利哈密顿量（NC）</td><td>见“比”一节</td><td>克利福德 + \(\mathfrak{so}(L+1)\) 群元</td><td><strong>本文给出：李代数 + 阿贝尔对称</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>表里有一个不平衡：两两反对易的泡利算符在 \(N\) 个比特上最多 \(2N+1\) 个，两两对易的却可以有 \(2^N\) 个，所以 AC 片段通常比 FC 片段小。另一方面，非上下文泡利哈密顿量早就被发现可解（Kirby 与 Love），可它为什么可解、能不能推广，缺一个代数上的说法。这篇论文给的说法覆盖了表里所有的行：<strong>一个李代数，加上它的一个阿贝尔对称群</strong>。</p>
+</section>
+
+<!-- ═══════════════ 旧：李代数里的可解 ═══════════════ -->
+<section id="s-jiu" aria-labelledby="h-jiu">
+  <div class="head"><span class="seal" aria-hidden="true">旧</span><h2 id="h-jiu">旧办法：李代数里，一支箭转到底</h2></div>
+  <p>任何有限维的量子多体哈密顿量，都可以写成一组厄米算符 \(\{\Lambda_i\}\) 的多项式；这组算符在希尔伯特空间 \(V\) 上生成一个紧致的<button type="button" class="term" data-g="liealg">李代数</button> \(\mathcal A\)。最简单的可解哈密顿量就是 \(\mathcal A\) 自己的元素，外加一个常数：</p>
+  <div class="eq" data-label="Hc" data-paper="10">$$H_{\vec c}=\sum_ic_i\Lambda_i+c_0,\qquad c_i\in\mathbb R.$$</div>
+  <div class="boxed">
+    <p><span class="ev k2">定理</span><strong><button type="button" class="term" data-g="torus">极大环面定理</button></strong>：紧李代数 \(\mathcal A\) 的任何元素，都能用对应李群里的某个元素共轭到一个固定的<button type="button" class="term" data-g="cartan">嘉当子代数</button> \(\mathcal C\subset\mathcal A\) 里。\(\mathcal C\) 是极大的阿贝尔子代数，它的元素两两对易，可以同时测量。</p>
+    <p>所以 \(H_{\vec c}\) 一定能被一个李群元素 \(U=e^{X}\)（\(X\in\mathcal A\) 反厄米）转成嘉当生成元的线性组合；只要再有一个把 \(\mathcal C\) 的本征基送到计算基的变换，就算“解出”了。</p>
+  </div>
+  <p>最小的例子是一个比特：\(\mathfrak{su}(2)\) 由 \(X,Y,Z\) 生成，嘉当子代数取 \(Z\) 张成的那一条线。\(c_xX+c_yY+c_zZ\) 是一个三维向量 \(\vec c\)，转动它的方向，总能转到 \(Z\) 轴上，得到 \(\lVert\vec c\rVert Z\)。把系数向量画成一支箭，“解”就是把这支箭转到竖直方向。</p>
+
+  <h3 class="sub">反对易组与 \(\mathfrak{so}(L+1)\)</h3>
+  <p>同样的图景对 \(L\) 个两两<button type="button" class="term" data-g="anticomm">反对易</button>的泡利算符 \(A_1,\dots,A_L\) 成立。它们和两两乘积 \(\{A_iA_j\}_{i<j}\) 一起在对易子下封闭，生成 \(\mathfrak{so}(L+1)\)：</p>
+  <div class="eq" data-label="HA">$$H_A=\sum_{i=1}^{L}p_iA_i,\qquad A_iA_j+A_jA_i=2\delta_{ij},\qquad H_A^2=\sum_ip_i^2=\lVert\vec p\rVert^2 .$$</div>
+  <p class="zhu"><b>意思</b>数一数：\(L\) 个 \(A_i\) 加上 \(\binom L2\) 个 \(A_iA_j\)，共 \(L+\tfrac{L(L-1)}2=\tfrac{L(L+1)}2\) 个，正好是 \(\mathfrak{so}(L+1)\) 的维数。\(H_A^2\) 展开时交叉项成对出现，\(p_ip_j(A_iA_j+A_jA_i)=0\)，只剩平方项，所以 \(H_A\) 的本征值只能是 \(\pm\lVert\vec p\rVert\)。</p>
+  <p>论文给出的具体转法是一串“两维平面里的转动”：每一步只动 \((A_j,A_L)\) 这一对，把 \(A_j\) 的系数转成零、并进 \(A_L\)。</p>
+  <ol class="deriv">
+    <li>
+      <div class="step">
+        <p>取生成元 \(G_j=A_LA_j\)。它反厄米，平方是 \(-1\)：</p>
+        <div class="eq" data-label="G">$$G_j^\dagger=A_jA_L=-A_LA_j=-G_j,\qquad G_j^2=A_LA_jA_LA_j=-A_L^2A_j^2=-1,\qquad e^{\theta G_j/2}=\cos\tfrac\theta2+G_j\sin\tfrac\theta2 .$$</div>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>最后一个等号是把 \(e^{\theta G/2}=\sum_k(\theta G/2)^k/k!\) 按奇偶拆开：偶数次 \(G^{2m}=(-1)^m\)，凑成 \(\cos\)；奇数次 \(G^{2m+1}=(-1)^mG\)，凑成 \(G\sin\)。能这样拆，是因为这个级数<button type="button" class="term" data-g="absconv">绝对收敛</button>，重新分组不改变和。和 \(e^{i\theta}=\cos\theta+i\sin\theta\) 是同一回事：\(G\) 扮演 \(i\)。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>\(G_j\) 与 \(A_j\)、\(A_L\) 都反对易，与其余 \(A_k\) 对易。于是共轭只在 \((A_j,A_L)\) 平面里转：</p>
+        <div class="eq" data-label="conj">$$e^{\theta G_j/2}A_je^{-\theta G_j/2}=\cos\theta\,A_j+\sin\theta\,A_L,\qquad e^{\theta G_j/2}A_Le^{-\theta G_j/2}=\cos\theta\,A_L-\sin\theta\,A_j .$$</div>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>\(A\) 与 \(G\) 反对易时 \(AG^k=(-G)^kA\)，逐项代进级数得 \(Ae^{-\theta G/2}=e^{\theta G/2}A\)，所以 \(e^{\theta G/2}Ae^{-\theta G/2}=e^{\theta G}A\)，再用上一步的 \(\cos+G\sin\)。半角 \(\theta/2\) 在这里翻成整角 \(\theta\)：这和自旋 \(\tfrac12\) 转 \(\theta\) 时态的相位只走一半是同一个现象。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>于是 \(A_j\) 的系数变成 \(p_j\cos\theta-p_L\sin\theta\)。让它为零，就得到论文的角度条件；第 \(j\) 步时 \(A_L\) 的系数已经是前面并进来的 \(\sqrt{\sum_{i<j}p_i^2+p_L^2}\)：</p>
+        <div class="eq" data-label="angles" data-paper="21">$$p_1\cos\theta_1=p_L\sin\theta_1,\qquad p_j\cos\theta_j=\sin\theta_j\sqrt{\textstyle\sum_{i=1}^{j-1}p_i^2+p_L^2}\quad(j>1).$$</div>
+        <div class="eq" data-label="Urot" data-paper="20">$$U=e^{\theta_{L-1}A_LA_{L-1}/2}\cdots e^{\theta_2A_LA_2/2}\,e^{\theta_1A_LA_1/2},\qquad UH_AU^\dagger=\lVert\vec p\rVert\,A_L .$$</div>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>读注</b>原文把 \(U\) 写成 \(\prod_{j=1}^{L-1}\)，没说乘积顺序。角度条件里第 \(j\) 步用到前面几步并进来的系数，所以 \(j=1\) 必须<strong>先</strong>作用，写在最右边。相邻两个生成元 \(G_1,G_2\) 反对易，顺序真的要紧：verify.mjs 把顺序倒过来试了 60 组，一组也转不到 \(A_L\)。</p>
+        <p class="zhu"><b>读注</b>\(\tan\theta_1=p_1/p_L\) 有两个解。取 \(\theta_1=\operatorname{atan2}(p_1,p_L)\)，新的 \(A_L\) 系数才是 \(+\lVert\vec p\rVert\)；\(p_L<0\) 时另一个解会给出 \(-\lVert\vec p\rVert\)，同样对角，只是符号翻了。</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="stage" id="lab-jiu">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>墨箭是系数向量 \(\vec p=(p_1,p_2,p_3)\)，三根轴是 \(A_1,A_2,A_3\)（例如 \(X,Y,Z\)）。拖动箭头改系数，拖动别处转视角；“转动”滑块走完两步 \(\theta_1,\theta_2\)，朱色虚线是箭头走过的路</span>
+      <div class="wash-box sq"><canvas id="jiu" class="drag" tabindex="0" role="img" aria-label="三维系数空间里的一支箭，按式 (20)(21) 分两步转到 A3 轴上；方向键转视角"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span>转动</span><input type="range" id="jiu-t" min="0" max="2" step="0.01" value="0" aria-label="转动进度：0 到 1 是第一步 θ1，1 到 2 是第二步 θ2"><output id="jiu-t-o"></output></label>
+        <button type="button" class="toggle" id="jiu-play" aria-pressed="false">转一遍</button>
+        <button type="button" class="toggle" id="jiu-flip">把 <i>p</i><sub>3</sub> 变号</button>
+      </div>
+    </div>
+    <aside class="panel" id="jiu-panel" aria-live="polite"></aside>
+  </div>
+  <p>这就是“旧办法”的全部：<strong>系数是实数，系数向量是一支箭，找一个群元把它转到嘉当方向。</strong>它的局限也在这里：线性组合里的项数和李代数的维数一样多，而维数要是多项式大小才有用；反对易组又最多 \(2N+1\) 个元素。论文的问题是：能不能让系数本身带上一点“结构”？</p>
+</section>
+
+<!-- ═══════════════ 符：系数换成对称算符 ═══════════════ -->
+<section id="s-fu" aria-labelledby="h-fu">
+  <div class="head"><span class="seal" aria-hidden="true">符</span><h2 id="h-fu">新办法：把系数换成对称算符的多项式</h2></div>
+  <p>关键在李代数作用的那个空间 \(V\)。\(V\) 是 \(\mathcal A\) 的一个<button type="button" class="term" data-g="rep">表示</button>。如果它不可约，<button type="button" class="term" data-g="schur">舒尔引理</button>说：和 \(\mathcal A\) 里每个元素都对易的算符只能是单位算符的倍数，没有别的对称。如果它可约，\(V=\bigoplus_\lambda V_\lambda\) 拆成若干不变子空间，那么任何在每个 \(V_\lambda\) 上各乘一个常数的算符 \(\sum_\lambda c_\lambda I_\lambda\)，都和整个 \(\mathcal A\) 对易：\(\mathcal A\) 有了非平凡的对称。</p>
+  <div class="boxed">
+    <p><span class="ev">定义</span>取一组两两对易的厄米算符 \(C_1,\dots,C_K\)，每个都与所有 \(\Lambda_i\) 对易，生成一个<button type="button" class="term" data-g="abelian">阿贝尔群</button> \(\mathcal G\)。\(\mathcal G\) 是有限群，恰好等价于每个 \(C_k\) 都是<button type="button" class="term" data-g="reflection">反射</button>：谱只含 \(\pm1\)，\(C_k^2=1\)。这时 \(\mathcal G\cong\mathbb Z_2^K\)，有 \(2^K\) 个元素。论文里用到的对称都是这一种，而且都幺正等价于泡利算符。</p>
+    <p>\(\mathcal G\) 无限时构造照样成立，只是对称的多项式一般可以有任意多项；论文指出，总能挑出一组线性无关的群元把它化到不超过 \(\dim V\) 项。</p>
+  </div>
+  <p class="zhu"><b>意思</b>为什么有限就必须是 \(\pm1\)？\(C\) 的一个本征值 \(\lambda\) 生成的 \(\lambda,\lambda^2,\lambda^3,\dots\) 也都得是群里某个元素的本征值，有限群里只有有限个，所以 \(\lambda\) 的幂会重复，\(|\lambda|=1\)；厄米算符的本征值是实数，于是 \(\lambda=\pm1\)。换个说法：\(\mathbb R\setminus\{0\}\) 在乘法下唯一的有限子群是 \(\{1,-1\}\)。</p>
+  <p>对易的反射可以同时对角化。把每个 \(C_k\) 的本征值记成 \(v_k=\pm1\)，一组取值 \(\vec v\) 对应一个<button type="button" class="term" data-g="spectral">共同本征空间</button>（原文叫 simultaneous eigenspace，本页简称“扇区”），它的<button type="button" class="term" data-g="projector">投影算符</button>是</p>
+  <div class="eq" data-label="Pv" data-paper="11, 18">$$C_k=\sum_{\vec v}v_k\,P_{\vec v},\qquad P_{\vec v}=\prod_{l=1}^{K}\frac{1+v_lC_l}{2},\qquad \vec v\in\{+1,-1\}^K .$$</div>
+  <p class="zhu"><b>意思</b>\(\tfrac{1+v_lC_l}2\) 在 \(C_l=v_l\) 的本征向量上等于 1，在 \(C_l=-v_l\) 的上等于 0，所以它是投影；对易投影的乘积还是投影。把 \(\tfrac{1+C}2+\tfrac{1-C}2=1\) 对每个 \(l\) 乘起来，就得到 \(\sum_{\vec v}P_{\vec v}=1\)：\(2^K\) 个扇区铺满整个空间。</p>
+  <p>\(\mathcal G\) 里元素的实系数线性组合组成<button type="button" class="term" data-g="groupalg">群代数</button> \(\mathbb R[\mathcal G]\)，也就是 \(C_k\) 的多项式。因为 \(C_k^2=1\)，每个多项式都能化成每个变量至多一次的形式，最多 \(2^K\) 项。在扇区 \(\vec v\) 里，每个 \(C_k\) 就是数 \(v_k\)，多项式也就取一个数：</p>
+  <div class="eq" data-label="pv" data-paper="13">$$p(C_1,\dots,C_K)=\sum_{\vec v}p(v_1,\dots,v_K)\,P_{\vec v}.$$</div>
+  <p class="zhu"><b>意思</b>由 \(C_kP_{\vec v}=v_kP_{\vec v}\)，任何单项式 \(C_{k_1}C_{k_2}\cdots\) 乘上 \(P_{\vec v}\) 都变成 \(v_{k_1}v_{k_2}\cdots P_{\vec v}\)；再对 \(\vec v\) 求和、用 \(\sum P_{\vec v}=1\) 就是上式。</p>
+  <div class="boxed">
+    <p><span class="ev k2">定理</span><strong>论文的新可解类。</strong>把 {{eq:Hc}} 里的实数系数换成群代数里的元素：</p>
+    <div class="eq" data-label="Hp" data-paper="14">$$H_{\vec p}=\sum_ip_i(C_1,\dots,C_K)\,\Lambda_i+p_0(C_1,\dots,C_K).$$</div>
+    <p>代入 {{eq:pv}}，再用 \(C_k\) 与 \(\Lambda_i\) 对易把投影挪到右边：</p>
+    <div class="eq" data-label="Hv" data-paper="15">$$H_{\vec p}=\sum_{\vec v}\Big[\sum_ip_i(\vec v)\,\Lambda_i+p_0(\vec v)\Big]P_{\vec v}=\sum_{\vec v}H_{\vec v}P_{\vec v}.$$</div>
+    <p>每个 \(H_{\vec v}\) 都是 \(\mathcal A\) 的元素加常数，各有一个群元 \(U_{\vec v}=e^{X_{\vec v}}\) 把它转正；下一节证明 \(V=\exp\big(\sum_{\vec v}X_{\vec v}P_{\vec v}\big)\) 一次把它们全部转正。</p>
+  </div>
+  <p>论文的结论里把 \(p_i(C)\) 叫作“广义系数”：只要给每个对称一个本征值，它就变回实数。系数向量也就不再是一支箭，而是<strong>每个扇区一支箭</strong>。下图是最小的有趣例子：两个对称 \(z_1=Z_1\)、\(z_2=Z_2\)，第三个比特上的反对易组 \(A'=(X_3,Y_3,Z_3)\)：</p>
+  <div class="eq" data-label="ex3">$$H=\sum_{i=1}^{3}p_i(z_1,z_2)\,A'_i+p_0(z_1,z_2),\qquad p(z_1,z_2)=\alpha+\beta z_1+\gamma z_2+\delta z_1z_2 .$$</div>
+  <p>四个扇区 \(\vec v=(\pm,\pm)\) 里，\(p_i(\vec v)\) 是四支不同的箭。反过来，四支箭也唯一地决定多项式系数：</p>
+  <div class="eq" data-label="wh">$$\alpha=\tfrac14\sum_{\vec v}p(\vec v),\qquad \beta=\tfrac14\sum_{\vec v}v_1\,p(\vec v),\qquad \gamma=\tfrac14\sum_{\vec v}v_2\,p(\vec v),\qquad \delta=\tfrac14\sum_{\vec v}v_1v_2\,p(\vec v).$$</div>
+  <p class="zhu"><b>意思</b>四个函数 \(1,v_1,v_2,v_1v_2\) 在四个扇区上两两正交：比如 \(\sum_{\vec v}v_1=0\)、\(\sum_{\vec v}v_1\cdot v_1v_2=\sum v_2=0\)，而每个的平方和都是 4。所以“扇区上的值”和“多项式系数”之间是一个正交变换（沃尔什–阿达马变换）的 \(\tfrac14\) 倍，可以随意来回换。\(\mathbb R[\mathbb Z_2^2]\) 和 \(\mathbb R^4\) 是一回事。</p>
+
+  <div class="stage" id="lab-fu">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>四支箭是四个扇区里的 \(\big(p_1(\vec v),p_2(\vec v),p_3(\vec v)\big)\)，朱色的是选中的扇区。拖动箭头改它，拖动别处转视角；“转动”滑块让每支箭按自己的 \(\theta_1(\vec v),\theta_2(\vec v)\) 转到 \(A'_3\) 轴</span>
+      <div class="wash-box sq"><canvas id="fu" class="drag" tabindex="0" role="img" aria-label="四个扇区的四支系数箭头，各自转到 A3 轴上；方向键转视角"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span>转动</span><input type="range" id="fu-t" min="0" max="2" step="0.01" value="0" aria-label="四支箭同时转动的进度"><output id="fu-t-o"></output></label>
+        <button type="button" class="toggle" id="fu-play" aria-pressed="false">一起转</button>
+      </div>
+      <div class="ctrl">
+        <span>选扇区</span>
+        <div class="chips" id="fu-sec" role="group" aria-label="选中的扇区">
+          <button type="button" data-k="0" aria-pressed="true">++</button><button type="button" data-k="1" aria-pressed="false">+−</button><button type="button" data-k="2" aria-pressed="false">−+</button><button type="button" data-k="3" aria-pressed="false">−−</button>
+        </div>
+        <button type="button" class="toggle" id="fu-ex">例一</button>
+        <button type="button" class="toggle" id="fu-rand">随机四支</button>
+        <button type="button" class="toggle" id="fu-flat">系数是数</button>
+      </div>
+    </div>
+    <aside class="panel">
+      <span class="plot-title"><span class="ev k4">数值</span>能级：每个扇区两条，\(p_0(\vec v)\pm a(\vec v)\)</span>
+      <div class="wash-box lv"><canvas id="fu-lv" role="img" aria-label="四个扇区各两条能级"></canvas></div>
+      <div id="fu-panel" aria-live="polite"></div>
+    </aside>
+  </div>
+  <p>点“系数是数”，四支箭重合成它们的平均：多项式只剩常数项 \(\alpha\)，哈密顿量退回到旧办法里的单个李代数元素，只需要一个转动。四支箭分得越开，能级结构越丰富，但每一块仍然只需要转一支箭。</p>
+</section>
+
+<!-- ═══════════════ 块：分块对角化 ═══════════════ -->
+<section id="s-kuai" aria-labelledby="h-kuai">
+  <div class="head"><span class="seal" aria-hidden="true">块</span><h2 id="h-kuai">分块对角化：许多个转动，一个指数</h2></div>
+  <p>上一节留下一个问题：每个扇区一个 \(U_{\vec v}\)，怎样拼成一个幺正变换？论文开头先证明了一个一般的结论（附录 A）。</p>
+  <div class="boxed">
+    <p><span class="ev k2">定理</span>设 \(P_i\) 是一组完备、两两正交的投影（\(P_iP_j=\delta_{ij}P_i\)，\(\sum_iP_i=1\)），反厄米的 \(X_i\) 与所有 \(P_j\) 对易，\(U_i=e^{X_i}\) 把 \(H_i\) 转成对角：\(H_i=U_i^\dagger D_iU_i\)。那么</p>
+    <div class="eq" data-label="block" data-paper="7–9">$$H=\sum_iH_iP_i\quad\Longrightarrow\quad U=\sum_iU_iP_i=e^{\sum_iX_iP_i},\qquad UHU^\dagger=\sum_iD_iP_i .$$</div>
+  </div>
+  <p>证明分四步，都在原文附录 A 里。</p>
+  <ol class="deriv">
+    <li>
+      <div class="step">
+        <p>先看一个投影。\(X\) 与 \(P\) 对易：</p>
+        <div class="eq" data-label="A2" data-paper="A2">$$e^{XP}=\sum_{k\ge0}\frac{(XP)^k}{k!}=1+\Big(\sum_{k\ge1}\frac{X^k}{k!}\Big)P=1+(e^X-1)P=UP+(1-P).$$</div>
+        <p>意思是：\(e^{XP}\) 在 \(P\) 的像空间里做 \(U\)，在其余部分什么也不做。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>这是一步<button type="button" class="term" data-g="taylor">泰勒展开</button>。\((XP)^k=X^kP^k=X^kP\)：第一个等号把 \(P\) 一个个挪到右边（靠 \([X,P]=0\)），第二个用 \(P^2=P\)。注意 \(k=0\) 那一项是 1，不带 \(P\)，所以要单独拿出来，剩下的 \(k\ge1\) 各项都带一个 \(P\)，提到括号外；括号里差一个 \(k=0\) 项，正是 \(e^X-1\)。级数绝对收敛，这样分组是允许的。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>多个投影用<button type="button" class="term" data-g="induction">强归纳法</button>。假设对少于 \(N\) 个投影成立：</p>
+        <div class="eq" data-label="A3" data-paper="A3">$$e^{\sum_{i=1}^{N}X_iP_i}=e^{\sum_{i<N}X_iP_i}\;e^{X_NP_N}=\Big[\sum_{i<N}U_iP_i+\Big(1-\sum_{i<N}P_i\Big)\Big]\Big[U_NP_N+(1-P_N)\Big].$$</div>
+        <p>把右边乘开，凡是同时带 \(P_i\) 和 \(P_N\)（\(i\ne N\)）的项都是零，剩下 \(\sum_{i\le N}U_iP_i+(1-\sum_{i\le N}P_i)\)。投影完备时最后一项为零，就是 {{eq:block}} 的第一个等号。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>指数能拆成乘积 \(e^{A+B}=e^Ae^B\)，前提是 \([A,B]=0\)；否则要用 BCH 公式补上括号项。这里 \(X_iP_i\) 和 \(X_NP_N\) 的乘积两种顺序都等于 \(X_iX_NP_iP_N=0\)，所以对易。有意思的是 \(X_i\) 和 \(X_N\) 本身<strong>不必</strong>对易：投影把它们隔在不同的块里。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>再看共轭。\(H_j\)、\(U_k\) 都与投影对易，交叉项全消：</p>
+        <div class="eq" data-label="A6" data-paper="A6">$$UHU^\dagger=\sum_{i,j,k}U_iP_i\,H_jP_j\,P_kU_k^\dagger=\sum_iU_iH_iU_i^\dagger P_i=\sum_iD_iP_i .$$</div>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>三重求和里只有 \(i=j=k\) 的项不含 \(P_iP_j=0\) 这样的因子。纯代数，不涉及极限。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step">
+        <p>式 {{eq:Urot}} 里的 \(U_{\vec v}\) 是几个指数的<strong>乘积</strong>，不是一个指数。附录 A 的最后一步说乘积形式也行：若投影 \(P\) 与每个 \(X_j\) 对易，</p>
+        <div class="eq" data-label="A10" data-paper="A8, A10">$$\prod_je^{X_jP}=\Big(\prod_je^{X_j}\Big)P+(1-P),$$</div>
+        <p>于是 \(V=\prod_{\vec v}\prod_je^{\theta_j(\vec v)A'_LA'_jP_{\vec v}/2}=\sum_{\vec v}U_{\vec v}P_{\vec v}\)（原文 23）。电路里正好按这个乘积一块一块地做。</p>
+      </div>
+      <div class="notes">
+        <p class="zhu"><b>意思</b>把每个因子写成 \(e^{X_j}P+(1-P)\)，乘开以后，凡是 \(P\) 和 \(1-P\) 挨在一起的交叉项都含 \(P(1-P)=P-P^2=0\)，只剩“全取 \(P\)”和“全取 \(1-P\)”两项。</p>
+      </div>
+    </li>
+  </ol>
+
+  <p>下图把上一节的例子画成 \(8\times8\) 矩阵。为了看出“对称藏在哪里”，先把它放回一个更乱的基：原文的 \(\hat U_{\rm T}\) 是一个<button type="button" class="term" data-g="tapering">量子比特缩减</button>用的克利福德变换，这里取三比特翻转码的解码电路 \(U_{\rm T}=\mathrm{CNOT}(3\to2)\,\mathrm{CNOT}(3\to1)\)。在原始基里，两个对称是 \(Z_1Z_3\) 和 \(Z_2Z_3\)，反对易组是 \(X_1X_2X_3,\ X_1X_2Y_3,\ Z_3\)。</p>
+  <div class="stage" id="lab-kuai">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>每格一个墨点：大小是矩阵元的模，朱色指针是它的相位（向右为正实数，向上为 \(+i\)）。滑块走过三段：\(U_{\rm T}(s)\) 把矩阵变成 2×2 分块；然后每块按自己的 \(\theta_1(\vec v)\)、\(\theta_2(\vec v)\) 转，变成对角</span>
+      <div class="wash-box sq"><canvas id="kuai" role="img" aria-label="8 乘 8 的哈密顿量矩阵，由原始基经 U_T 变成分块，再经 V 变成对角"></canvas></div>
+      <div class="ctrl">
+        <label class="slider"><span>进度 <i>s</i></span><input type="range" id="kuai-s" min="0" max="3" step="0.01" value="0" aria-label="进度：0 原始基，1 分块，2 第一步转动，3 对角"><output id="kuai-s-o"></output></label>
+        <button type="button" class="toggle" id="kuai-play" aria-pressed="false">走一遍</button>
+      </div>
+    </div>
+    <aside class="panel" id="kuai-panel" aria-live="polite"></aside>
+  </div>
+  <p class="zhu"><b>意思</b>克利福德变换也能连续地走：\(\mathrm{CNOT}=e^{i\pi Q}\)，\(Q=\tfrac14(1-Z_c)(1-X_t)\) 是投影（\(e^{i\pi Q}=1+(e^{i\pi}-1)Q=1-2Q\)，又是 {{eq:A2}}）。所以 \(U_{\rm T}(s)=e^{i\pi s(Q_{31}+Q_{32})}\)，\(s=1\) 时正好是两个 CNOT。中间的 \(s\) 只是为了看得见过程，不是论文里的东西。</p>
+  <p>这幅图和上一幅用的是同一组数：在上一幅里拖动箭头，这里的矩阵和泡利项跟着变。</p>
+</section>
+
+<!-- ═══════════════ 比：量子比特 ═══════════════ -->
+<section id="s-bi" aria-labelledby="h-bi">
+  <div class="head"><span class="seal" aria-hidden="true">比</span><h2 id="h-bi">量子比特：非上下文泡利哈密顿量</h2></div>
+  <p>把“符”一节的配方用在 \(\mathfrak{so}(L+1)\) 上：李代数由两两反对易的泡利算符 \(\{A_i\}\) 生成，对称群 \(\mathcal G\) 由与所有 \(A_i\) 对易的泡利算符生成。得到</p>
+  <div class="eq" data-label="H16" data-paper="16">$$H=\sum_{i=1}^{L}p_i(C_1,\dots,C_K)\,A_i+p_0(C_1,\dots,C_K).$$</div>
+  <div class="boxed">
+    <p><span class="ev">定义</span>一组泡利算符 \(\mathcal S\) 是<button type="button" class="term" data-g="noncontext">非上下文的</button>，如果它能分成 \(\mathcal S=\mathcal Z\cup\mathcal T\)：\(\mathcal Z\) 里的元素与 \(\mathcal S\) 里所有元素对易；在 \(\mathcal T\) 上，“对易”是一个<button type="button" class="term" data-g="equiv">等价关系</button>。于是 \(\mathcal T\) 分成若干<button type="button" class="term" data-g="commclass">对易类</button> \(\mathcal C_1\cup\dots\cup\mathcal C_N\)：同类两两对易，异类两两反对易。泡利项全部来自非上下文集合的哈密顿量叫非上下文泡利哈密顿量。</p>
+  </div>
+  <p class="zhu"><b>意思</b>“等价关系”要满足自反、对称、传递。泡利算符和自己对易、对易是对称的，前两条白送；真正的条件是<strong>传递性</strong>：\(a\) 与 \(b\) 对易、\(b\) 与 \(c\) 对易，就要求 \(a\) 与 \(c\) 也对易。“上下文”这个词来自隐变量理论：一组可观测量能不能被事先赋好值，取决于它们之间的对易结构。论文说明这层联系与本文的结论无关。</p>
+  <p><strong>{{eq:H16}} 一定是非上下文的。</strong>它的每个泡利项要么属于 \(\mathcal G\)（放进 \(\mathcal Z\)），要么属于某个陪集 \(\mathcal GA_i=\{XA_i:X\in\mathcal G\}\)。同一陪集里 \((XA_i)(YA_i)\) 与 \((YA_i)(XA_i)\) 都等于 \(XY\)，对易；不同陪集里 \(A_i\) 与 \(A_j\) 反对易，乘上与谁都对易的 \(X,Y\) 仍然反对易。</p>
+  <p><strong>反过来，每个非上下文泡利哈密顿量都能写成 {{eq:H16}}</strong>（附录 B，沿用 Kirby 与 Love 的做法）。从每个对易类挑一个代表 \(A_i=A_{i1}\)，令 \(C_{ij}=A_{ij}A_i\)：</p>
+  <div class="eq" data-label="B2" data-paper="B1–B4">$$H_{\rm nc}=\sum_{\alpha}h_\alpha Z_\alpha+\sum_{i=1}^{L}\sum_{j}h_{ij}A_{ij}=\sum_{\alpha}h_\alpha Z_\alpha+\sum_{i=1}^{L}\Big(\sum_jh_{ij}C_{ij}\Big)A_i .$$</div>
+  <p class="zhu"><b>意思</b>第二个等号用了泡利算符的对合性 \(A_i^2=1\)：\(A_{ij}=A_{ij}A_iA_i=C_{ij}A_i\)。\(C_{ij}\) 为什么是对称？它和 \(A_i\) 对易（\(A_{ij}\) 与 \(A_i\) 同类）；对别的 \(A_k\)，\(A_{ij}\) 和 \(A_i\) 都与它反对易，两个负号相消，乘积对易；对 \(\mathcal Z\) 里的元素当然也对易。所以 \(\mathcal Z\cup\{C_{ij}\}\) 生成一个阿贝尔群，括号里的组合就是群代数里的多项式。</p>
+
+  <div class="stage" id="lab-bi">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>点选两比特泡利串，下图画出它们的对易关系：墨线连着对易的两项，没连线就是反对易。非上下文时，中间是 \(\mathcal Z\)，四周是各个对易类；上下文时，朱线标出一组违反传递性的三项</span>
+      <div class="pchips" id="bi-pick" role="group" aria-label="选择泡利串"></div>
+      <div class="ctrl">
+        <span>例子</span>
+        <div class="chips" id="bi-pre" role="group" aria-label="预设集合">
+          <button type="button" data-k="ac" aria-pressed="false">反对易组</button><button type="button" data-k="fc" aria-pressed="false">对易组</button><button type="button" data-k="nc" aria-pressed="true">海森堡一对</button><button type="button" data-k="ctx" aria-pressed="false">两个独立比特</button>
+        </div>
+      </div>
+      <div class="wash-box"><canvas id="bi" role="img" aria-label="所选泡利串的对易图"></canvas></div>
+    </div>
+    <aside class="panel" id="bi-panel" aria-live="polite"></aside>
+  </div>
+  <p>“两个独立比特”那一组 \(\{X_1,Z_1,X_2,Z_2\}\) 是上下文的：\(X_1\) 与 \(X_2\) 对易，\(X_2\) 与 \(Z_1\) 对易，\(X_1\) 与 \(Z_1\) 却反对易。可是 \(X_1+Z_1+X_2+Z_2\) 显然可解，两个比特各转各的。非上下文是可解的<strong>充分</strong>条件，不是必要条件；下面海森堡链的例子正好用到这一点。</p>
+
+  <h3 class="sub">怎样解：克利福德 + 每扇区一串转动</h3>
+  <p>先用一个克利福德变换 \(U_{\rm T}\) 把对称生成元变成前 \(K\) 个比特上的 \(z_1,\dots,z_K\)，把 \(A_i\) 变成其余比特上的 \(A'_i\)（找 \(U_{\rm T}\) 的方法来自量子比特缩减）。然后按扇区展开，每块用式 {{eq:Urot}} 转到 \(a(\vec v)A'_L\)，最后一个单比特转动 \(R\) 把 \(A'_L\) 变成若干 \(z\) 的乘积 \(z_S\)：</p>
+  <div class="eq" data-label="H19" data-paper="17–19">$$U_{\rm T}HU_{\rm T}^\dagger=\sum_{\vec v}\Big[\sum_{i=1}^{L}p_i(\vec v)A'_i+p_0(\vec v)\Big]P_{\vec v},\qquad P_{\vec v}=\prod_{l=1}^{K}\frac{1+v_lz_l}{2},$$</div>
+  <div class="eq" data-label="H24" data-paper="22, 24">$$R\,V\,U_{\rm T}\,H\,U_{\rm T}^\dagger V^\dagger R^\dagger=\sum_{\vec v}\big[a(\vec v)\,z_S+p_0(\vec v)\big]P_{\vec v},\qquad a(\vec v)=\sqrt{\textstyle\sum_{i}p_i(\vec v)^2}.$$</div>
+  <p>“块”一节的矩阵图就是这条流水线：例子里 \(A'_3=Z_3\) 已经是 \(z\)，所以 \(R=1\)。</p>
+
+  <h3 class="sub">一个例子：两片对三片</h3>
+  <p>论文举了一个推广的海森堡自旋链（\(2n\) 个比特，近邻耦合加纵场）：</p>
+  <div class="eq" data-label="H37" data-paper="37">$$H=\sum_{i=1}^{2n-1}\big(a_ix_ix_{i+1}+b_iy_iy_{i+1}+c_iz_iz_{i+1}\big)+\sum_{j=1}^{2n}d_jz_j .$$</div>
+  <p>按全对易（FC）分组要三片：奇数键、偶数键、全部纵场。按非上下文分组只要两片：</p>
+  <div class="eq" data-label="H38" data-paper="38, 39">$$H_1^{\rm (NC)}=\sum_{i=1}^{n}\big(a_{2i-1}x_{2i-1}x_{2i}+b_{2i-1}y_{2i-1}y_{2i}+c_{2i-1}z_{2i-1}z_{2i}+d_{2i-1}z_{2i-1}+d_{2i}z_{2i}\big),\qquad H_2^{\rm (NC)}=\sum_{i=1}^{n-1}\big(a_{2i}x_{2i}x_{2i+1}+b_{2i}y_{2i}y_{2i+1}+c_{2i}z_{2i}z_{2i+1}\big).$$</div>
+  <div class="stage" id="lab-chain">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k3">示意</span>墨点是比特；上方的弧是一条键（含 \(xx,yy,zz\) 三项），下方的短竖是纵场 \(z_j\)。同一种墨色属于同一片</span>
+      <div class="wash-box wide"><canvas id="chain" role="img" aria-label="海森堡型链的两种分组：全对易三片，非上下文两片"></canvas></div>
+      <div class="ctrl">
+        <div class="chips" id="chain-mode" role="group" aria-label="分组方式">
+          <button type="button" data-k="fc" aria-pressed="false">全对易：三片</button><button type="button" data-k="nc" aria-pressed="true">非上下文：两片</button>
+        </div>
+        <label class="slider"><span><i>n</i> =</span><input type="range" id="chain-n" min="2" max="6" step="1" value="3" aria-label="链长参数 n，比特数为 2n"><output id="chain-n-o"></output></label>
+      </div>
+    </div>
+    <aside class="panel" id="chain-panel" aria-live="polite"></aside>
+  </div>
+  <p class="zhu"><b>读注</b>原文 (39) 的求和写到 \(i=n\)，可 \(i=n\) 那一项是键 \((2n,2n+1)\)，而 (37) 里只有 \(2n\) 个比特。偶数键共 \(n-1\) 条，上限应为 \(n-1\)；上面已按此改写。另外，\(H_1^{\rm (NC)}\) 作为整体并不是非上下文的（不同比特对之间的 \(x_1x_2\)、\(z_3\)、\(z_1\) 就违反传递性）；论文说它可解，是因为它是 \(n\) 个作用在不相交比特对上的非上下文哈密顿量之和。</p>
+
+  <h3 class="sub">分子哈密顿量上的结果（原文表 I）</h3>
+  <p>用布拉维–基塔耶夫变换把 STO-3G 基组下的分子哈密顿量写成泡利项，再用贪心算法分组。“FNC”是论文提出的折中：先贪心地找 FC 片段，按项数排序，再把小片段的项挪进大片段，只要不破坏非上下文性。墨条是同一行里相对 AC 的长短，朱字是这一行的最少片段数。</p>
+  <div class="tbl-wrap">
+    <table class="bars" id="tab1">
+      <thead><tr><th>体系</th><th class="r">泡利项数</th><th>AC 全反对易</th><th>FC 全对易</th><th>NC 非上下文</th><th>FNC 混合</th></tr></thead>
+      <tbody>
+        <tr><td>H₂</td><td class="r">15</td><td data-v="11">11</td><td data-v="2">2</td><td data-v="1">1</td><td data-v="1">1</td></tr>
+        <tr><td>LiH</td><td class="r">631</td><td data-v="110">110</td><td data-v="42">42</td><td data-v="34">34</td><td data-v="31">31</td></tr>
+        <tr><td>BeH₂</td><td class="r">666</td><td data-v="134">134</td><td data-v="36">36</td><td data-v="33">33</td><td data-v="29">29</td></tr>
+        <tr><td>H₂O</td><td class="r">1086</td><td data-v="156">156</td><td data-v="50">50</td><td data-v="49">49</td><td data-v="40">40</td></tr>
+        <tr><td>NH₃</td><td class="r">3609</td><td data-v="324">324</td><td data-v="122">122</td><td data-v="148">148</td><td data-v="101">101</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>除 NH₃ 外，NC 都比 FC 少；FC 和 AC 片段本身就是非上下文的，所以往 FC 片段里“加项”总不会更差，FNC 比 FC 稳定地少两成左右（LiH 到 NH₃ 平均 21%）。H₂ 的 15 个泡利项整个是一个非上下文集合，一片就够。</p>
+</section>
+
+<!-- ═══════════════ 费：费米子 ═══════════════ -->
+<section id="s-fei" aria-labelledby="h-fei">
+  <div class="head"><span class="seal" aria-hidden="true">费</span><h2 id="h-fei">费米子：本征态是斯莱特行列式，轨道却随扇区而变</h2></div>
+  <p>本征基只由<button type="button" class="term" data-g="slater">斯莱特行列式</button>组成的费米子哈密顿量叫<button type="button" class="term" data-g="meanfield">平均场可解</button>。单体哈密顿量是最简单的一类：把 \(N\) 个自旋轨道分成两组，\(S_1\) 有 \(N-K\) 个，\(S_2\) 有 \(K\) 个；\(S_1\) 上的单体算符用一个轨道转动就能对角化：</p>
+  <div class="eq" data-label="H25" data-paper="25–27">$$H=\sum_{ij\in S_1}h_{ij}a_i^\dagger a_j+h_0,\qquad U_\theta HU_\theta^\dagger=\sum_i\gamma_in_i+h_0,\qquad U_\theta=e^{\sum_{i>j}\theta_{ij}(a_i^\dagger a_j-a_j^\dagger a_i)},$$</div>
+  <p>\(\gamma_i\) 是矩阵 \(h_{ij}\) 的本征值。\(S_2\) 上的占据数 \(n_k\)（\(k\in S_2\)）与 \(S_1\) 上的一切单体算符对易，是现成的对称。把 \(h_{ij}\) 和 \(h_0\) 换成 \(n_k\) 的多项式，就得到一个两体哈密顿量：</p>
+  <div class="eq" data-label="H28" data-paper="28">$$H=U_{\rm T}^\dagger\Big[\sum_{ij\in S_1}\Big(\sum_{k\in S_2}h^{(k)}_{ij}n_k\Big)a_i^\dagger a_j+\sum_{kl\in S_2}\lambda_{kl}\,n_kn_l\Big]U_{\rm T},$$</div>
+  <p>\(U_{\rm T}\) 是全部 \(N\) 个轨道上的一个轨道转动，作用和量子比特情形里的克利福德变换一样。</p>
+  <p class="zhu"><b>意思</b>\(n_k\) 不可逆（本征值 0 和 1），本身不能当群元；但 \(z_k=2n_k-1\) 满足 \(z_k^2=4n_k^2-4n_k+1=1\)（因为 \(n_k^2=n_k\)），是反射。\(n_k\) 的多项式和 \(z_k\) 的多项式是同一批东西，所以前面的理论照用。为什么 \(n_k\) 和 \(a_i^\dagger a_j\) 对易？三者作用在不同的轨道上，\(a_i^\dagger a_j\) 是偶数个费米子算符，挪过 \(n_k\) 时产生的负号成对抵消。</p>
+  <p>扇区由 \(S_2\) 的占据 \(\vec v\in\{0,1\}^K\) 标记，投影是 \(P_{\vec v}=\prod_{l\in S_2}n_l^{v_l}(1-n_l)^{1-v_l}\)（原文 29）。代进去：</p>
+  <div class="eq" data-label="H30" data-paper="30–32">$$U_{\rm T}HU_{\rm T}^\dagger=\sum_{\vec v}\Big[\sum_{ij}\gamma_{ij}(\vec v)\,a_i^\dagger a_j+\sum_{kl}\lambda_{kl}v_kv_l\Big]P_{\vec v},\qquad \gamma_{ij}(\vec v)=\sum_kh^{(k)}_{ij}v_k .$$</div>
+  <p>每块是 \(S_1\) 上的单体算符，各用一个轨道转动 \(e^{X_{\vec v}}\) 解开。本征态这样造：先在 \(S_2\) 上选一个占据组态，它定下 \(\vec v\)；再对角化 \(\gamma(\vec v)\)，得到这个扇区自己的一组轨道，在上面任选一个占据组态。每个 \(\vec v\) 配 \(2^{|S_1|}\) 个本征态，合起来正好 \(2^N\) 个。<strong>每个本征态都是一个斯莱特行列式，但不同扇区的行列式用的是不同的单粒子轨道。</strong></p>
+
+  <div class="stage" id="lab-fei">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>左边：\(S_1\) 是四个轨道连成的链，上面两个圆是 \(S_2\) 的轨道 5、6，实心表示占据（点它们切换 \(\vec v\)）。右边：这个扇区的四条轨道能级 \(\gamma_m(\vec v)\) 和形状（墨点为正、朱点为负、大小是系数的模）；点能级放上或拿走电子</span>
+      <div class="wash-box"><canvas id="fei" role="img" aria-label="费米子平均场例子：S2 的占据决定 S1 上的轨道与能级"></canvas></div>
+      <div class="ctrl">
+        <span>\(S_2\) 占据 \(\vec v\)</span>
+        <div class="chips" id="fei-v" role="group" aria-label="S2 的占据">
+          <button type="button" data-k="00" aria-pressed="true">00</button><button type="button" data-k="01" aria-pressed="false">01</button><button type="button" data-k="10" aria-pressed="false">10</button><button type="button" data-k="11" aria-pressed="false">11</button>
+        </div>
+        <label class="slider"><span>\(S_1\) 电子数</span><input type="range" id="fei-ne" min="0" max="4" step="1" value="2" aria-label="S1 上的电子数，从最低轨道填起"><output id="fei-ne-o"></output></label>
+      </div>
+    </div>
+    <aside class="panel" id="fei-panel" aria-live="polite"></aside>
+  </div>
+  <p class="zhu"><b>读注</b>原文 (28) 的括号里只写了 \(n_k\) 的一次项。图里另加了零次项 \(h^{(0)}_{ij}\)（一条最近邻跳跃链），它就是普通的单体哈密顿量，也属于“\(n_k\) 的多项式”，可解性不变；没有它，\(\vec v=00\) 那个扇区的单体部分为零，四条轨道全简并，看不出形状。verify.mjs 在 \(2^6=64\) 维福克空间里逐个核对了图里这个哈密顿量的 64 个斯莱特行列式本征态。</p>
+  <p>这一类叫 GMF(\(K\))。\(K=0\) 时它就是单体哈密顿量；\(K=N\) 时 \(S_1\) 是空的，只剩 \(\sum\lambda_{kl}n_kn_l\)，正是满秩片段 GFRO（表里第二行）。</p>
+
+  <h3 class="sub">分子哈密顿量上的结果（原文表 II）</h3>
+  <p>每个片段用梯度极小化去拟合剩余的双电子张量 \(g_{pqrs}\)，直到剩余的 \(L_2\) 范数平方小于 \(10^{-6}\)。GMF 取 \(K=N/2\)，按轨道能量从低到高、\(\alpha\beta\) 交替排序后对半分。</p>
+  <div class="tbl-wrap">
+    <table class="bars" id="tab2">
+      <thead><tr><th>体系</th><th>GFRO 满秩</th><th>LR 低秩</th><th>GMF(N/2)</th></tr></thead>
+      <tbody>
+        <tr><td>H₂</td><td data-v="3">3</td><td data-v="4">4</td><td data-v="15">15</td></tr>
+        <tr><td>H₄</td><td data-v="15">15</td><td data-v="8">8</td><td data-v="20">20</td></tr>
+        <tr><td>LiH</td><td data-v="24">24</td><td data-v="20">20</td><td data-v="58">58</td></tr>
+        <tr><td>BeH₂</td><td data-v="32">32</td><td data-v="23">23</td><td data-v="83">83</td></tr>
+        <tr><td>H₂O</td><td data-v="34">34</td><td data-v="24">24</td><td data-v="102">102</td></tr>
+        <tr><td>NH₃</td><td data-v="47">47</td><td data-v="28">28</td><td data-v="61">61</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>费米子这边新类反而更费：GMF(\(N/2\)) 在六个体系上都比 GFRO 和<button type="button" class="term" data-g="lowrank">低秩分解</button>需要更多片段。论文的解释是：这些分子的双电子张量，大部分 \(L_2\) 范数在 \(g_{ppqq}\) 型的项上，一个 GFRO 片段就能在最合适的轨道基里把它整个吃下；GMF 片段因为 \(S_1\)、\(S_2\) 不相交，做不到这一点。实际计算中 \(K\) 越大 GMF 越好，\(K=N\) 时与 GFRO 完全一致。</p>
+</section>
+
+<!-- ═══════════════ 路：量子电路 ═══════════════ -->
+<section id="s-lu" aria-labelledby="h-lu">
+  <div class="head"><span class="seal" aria-hidden="true">路</span><h2 id="h-lu">量子电路：受控转动，或中途测量</h2></div>
+  <p>在量子计算机上测这些片段，要把 \(V=\exp\big(\sum_{\vec v}X_{\vec v}P_{\vec v}\big)\) 做成电路。生成元里各项对易，指数可以拆开；经 \(U_{\rm T}\) 之后，每个扇区恰好对应前 \(K\) 个比特的一个计算基态 \(|\vec v\rangle\)：</p>
+  <div class="eq" data-label="H35" data-paper="33–35">$$V=\prod_{\vec v}e^{X_{\vec v}P_{\vec v}},\qquad P_{\vec v}=|\vec v\rangle\langle\vec v|\otimes1,\qquad e^{X_{\vec v}P_{\vec v}}=|\vec v\rangle\langle\vec v|\otimes U_{\vec v}+\big(1-|\vec v\rangle\langle\vec v|\big).$$</div>
+  <p>最后一式又是 {{eq:A2}}：它就是“前 \(K\) 个比特处在 \(|\vec v\rangle\) 时才做 \(U_{\vec v}\)”的受控门（原文图 1a）。问题是这样的受控门要 \(2^K\) 个，随独立对称的个数指数增长。</p>
+  <p>如果目的只是<strong>测量</strong> \(H\)（变分量子本征求解器里正是如此），有更省的路：做完 \(U_{\rm T}\) 以后，对称比特只当控制位用，不再被改动。那就先把它们测掉，得到 \(\vec v\)，由经典计算机算出 \(U_{\vec v}\) 的参数，再只做这一个门（原文图 1b）。这种<button type="button" class="term" data-g="dynamic">动态量子电路</button>已经在超导和离子阱处理器上演示过。</p>
+  <div class="stage" id="lab-lu">
+    <div class="lab">
+      <span class="plot-title"><span class="ev k4">数值</span>上：三比特例子的测量电路。下：在一个固定的试探态 \(|\psi\rangle\) 上反复测量，读数 \(e=p_0(\vec v)+a(\vec v)z\) 的累计平均（墨线）趋向 \(\langle\psi|H|\psi\rangle\)（朱色虚线），淡墨带是 \(\pm2\) 个标准误</span>
+      <div class="wash-box"><canvas id="lu" role="img" aria-label="测量电路与多次测量的累计平均"></canvas></div>
+      <div class="ctrl">
+        <div class="chips" id="lu-mode" role="group" aria-label="电路形式">
+          <button type="button" data-k="a" aria-pressed="false">图 1a：全受控</button><button type="button" data-k="b" aria-pressed="true">图 1b：中途测量</button>
+        </div>
+        <button type="button" class="toggle" id="lu-one">测 1 次</button>
+        <button type="button" class="toggle" id="lu-many">测 200 次</button>
+        <button type="button" class="toggle" id="lu-reset">清零</button>
+      </div>
+    </div>
+    <aside class="panel" id="lu-panel" aria-live="polite"></aside>
+  </div>
+  <p class="zhu"><b>意思</b>每次读数都是 \(H\) 的一个本征值，取到它的概率是 \(|\psi\rangle\) 在那个本征向量上的权重，所以读数的期望正好是 \(\langle\psi|H|\psi\rangle\)。\(N\) 次读数的平均按<button type="button" class="term" data-g="lln">大数定律</button>收敛过去，标准误是 \(\sigma/\sqrt N\)，\(\sigma^2=\langle H^2\rangle-\langle H\rangle^2\)。两种电路的读数分布完全相同，差别只在硬件开销。</p>
+</section>
+
+<!-- ═══════════════ 评：结论与局限 ═══════════════ -->
+<section id="s-ping" aria-labelledby="h-ping">
+  <div class="head"><span class="seal" aria-hidden="true">评</span><h2 id="h-ping">结论与局限</h2></div>
+  <div class="two">
+    <div>
+      <h3>论文做成了什么</h3>
+      <p>构造可解哈密顿量只要两样东西：(1) 一个大小为多项式的紧李代数 \(\mathcal A\) 和对应的李群作用；(2) \(\mathcal A\) 的一个阿贝尔对称群 \(\mathcal G\)。系数取在群代数 \(\mathbb R[\mathcal G]\) 里。得到的哈密顿量一般已不在 \(\mathcal A\) 里，超出了极大环面定理直接覆盖的范围。</p>
+      <p>用在 \(\mathfrak{so}(L+1)\) 上，得到的正好是全部非上下文泡利哈密顿量，这给“非上下文为什么可解”一个李代数的解释；用在费米子上，得到 \(N-K\) 个轨道上的平均场 \(\mathfrak u(N-K)\) 加 \(K\) 个轨道上的对称投影。</p>
+    </div>
+    <div>
+      <h3>还没解决的</h3>
+      <p><strong>片段少不等于测得省。</strong>论文自己强调：总测量次数由各片段的<button type="button" class="term" data-g="variance">方差</button>决定，片段数减少时方差可能反而变大。非上下文片段的真实价值，要配合方差优化再算一遍。</p>
+      <p><strong>电路开销。</strong>全受控的电路随 \(K\) 指数增长，省下来要靠中途测量和经典前馈。</p>
+      <p><strong>超出平均场。</strong>把轨道分成不相交的子集，为在子集内部放进关联、构造“超出平均场”的可解哈密顿量留了口子。</p>
+    </div>
+  </div>
+  <h3 class="sub">读的时候注意到的几处</h3>
+  <p>以下是本页读注的汇总，都由 verify.mjs 核对过，不影响论文的结论。</p>
+  <div class="tbl-wrap">
+    <table class="small">
+      <thead><tr><th>位置</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="nw">原文 (20)</td><td>乘积 \(\prod_{j=1}^{L-1}\) 的顺序：\(j=1\) 先作用（写在最右边）。相邻因子不对易，倒过来一般转不到 \(A_L\)。</td></tr>
+        <tr><td class="nw">原文 (21)</td><td>角度取 \(\operatorname{atan2}\) 的分支，\(a(\vec v)\) 才是正的；另一分支给出 \(-a(\vec v)\)。</td></tr>
+        <tr><td class="nw">原文 (39)</td><td>求和上限应为 \(n-1\)（偶数键只有 \(n-1\) 条）。</td></tr>
+        <tr><td class="nw">原文 (38)</td><td>\(H_1^{\rm (NC)}\) 作为整体是上下文的；它可解是因为它是不相交比特对上非上下文块之和。</td></tr>
+        <tr><td class="nw">原文 (28)</td><td>只写了 \(n_k\) 的一次项；零次项（普通单体项）同样可以加。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ 练：六道小题 ═══════════════ -->
+<section id="s-quiz" aria-labelledby="h-quiz">
+  <div class="head"><span class="seal" aria-hidden="true">练</span><h2 id="h-quiz">六道小题</h2></div>
+  <div class="quiz">
+    <div>
+      <p><span class="qn">一</span>两个比特，对称 \(C=Z_1\)，反对易组 \(X_2,Y_2,Z_2\)，系数 \(p_i=a_i+b_iZ_1\)（\(i=0,1,2,3\)）。写出全部能级。</p>
+      <details><summary>看答案</summary><div>
+        <p>两个扇区 \(v=\pm1\)。扇区里 \(p_i(v)=a_i+b_iv\)，能级 \(a_0+b_0v\pm\sqrt{\sum_{i=1}^3(a_i+b_iv)^2}\)，共四条。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">二</span>\(\{X_1,Z_1,X_2,Z_2\}\) 是非上下文的吗？\(X_1+Z_1+X_2+Z_2\) 可解吗？</p>
+      <details><summary>看答案</summary><div>
+        <p>不是：没有哪一项与其余全部对易，\(\mathcal Z\) 为空；\(X_1\sim X_2\sim Z_1\)，但 \(X_1\) 与 \(Z_1\) 反对易，传递性破了。可它可解：两个比特各转各的。非上下文是充分条件，不是必要条件。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">三</span>为什么论文把对称群的生成元取成谱为 \(\pm1\) 的反射？换成谱为 \(\{0,1\}\) 的 \(n_k\) 行不行？</p>
+      <details><summary>看答案</summary><div>
+        <p>要让 \(\mathcal G\) 是有限群，厄米生成元的本征值只能是 \(\pm1\)。\(n_k\) 不可逆，不能当群元；但 \(z_k=2n_k-1\) 是反射，\(n_k\) 的多项式就是 \(z_k\) 的多项式，所以用 \(n_k\) 写系数完全可以。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">四</span>费米子例子里 \(N=6\)、\(K=2\)。每个扇区有几个本征态？总共几个？它们都是斯莱特行列式吗？</p>
+      <details><summary>看答案</summary><div>
+        <p>每个扇区 \(2^{4}=16\) 个（\(S_1\) 上任选占据），四个扇区共 \(64=2^6\) 个，正好是整个福克空间的维数。都是斯莱特行列式，但 \(S_1\) 部分用的是各扇区自己的轨道。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">五</span>图 1b 先测对称比特。为什么这不会让 \(\langle H\rangle\) 的估计出偏差？</p>
+      <details><summary>看答案</summary><div>
+        <p>因为 \([H,P_{\vec v}]=0\)：\(H=\sum_{\vec v}H_{\vec v}P_{\vec v}\)，所以 \(\langle\psi|H|\psi\rangle=\sum_{\vec v}\Pr(\vec v)\,\langle H_{\vec v}\rangle_{\vec v}\)，先测 \(\vec v\) 再在塌缩后的态上测 \(H_{\vec v}\)，期望不变。这和在 \(H\) 的一组共同本征基里一次读出是一回事。</p>
+      </div></details>
+    </div>
+    <div>
+      <p><span class="qn">六</span>三比特例子里，四个扇区的系数相同时（“系数是数”），原始基里的 \(H\) 还剩几个泡利项？需要几个不同的 \(U_{\vec v}\)？</p>
+      <details><summary>看答案</summary><div>
+        <p>多项式只剩常数项，\(H=\sum_i\alpha_iA_i+\alpha_0\)：除常数外 3 项，正是 \(X_1X_2X_3\)、\(X_1X_2Y_3\)、\(Z_3\)。四个 \(U_{\vec v}\) 都相同，受控门可以合并成一个不受控的转动。</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 析：注释总表 ═══════════════ -->
+<section id="s-gloss" aria-labelledby="h-gloss">
+  <div class="head"><span class="seal" aria-hidden="true">析</span><h2 id="h-gloss">注释总表</h2></div>
+  <p>正文里带虚线的词都在这里，按出现的先后排列。每条先说“意思”，再说“在这里”它起什么作用；英文名附在后面，方便对照原文。</p>
+  <dl class="gloss">
+    <div class="gl" id="g-solvable"><dt>精确可解<small>exactly solvable</small></dt><dd><p><b>意思</b>能高效地（解析地，或用多项式时间的数值方法）找到把哈密顿量转成对角形式的幺正变换。</p><p><b>在这里</b>“对角形式”最终要落到量子计算机的计算基上，这样才能一次读出。</p></dd></div>
+    <div class="gl" id="g-spinorb"><dt>自旋轨道<small>spin-orbital</small></dt><dd><p><b>意思</b>空间轨道乘上自旋 \(\alpha\) 或 \(\beta\)，每个最多放一个电子。</p><p><b>在这里</b>\(N\) 个自旋轨道对应 \(N\) 个费米子模式，也对应 \(N\) 个量子比特。</p></dd></div>
+    <div class="gl" id="g-jw"><dt>约当–维格纳与布拉维–基塔耶夫变换<small>Jordan–Wigner · Bravyi–Kitaev transformation</small></dt><dd><p><b>意思</b>把费米子的产生、湮灭算符写成泡利算符的方法。约当–维格纳用一串 \(Z\) 记录前面轨道的占据带来的符号；布拉维–基塔耶夫把这串符号分散存储，每个算符只碰 \(O(\log N)\) 个比特。</p><p><b>在这里</b>表 I 的分子哈密顿量用的是布拉维–基塔耶夫变换。</p></dd></div>
+    <div class="gl" id="g-pauli"><dt>泡利算符<small>Pauli operator · Pauli string</small></dt><dd><p><b>意思</b>每个比特上放 \(I,X,Y,Z\) 之一再做张量积，例如 \(X_1Z_3=X\otimes I\otimes Z\)。任意两个要么对易、要么反对易：数一数两者都不是 \(I\) 且字母不同的位置，偶数个就对易。</p><p><b>在这里</b>本页的对称、反对易组和全部例子都是泡利算符。它们平方为 1，是反射。</p></dd></div>
+    <div class="gl" id="g-fragment"><dt>片段<small>fragment · measurable fragment</small></dt><dd><p><b>意思</b>把哈密顿量写成 \(\sum_\alpha H_\alpha\) 时的每一项，要求每项各自可解。</p><p><b>在这里</b>片段数是表 I、表 II 比较的指标；但测量开销还取决于方差，见“评”。</p></dd></div>
+    <div class="gl" id="g-vqe"><dt>变分量子本征求解器<small>variational quantum eigensolver · VQE</small></dt><dd><p><b>意思</b>在量子计算机上制备带参数的试探态，测量能量期望值，由经典优化器调参数使能量最低。</p><p><b>在这里</b>它要反复测 \(\langle H\rangle\)，“测量问题”就是怎样用最少的测量次数测准它。</p></dd></div>
+    <div class="gl" id="g-trotter"><dt>特罗特–铃木分解<small>Trotter–Suzuki decomposition</small></dt><dd><p><b>意思</b>\(e^{-i(A+B)t}\approx\big(e^{-iAt/n}e^{-iBt/n}\big)^n\)，误差来自 \(A\)、\(B\) 不对易，随 \(n\) 增大而减小；高阶公式更准。</p><p><b>在这里</b>量子相位估计用它实现时间演化，片段的选择影响误差和电路深度。</p></dd></div>
+    <div class="gl" id="g-orbrot"><dt>轨道转动<small>orbital rotation</small></dt><dd><p><b>意思</b>\(e^{\sum\theta_{pq}(a_p^\dagger a_q-a_q^\dagger a_p)}\)，把一组单粒子轨道线性变换成另一组正交归一的轨道；它把斯莱特行列式送到斯莱特行列式。</p><p><b>在这里</b>单体哈密顿量、GFRO 片段和费米子新类都靠它解开。</p></dd></div>
+    <div class="gl" id="g-clifford"><dt>克利福德变换<small>Clifford group</small></dt><dd><p><b>意思</b>把每个泡利算符共轭成另一个泡利算符（最多差一个相位）的幺正变换，由阿达马门、相位门和 CNOT 生成。</p><p><b>在这里</b>\(U_{\rm T}\) 是克利福德变换：它把对称变成单比特的 \(z_k\)。</p></dd></div>
+    <div class="gl" id="g-liealg"><dt>李代数<small>Lie algebra</small></dt><dd><p><b>意思</b>一个对“括号”封闭的线性空间；矩阵情形括号是对易子 \([X,Y]=XY-YX\)。紧李代数对应紧李群，例如 \(\mathfrak{su}(n)\)、\(\mathfrak{so}(n)\)、\(\mathfrak u(n)\)。</p><p><b>在这里</b>物理上常用厄米生成元 \(\Lambda_i\)，乘以 \(i\) 就是数学上的反厄米元素。李代数的维数要是多项式大小，构造才有用。</p></dd></div>
+    <div class="gl" id="g-torus"><dt>极大环面定理<small>maximal torus theorem</small></dt><dd><p><b>意思</b>连通紧李群里所有极大环面互相共轭；在李代数层面，任何元素都能用群元共轭到一个固定的嘉当子代数里。</p><p><b>在这里</b>它保证 \(\sum c_i\Lambda_i\) 可解，是“旧办法”的理论依据。</p></dd></div>
+    <div class="gl" id="g-cartan"><dt>嘉当子代数<small>Cartan subalgebra</small></dt><dd><p><b>意思</b>紧李代数里一个极大的阿贝尔子代数：元素两两对易，再加任何元素都不再全对易。</p><p><b>在这里</b>\(\mathfrak{su}(2)\) 里取 \(Z\)，\(\mathfrak u(N)\) 里取全部 \(n_p\)，反对易组里取 \(A_L\)。转到它上面就能同时测量。</p></dd></div>
+    <div class="gl" id="g-anticomm"><dt>反对易<small>anticommute</small></dt><dd><p><b>意思</b>\(AB=-BA\)，即 \(\{A,B\}=AB+BA=0\)。</p><p><b>在这里</b>两两反对易的泡利算符生成 \(\mathfrak{so}(L+1)\)；也正是这个负号让 {{eq:conj}} 只在一个平面里转。</p></dd></div>
+    <div class="gl" id="g-absconv"><dt>绝对收敛<small>absolute convergence</small></dt><dd><p><b>意思</b>\(\sum_k\lVert a_k\rVert<\infty\)。绝对收敛的级数怎样重排、分组，和都不变。矩阵指数的级数总是绝对收敛：\(\lVert X^k/k!\rVert\le\lVert X\rVert^k/k!\)。</p><p><b>在这里</b>允许把 \(e^{\theta G/2}\) 按奇偶项拆开，也允许式 {{eq:A2}} 里把 \(P\) 提出来。</p></dd></div>
+    <div class="gl" id="g-rep"><dt>表示<small>representation</small></dt><dd><p><b>意思</b>李代数到某个线性空间 \(V\) 上线性算符的映射，保持括号。\(V\) 里如果有一个子空间被所有算符映回自己，就叫不变子空间；有非平凡不变子空间的表示叫可约的。</p><p><b>在这里</b>多比特希尔伯特空间上的 \(\mathfrak{so}(L+1)\) 表示通常可约，对称就从这里来。</p></dd></div>
+    <div class="gl" id="g-schur"><dt>舒尔引理<small>Schur’s lemma</small></dt><dd><p><b>意思</b>复的不可约表示里，与所有表示算符对易的算符只能是单位算符的倍数。</p><p><b>在这里</b>反过来读：有非平凡的对称，表示就一定可约。</p></dd></div>
+    <div class="gl" id="g-abelian"><dt>阿贝尔群<small>abelian group</small></dt><dd><p><b>意思</b>乘法可交换的群。</p><p><b>在这里</b>对称群 \(\mathcal G\) 由两两对易的 \(C_k\) 生成，有限时同构于 \(\mathbb Z_2^K\)。</p></dd></div>
+    <div class="gl" id="g-reflection"><dt>反射<small>reflection · involution</small></dt><dd><p><b>意思</b>平方为单位算符的厄米算符，谱只含 \(\pm1\)；它是一面“镜子”。</p><p><b>在这里</b>对称群的生成元都要求是反射；泡利算符和 \(z_k=2n_k-1\) 都是。</p></dd></div>
+    <div class="gl" id="g-spectral"><dt>谱分解与共同本征空间<small>spectral decomposition · simultaneous eigenspace</small></dt><dd><p><b>意思</b>把厄米算符写成 \(\sum\lambda P_\lambda\)。一组对易的厄米算符可以同时这样分解，每组本征值 \(\vec v\) 对应一个共同本征空间。</p><p><b>在这里</b>共同本征空间就是“扇区”，在其中每个对称都等于一个数。</p></dd></div>
+    <div class="gl" id="g-projector"><dt>投影算符<small>projector</small></dt><dd><p><b>意思</b>\(P^2=P\) 的厄米算符，把向量投到一个子空间上。一组投影两两正交、加起来等于 1，叫完备正交投影组。</p><p><b>在这里</b>\(P_{\vec v}\) 把空间切成扇区；分块定理的全部论证只用到 \(P_iP_j=\delta_{ij}P_i\)。</p></dd></div>
+    <div class="gl" id="g-groupalg"><dt>群代数<small>group algebra</small></dt><dd><p><b>意思</b>群元素的形式线性组合 \(\sum_gc_g\,g\)，乘法由群乘法线性扩张。</p><p><b>在这里</b>\(\mathbb R[\mathcal G]\) 就是对称算符的多项式，论文称其元素为“广义系数”。</p></dd></div>
+    <div class="gl" id="g-taylor"><dt>泰勒展开<small>Taylor expansion</small></dt><dd><p><b>意思</b>把函数写成幂级数；对矩阵，\(e^X=\sum_kX^k/k!\) 就是定义。</p><p><b>在这里</b>附录 A 的第一步：把 \(e^{XP}\) 逐项展开，用 \(P^2=P\) 化简。</p></dd></div>
+    <div class="gl" id="g-induction"><dt>强归纳法<small>strong induction</small></dt><dd><p><b>意思</b>证明对 \(N=1\) 成立，并且“对所有 \(k<N\) 成立”推出“对 \(N\) 成立”，于是对所有 \(N\) 成立。</p><p><b>在这里</b>把 \(N\) 个投影的指数拆成前 \(N-1\) 个与最后一个。</p></dd></div>
+    <div class="gl" id="g-tapering"><dt>量子比特缩减<small>qubit tapering</small></dt><dd><p><b>意思</b>找出哈密顿量的泡利对称，用克利福德变换把它们变成单比特 \(Z\)，再把这些比特换成本征值 \(\pm1\)，从而减少比特数。</p><p><b>在这里</b>论文借用它找 \(U_{\rm T}\)；不同的是这里不扔掉对称比特，而是逐个扇区处理。</p></dd></div>
+    <div class="gl" id="g-noncontext"><dt>非上下文<small>non-contextual</small></dt><dd><p><b>意思</b>泡利集合 \(\mathcal S=\mathcal Z\cup\mathcal T\)，\(\mathcal Z\) 与一切对易，\(\mathcal T\) 上对易是等价关系。名字来自量子上下文性：非上下文集合的测量结果可以用一个经典的隐变量模型复现。</p><p><b>在这里</b>本文证明：非上下文泡利哈密顿量恰好是 \(\mathfrak{so}(L+1)\) 加泡利对称构造出的那一类。</p></dd></div>
+    <div class="gl" id="g-equiv"><dt>等价关系<small>equivalence relation</small></dt><dd><p><b>意思</b>满足自反、对称、传递的关系；它把集合切成互不相交的等价类。</p><p><b>在这里</b>对易天然自反、对称，非上下文的要求只是传递性。</p></dd></div>
+    <div class="gl" id="g-commclass"><dt>对易类<small>commutation class</small></dt><dd><p><b>意思</b>\(\mathcal T\) 在“对易”这个等价关系下的等价类：同类两两对易，异类两两反对易。</p><p><b>在这里</b>每类取一个代表 \(A_i\)，代表们两两反对易，生成 \(\mathfrak{so}(L+1)\)。</p></dd></div>
+    <div class="gl" id="g-slater"><dt>斯莱特行列式<small>Slater determinant</small></dt><dd><p><b>意思</b>把若干个单粒子轨道反对称化得到的多电子态，\(\prod_mb_m^\dagger|0\rangle\)；哈特里–福克的波函数就是一个。</p><p><b>在这里</b>新类的每个本征态都是一个斯莱特行列式，但轨道 \(b_m(\vec v)\) 随扇区变。</p></dd></div>
+    <div class="gl" id="g-meanfield"><dt>平均场可解<small>mean-field solvable</small></dt><dd><p><b>意思</b>有一组完全由斯莱特行列式组成的本征基的费米子哈密顿量。</p><p><b>在这里</b>GMF(\(K\)) 片段属于这一类，但它是两体的，不是单体的。</p></dd></div>
+    <div class="gl" id="g-lowrank"><dt>低秩与满秩分解<small>low-rank (LR) · greedy full-rank (GFRO)</small></dt><dd><p><b>意思</b>把双电子张量写成若干 \(U^\dagger(\sum\lambda_{pq}n_pn_q)U\) 之和。LR 用张量的特征分解，每片 \(\lambda\) 是秩一的；GFRO 用贪心的梯度优化，\(\lambda\) 满秩。</p><p><b>在这里</b>它们是表 II 里的参照；GFRO 是 GMF(\(K=N\)) 的特例。</p></dd></div>
+    <div class="gl" id="g-dynamic"><dt>动态量子电路<small>dynamic quantum circuit · mid-circuit measurement</small></dt><dd><p><b>意思</b>电路中途测量一部分比特，经典处理器根据结果实时决定后面的门。</p><p><b>在这里</b>先测对称比特得到 \(\vec v\)，再只做一个 \(U_{\vec v}\)，把 \(2^K\) 个受控门换成一个。</p></dd></div>
+    <div class="gl" id="g-lln"><dt>大数定律与标准误<small>law of large numbers · standard error</small></dt><dd><p><b>意思</b>独立同分布的读数，平均值收敛到期望；\(N\) 次平均的标准差是 \(\sigma/\sqrt N\)。</p><p><b>在这里</b>测量图下方的淡墨带就是 \(\langle H\rangle\pm2\sigma/\sqrt N\)。</p></dd></div>
+    <div class="gl" id="g-variance"><dt>方差与测量开销<small>variance · measurement cost</small></dt><dd><p><b>意思</b>要把 \(\langle H\rangle=\sum_\alpha\langle H_\alpha\rangle\) 测到精度 \(\epsilon\)，最优分配下总次数约为 \(\big(\sum_\alpha\sqrt{\operatorname{Var}H_\alpha}\big)^2/\epsilon^2\)。</p><p><b>在这里</b>片段少了，若每片的方差变大，总次数不一定减少，这是论文自己提的局限。</p></dd></div>
+  </dl>
+</section>
+
+<footer>
+  <p><strong>录。</strong>本页依据：Smik Patel, Tzu-Ching Yen, Artur F. Izmaylov, Extension of exactly-solvable Hamiltonians using symmetries of Lie algebras，arXiv:2305.18251v2 [quant-ph]（2023 年 9 月 18 日），<a href="https://arxiv.org/abs/2305.18251">arxiv.org/abs/2305.18251</a>。作者单位：多伦多大学化学系，多伦多大学士嘉堡分校物理与环境科学系。式号、表 I、表 II 的数据与图 1 的电路都取自该文；表中数字原样照录。</p>
+  <p>文中提到的相关工作：非上下文泡利哈密顿量的经典模拟与分解，W. M. Kirby, P. J. Love, <i>Phys. Rev. A</i> 102, 032418 (2020)；嘉当子代数测量法，T.-C. Yen, A. F. Izmaylov, <i>PRX Quantum</i> 2, 040320 (2021)；平均场可解哈密顿量，A. F. Izmaylov, T.-C. Yen, <i>Quantum Sci. Technol.</i> 6, 044006 (2021)；量子比特缩减，S. Bravyi, J. M. Gambetta, A. Mezzacapo, K. Temme, arXiv:1701.08213；极大环面定理见 B. C. Hall, <i>Lie Groups, Lie Algebras, and Representations</i>, Springer GTM 222 (2015)。</p>
+  <p>图里的数都是浏览器现算的：复矩阵用指数的“缩小再平方”，实对称矩阵用雅可比转动对角化，转角按原文 (21) 取 \(\operatorname{atan2}\) 分支。三比特例子、费米子链和海森堡链是本页为讲解选的，不是论文里的数据。构建前，verify.mjs 用同一份代码复核了 38 条结论，包括附录 A 的各个等式、\(L=2\dots7\) 的逐次转动、两比特全部 32767 个子集的非上下文判定，以及 64 维福克空间里的全部斯莱特行列式本征态。</p>
+  <p>页面不联网：公式字体已内嵌，中文用本机的楷体和宋体。页面跟随系统的深色、浅色模式。</p>
+</footer>
+</div>
+
+<div id="pop" role="dialog" aria-labelledby="pop-title" hidden>
+  <div class="pop-top"><h3 id="pop-title"></h3><button type="button" id="pop-close">关闭</button></div>
+  <div id="pop-body"></div>
+  <a id="pop-more" href="#s-gloss">在注释总表里看这一条</a>
+</div>
+
+<script data-inline="solv.js">/*__SOLV__*/</script>
+<script data-inline="ink.js">/*__INK__*/</script>
+<script data-inline="app.js">/*__APP__*/</script>
+</body>
+</html>

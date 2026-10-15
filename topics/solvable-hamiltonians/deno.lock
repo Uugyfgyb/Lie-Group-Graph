@@ -1,0 +1,31 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:katex@0.16.11": "0.16.11",
+    "npm:playwright-core@1.49.1": "1.49.1"
+  },
+  "npm": {
+    "commander@8.3.0": {
+      "integrity": "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="
+    },
+    "katex@0.16.11": {
+      "integrity": "sha512-RQrI8rlHY92OLf3rho/Ts8i/XvjgguEjOkO1BEXcU3N8BqPpSzBNwV/G0Ukr+P/l3ivvJUE/Fa/CwbS6HesGNQ==",
+      "dependencies": [
+        "commander"
+      ],
+      "bin": true
+    },
+    "playwright-core@1.49.1": {
+      "integrity": "sha512-BzmpVcs4kE2CH15rWfzpjzVGhWERJfmnXmniSyKeRZUs9Ws65m+RGIi7mjJK/euCegfn3i7jvqWeWyHe9y3Vgg==",
+      "bin": true
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:katex@0.16.11",
+        "npm:playwright-core@1.49.1"
+      ]
+    }
+  }
+}
