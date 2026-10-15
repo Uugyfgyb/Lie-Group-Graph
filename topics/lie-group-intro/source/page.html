@@ -19,6 +19,7 @@
       <h1><span>连珠成圆，</span><span>以切知圆</span></h1>
       <p class="lede">分子的点群只有有限个对称操作：氨分子可以转 120°，不能转 1°。圆盘、球、原子核外的电子云却能转任意角度，对称操作连成一整片，可以求导。这样的群叫<strong>李群</strong>。在单位元处求导，得到一个线性空间，叫<strong>李代数</strong>；用指数映射，又能把它卷回群里。这一页讲这一来一回，再看它在角动量和自旋里的样子。</p>
       <nav class="route" aria-label="本页路线">
+        <!--repo-only--><a href="#s-video"><b>片</b><span>三分钟动画</span></a><i aria-hidden="true">→</i><!--/repo-only-->
         <a href="#s-lian"><b>连</b><span>从点群到圆</span></a><i aria-hidden="true">→</i>
         <a href="#s-qie"><b>切</b><span>李代数</span></a><i aria-hidden="true">→</i>
         <a href="#s-juan"><b>卷</b><span>指数映射</span></a><i aria-hidden="true">→</i>
@@ -45,6 +46,21 @@
     </div>
   </div>
 </header>
+
+<!-- ═══════════════ 片：三分钟动画（只在库里有：视频文件不随 Artifact 发布） ═══════════════ -->
+<!--repo-only-->
+<section id="s-video" aria-labelledby="h-video">
+  <div class="head"><span class="seal" aria-hidden="true">片</span><h2 id="h-video">先看三分钟动画</h2></div>
+  <p>把下面六节浓缩成一段 3 分 41 秒的动画，中文真人配音，字幕在画面里。可以先看一遍再往下读，也可以读完回来再看。</p>
+  <figure class="film">
+    <video controls preload="none" playsinline poster="video/poster.jpg" width="1920" height="1080" aria-label="李群科普动画，中文配音，3 分 41 秒">
+      <source src="video/lie-group-intro-voice.mp4" type="video/mp4">
+      这个浏览器放不了视频，可以<a href="video/lie-group-intro-voice.mp4">直接下载</a>。
+    </video>
+    <figcaption><span class="ev k4">数值</span>画面里的级数部分和、2×2 矩阵的流、球面四段弧和回程差都是用本页同一份代码现算的；<span class="ev k3">示意</span>风车、转盘、球截面上的闭路是为讲解画的。视频文件 <a href="video/lie-group-intro-voice.mp4">lie-group-intro-voice.mp4</a>（22 MB，1920 × 1080），旁白稿与制作脚本在 <code>video/</code> 目录。</figcaption>
+  </figure>
+</section>
+<!--/repo-only-->
 
 <!-- ═══════════════ 连：从点群到圆 ═══════════════ -->
 <section id="s-lian" aria-labelledby="h-lian">

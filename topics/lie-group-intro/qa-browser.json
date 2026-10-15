@@ -173,6 +173,12 @@
       ],
       "bg": "rgb(236, 235, 227)",
       "title": "李群水墨图解",
+      "video": {
+        "src": "video/lie-group-intro-voice.mp4",
+        "poster": "video/poster.jpg",
+        "posterW": 1280,
+        "w": 1100
+      },
       "net": 0,
       "errors": []
     },
@@ -280,6 +286,12 @@
       ],
       "bg": "rgb(20, 22, 21)",
       "title": "李群水墨图解",
+      "video": {
+        "src": "video/lie-group-intro-voice.mp4",
+        "poster": "video/poster.jpg",
+        "posterW": 1280,
+        "w": 1100
+      },
       "net": 0,
       "errors": []
     },
@@ -387,6 +399,12 @@
       ],
       "bg": "rgb(236, 235, 227)",
       "title": "李群水墨图解",
+      "video": {
+        "src": "video/lie-group-intro-voice.mp4",
+        "poster": "video/poster.jpg",
+        "posterW": 1280,
+        "w": 358
+      },
       "net": 0,
       "errors": []
     },
@@ -494,6 +512,12 @@
       ],
       "bg": "rgb(20, 22, 21)",
       "title": "李群水墨图解",
+      "video": {
+        "src": "video/lie-group-intro-voice.mp4",
+        "poster": "video/poster.jpg",
+        "posterW": 1280,
+        "w": 358
+      },
       "net": 0,
       "errors": []
     }

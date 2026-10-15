@@ -8,7 +8,7 @@
 
 | 分类 | 专题 | 内容 | 入口 |
 |---|---|---|---|
-| 入门：从圆到自旋 | [`lie-group-intro`](./topics/lie-group-intro/) | 连珠成圆，以切知圆：点群 → *SO*(2)、李代数、指数映射、李括号、*SU*(2) 双覆盖 *SO*(3) 与自旋 | [打开](./topics/lie-group-intro/index.html) |
+| 入门：从圆到自旋 | [`lie-group-intro`](./topics/lie-group-intro/) | 连珠成圆，以切知圆：点群 → *SO*(2)、李代数、指数映射、李括号、*SU*(2) 双覆盖 *SO*(3) 与自旋；附 3 分 41 秒中文配音动画 | [打开](./topics/lie-group-intro/index.html) · [看动画](./topics/lie-group-intro/video/lie-group-intro-voice.mp4) |
 
 ## 结构
 
@@ -25,6 +25,9 @@ Lie-Group-Graph/
         ├── verification.json        source/verify.mjs 的 23 项数值核验
         ├── qa-browser.json          source/qa-browser.mjs 的浏览器验收
         ├── package.json             构建与核验依赖（katex、playwright-core）
+        ├── video/                   配音动画：成片、海报、旁白稿与制作脚本（见 video/README.md）
+        │   ├── lie-group-intro-voice.mp4   3 分 41 秒，1920 × 1080，中文真人配音，字幕烧在画面里
+        │   └── poster.jpg
         └── source/
             ├── page.html            页面模板（正文、公式、朱批、术语总表）
             ├── ink.css              水墨样式
@@ -62,3 +65,5 @@ deno run -A source/verify.mjs      # 数值核验 → verification.json
 deno run -A source/build.mjs       # 生成 index.html
 deno run -A source/qa-browser.mjs  # 浏览器验收 → qa-browser.json、preview*.png（需本机 Chrome / Chromium / Edge）
 ```
+
+动画的重新生成（合成旁白或换真人配音）见 [`topics/lie-group-intro/video/README.md`](./topics/lie-group-intro/video/README.md)，另需 ffmpeg。

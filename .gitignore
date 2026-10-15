@@ -3,3 +3,4 @@ node_modules/
 ._*
 qa/
 artifact.html
+topics/*/video/out/

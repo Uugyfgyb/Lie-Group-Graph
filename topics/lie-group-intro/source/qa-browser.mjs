@@ -39,6 +39,19 @@ for (const [name, vp, scheme] of [["desktop-light", { width: 1366, height: 900 }
     const bg = getComputedStyle(document.body).backgroundColor;
     return { overflow, wide, canv, panels, bg, title: document.title };
   });
+  // 动画入口：视频与海报文件都在库里，海报能显示
+  const vid = await page.evaluate(async () => {
+    const v = document.querySelector("#s-video video"); if (!v) return null;
+    const src = v.querySelector("source")?.getAttribute("src"), poster = v.getAttribute("poster");
+    const img = new Image(); img.src = poster; await img.decode().catch(() => null);
+    return { src, poster, posterW: img.naturalWidth, w: Math.round(v.getBoundingClientRect().width) };
+  });
+  if (!vid) fail.push(`${name}: 没有动画入口`);
+  else {
+    if (!fs.existsSync(path.join(root, vid.src))) fail.push(`${name}: 视频文件不存在 ${vid.src}`);
+    if (!vid.posterW) fail.push(`${name}: 海报没有加载 ${vid.poster}`);
+  }
+  r.video = vid;
   for (const c of r.canv) if (c.inkFrac < 0.005) fail.push(`${name}: 画布 ${c.id} 几乎是空的（${c.inkFrac}）`);
   for (const p of r.panels) if (p.len < 20) fail.push(`${name}: 题跋 ${p.id} 是空的`);
   if (r.overflow > 0) fail.push(`${name}: 横向溢出 ${r.overflow}px ${r.wide.join(" ")}`);
